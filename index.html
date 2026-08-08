@@ -200,43 +200,82 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:#758196;font-size:1
   </div>
 </section>
 
-<section id="contact"><div class="wrap lead">
-<div class="leadbox"><div class="eyebrow">Start a conversation</div><h2>Want a stock analysed?</h2><p class="muted">Send the stock name and your preferred contact. We’ll use this form as your lead-capture section.</p><p style="font-size:13px;color:#b7c1cf">Tip: connect this form to WhatsApp, Google Sheets or your CRM before going live.</p></div>
-<div class="card"><form class="form" id="leadForm"><input id="name" placeholder="Your name" required><input id="phone" placeholder="WhatsApp number" inputmode="tel" required><input id="stock" placeholder="Stock / sector you want analysed" required><select id="plan"><option>Starter</option><option>Pro Desk</option><option>Custom</option></select><button class="btn primary" type="submit">Send Request →</button></form><div id="msg" class="muted" style="font-size:12px;margin-top:10px"></div></div>
-</div></section>
-</main>
-<footer><div class="wrap foot"><div>© 2026 AlphaEdge. All rights reserved.</div><div>Educational purpose only. Market investments involve risk. No return is guaranteed.</div></div></footer>
+<!DOCTYPE html>
+<html>
+<head>
+<title>AlphaEdge Lead Form</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<h2>Want a stock analysed?</h2>
+<p>Send your details and we will contact you.</p>
+
+<form id="leadForm">
+
+<input id="name" type="text" placeholder="Your name" required>
+<br><br>
+
+<input id="phone" type="tel" placeholder="WhatsApp number" required>
+<br><br>
+
+<input id="stock" type="text" placeholder="Stock / sector you want analysed" required>
+<br><br>
+
+<select id="plan">
+<option>Starter</option>
+<option>Pro Desk</option>
+<option>Custom</option>
+</select>
+
+<br><br>
+
+<button type="submit">Send Request →</button>
+
+</form>
+
+<p id="msg"></p>
+
+
 <script>
 
-).catch(()=>{
-    prompt('Copy this UPI ID:', '72378686331@ybl');
-  });
-}
+document.getElementById("leadForm").addEventListener("submit", function(e){
 
-document.getElementById('leadForm').addEventListener('submit',function(e){
- e.preventDefault();
+    e.preventDefault();
 
- const n=document.getElementById('name').value.trim();
- const p=document.getElementById('phone').value.trim();
- const s=document.getElementById('stock').value.trim();
- const plan=document.getElementById('plan').value;
+    let name = document.getElementById("name").value;
+    let phone = document.getElementById("phone").value;
+    let stock = document.getElementById("stock").value;
+    let plan = document.getElementById("plan").value;
 
- // AlphaEdge WhatsApp destination
- const whatsappNumber = '917237868633';
 
-const message =
-  'Hi AlphaEdge!\\n' +
-  'Name: ' + n + '\\n' +
-  'WhatsApp: ' + p + '\\n' +
-  'Stock: ' + s + '\\n' +
-  'Plan: ' + plan;
+    // Your WhatsApp number
+    let whatsappNumber = "917237868633";
 
-const url = 'https://wa.me/' + 917237868633 + '?text=' +
-  encodeURIComponent(message);
 
-document.getElementById('msg').textContent = 'Opening WhatsApp...';
+    let message =
+    "Hi AlphaEdge!\n\n" +
+    "Name: " + name + "\n" +
+    "Customer WhatsApp: " + phone + "\n" +
+    "Stock: " + stock + "\n" +
+    "Plan: " + plan;
 
-window.location.href = url;
+
+    let url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(message);
+
+
+    document.getElementById("msg").innerHTML = "Opening WhatsApp...";
+
+
+    window.location.href = url;
+
+});
+
+</script>
+
+</body>
+</html>
 });
 </script>
 
