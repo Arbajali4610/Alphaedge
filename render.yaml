@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: alphaedge
-    runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn server:app --bind 0.0.0.0:$PORT
-    healthCheckPath: /health
+    name: alphaedge-live
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
-      - key: MARKET_UPSTREAM
-        value: http://65.0.104.9/stock/list
+      - key: UPSTOX_ACCESS_TOKEN
+        sync: false

@@ -1,0 +1,17 @@
+{
+  "name": "alphaedge-live-market",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AlphaEdge with protected live market feed integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "upstox-js-sdk": "^2.13.0"
+  }
+}
