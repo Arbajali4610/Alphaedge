@@ -121,18 +121,29 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:#758196;font-size:1
       <button class="btn primary" type="submit">Login →</button>
     </form>
     <form class="auth-form" id="registerForm" style="display:none">
-      <label for="registerName">Full Name</label>
-      <input id="registerName" type="text" autocomplete="name" placeholder="Your name" maxlength="60" required>
-      <label for="registerMobile">Mobile Number</label>
-      <input id="registerMobile" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number" maxlength="10" required>
-      <label for="registerPassword">Password</label>
-      <input id="registerPassword" type="password" autocomplete="new-password" placeholder="Minimum 6 characters" minlength="6" required>
-      <label for="registerConfirm">Confirm Password</label>
-      <input id="registerConfirm" type="password" autocomplete="new-password" placeholder="Re-enter password" minlength="6" required>
-      <div class="auth-message" id="registerMessage"></div>
-      <button class="btn primary" type="submit">Create Account →</button>
+      <div id="registerStep1">
+        <label for="registerName">Full Name</label>
+        <input id="registerName" type="text" autocomplete="name" placeholder="Your name" maxlength="60" required>
+        <label for="registerMobile">Mobile Number</label>
+        <input id="registerMobile" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number" maxlength="10" required>
+        <div class="auth-message" id="registerMessage"></div>
+        <button class="btn primary" type="button" id="sendOtpBtn">Send OTP →</button>
+      </div>
+
+      <div id="registerStep2" style="display:none">
+        <div style="margin-bottom:12px;color:var(--muted)">OTP sent to <strong id="otpMobileDisplay"></strong></div>
+        <label for="registerOtp">OTP</label>
+        <input id="registerOtp" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="Enter 6-digit OTP" maxlength="6" required>
+        <label for="registerPassword">Password</label>
+        <input id="registerPassword" type="password" autocomplete="new-password" placeholder="Minimum 6 characters" minlength="6" required>
+        <label for="registerConfirm">Confirm Password</label>
+        <input id="registerConfirm" type="password" autocomplete="new-password" placeholder="Re-enter password" minlength="6" required>
+        <div class="auth-message" id="registerOtpMessage"></div>
+        <button class="btn primary" type="submit">Verify & Create Account →</button>
+        <button class="btn" type="button" id="changeMobileBtn" style="margin-top:8px">Change Number</button>
+      </div>
     </form>
-    <p class="auth-note">Demo mode: accounts are stored in this browser's local storage. For production, connect this UI to a secure backend/database and never store raw passwords client-side.</p>
+    
   </div>
 </div>
 
@@ -351,156 +362,344 @@ setInterval(refreshMarket, 30000);
 </script>
 
 <script>
-/* AlphaEdge Login + Register */
-const AUTH_USERS_KEY = "alphaedge_users_v1";
-const AUTH_SESSION_KEY = "alphaedge_session_v1";
-
-function getUsers(){
-  try { return JSON.parse(localStorage.getItem(AUTH_USERS_KEY) || "[]"); }
-  catch(e){ return []; }
+/* AlphaEdge server-backed authentication */
+async function api(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    headers: {"Content-Type": "application/json", ...(options.headers || {})},
+    ...options
+  });
+  let data = {};
+  try { data = await response.json(); } catch (_) {}
+  if (!response.ok) throw new Error(data.message || "Something went wrong.");
+  return data;
 }
-function saveUsers(users){ localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users)); }
-function normalizeMobile(value){ return String(value || "").replace(/\D/g, "").slice(-10); }
-async function hashPassword(password){
-  if(window.crypto && crypto.subtle){
-    const data = new TextEncoder().encode(password);
-    const hash = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
-  }
-  return btoa(unescape(encodeURIComponent(password)));
-}
-
-// Enquiry → WhatsApp
-document.getElementById("enquiryForm").addEventListener("submit", function(e){
-  e.preventDefault();
-  const name = document.getElementById("enquiryName").value.trim();
-  const phone = document.getElementById("enquiryPhone").value.trim();
-  const stock = document.getElementById("enquiryStock").value.trim();
-  const plan = document.getElementById("enquiryPlan").value;
-  const message = document.getElementById("enquiryMessage").value.trim();
-  const status = document.getElementById("enquiryStatus");
-  const digits = phone.replace(/\D/g, "");
-  if(!/^[6-9]\d{9}$/.test(digits)){
-    status.textContent = "Please enter a valid 10-digit WhatsApp number.";
-    return;
-  }
-  const whatsappNumber = "917237868633";
-  const text =
-    "Hi AlphaEdge!\n\n" +
-    "Enquiry\n" +
-    "Name: " + name + "\n" +
-    "Customer WhatsApp: +91 " + digits + "\n" +
-    "Stock / Sector: " + stock + "\n" +
-    "Plan: " + plan + "\n" +
-    (message ? "Message: " + message + "\n" : "");
-  const url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(text);
-  status.textContent = "Opening WhatsApp…";
-  window.location.href = url;
-});
-
-setInterval(updateGreeting, 60000);
 
 function setAuthMessage(id, text, success=false){
-  const el=document.getElementById(id);
-  el.textContent=text; el.className="auth-message"+(success?" success":"");
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = "auth-message" + (success ? " success" : "");
 }
+
 function openAuth(mode="login"){
   document.getElementById("authModal").classList.add("open");
   document.getElementById("authModal").setAttribute("aria-hidden","false");
   switchAuth(mode);
-  setTimeout(()=>{ const el=document.getElementById(mode==="login"?"loginMobile":"registerName"); if(el) el.focus(); },50);
+  setTimeout(() => {
+    const el = document.getElementById(mode === "login" ? "loginMobile" : "registerName");
+    if(el) el.focus();
+  }, 50);
 }
+
 function closeAuth(){
   document.getElementById("authModal").classList.remove("open");
   document.getElementById("authModal").setAttribute("aria-hidden","true");
 }
+
 function switchAuth(mode){
-  const login=mode==="login";
-  document.getElementById("loginForm").style.display=login?"grid":"none";
-  document.getElementById("registerForm").style.display=login?"none":"grid";
-  document.getElementById("loginTab").classList.toggle("active",login);
-  document.getElementById("registerTab").classList.toggle("active",!login);
-  document.getElementById("authTitle").textContent=login?"Welcome back":"Create your account";
-  document.getElementById("authSubtitle").textContent=login?"Login with your mobile number and password.":"Register with your mobile number and create a password.";
-  setAuthMessage("loginMessage",""); setAuthMessage("registerMessage","");
+  const login = mode === "login";
+  document.getElementById("loginForm").style.display = login ? "grid" : "none";
+  document.getElementById("registerForm").style.display = login ? "none" : "grid";
+  document.getElementById("loginTab").classList.toggle("active", login);
+  document.getElementById("registerTab").classList.toggle("active", !login);
+  document.getElementById("authTitle").textContent = login ? "Welcome back" : "Create your account";
+  document.getElementById("authSubtitle").textContent =
+    login ? "Login with your mobile number and password." :
+            "Register with your mobile number and create a password.";
+  setAuthMessage("loginMessage","");
+  setAuthMessage("registerMessage","");
 }
+
 function getTimeGreeting(){
-  const hour=new Date().getHours();
-  if(hour>=5 && hour<12) return "Good morning";
-  if(hour>=12 && hour<17) return "Good afternoon";
-  if(hour>=17 && hour<21) return "Good evening";
+  const hour = new Date().getHours();
+  if(hour >= 5 && hour < 12) return "Good morning";
+  if(hour >= 12 && hour < 17) return "Good afternoon";
+  if(hour >= 17 && hour < 21) return "Good evening";
   return "Good night";
 }
+
 function updateGreeting(){
-  const greetingText=document.getElementById("loginGreetingText");
-  if(greetingText) greetingText.textContent=getTimeGreeting();
+  const greetingText = document.getElementById("loginGreetingText");
+  if(greetingText) greetingText.textContent = getTimeGreeting();
 }
-function updateAuthUI(){
+
+function updateAuthUI(session){
   updateGreeting();
-  const session=localStorage.getItem(AUTH_SESSION_KEY);
-  const guest=document.getElementById("guestActions");
-  const user=document.getElementById("authUser");
-  const name=document.getElementById("authUserName");
-  const greeting=document.getElementById("loginGreeting");
-  const greetingName=document.getElementById("loginGreetingName");
+  const guest = document.getElementById("guestActions");
+  const user = document.getElementById("authUser");
+  const name = document.getElementById("authUserName");
+  const greeting = document.getElementById("loginGreeting");
+  const greetingName = document.getElementById("loginGreetingName");
+
   if(session){
-    let data; try{data=JSON.parse(session)}catch(e){data=null}
-    const displayName=(data?.name || "User").trim();
-    guest.style.display="none"; user.style.display="flex"; name.textContent="Hi, "+displayName;
+    const displayName = (session.name || "User").trim();
+    guest.style.display = "none";
+    user.style.display = "flex";
+    name.textContent = "Hi, " + displayName;
     if(greeting && greetingName){
-      greetingName.textContent=displayName;
-      greeting.style.display="block";
+      greetingName.textContent = displayName;
+      greeting.style.display = "block";
     }
-  }else{
-    guest.style.display="flex"; user.style.display="none"; name.textContent="";
-    if(greeting){ greeting.style.display="none"; }
-    if(greetingName){ greetingName.textContent=""; }
+  } else {
+    guest.style.display = "flex";
+    user.style.display = "none";
+    name.textContent = "";
+    if(greeting) greeting.style.display = "none";
+    if(greetingName) greetingName.textContent = "";
   }
 }
 
+async function loadSession(){
+  try {
+    const data = await api("/api/me", {method:"GET", headers:{}});
+    updateAuthUI(data.user || null);
+  } catch (_) {
+    updateAuthUI(null);
+  }
+}
+
+
+// WhatsApp enquiry
+document.getElementById("enquiryForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const name = document.getElementById("enquiryName").value.trim();
+  const phone = document.getElementById("enquiryPhone").value.replace(/\D/g, "");
+  const stock = document.getElementById("enquiryStock").value.trim();
+  const plan = document.getElementById("enquiryPlan").value;
+  const message = document.getElementById("enquiryMessage").value.trim();
+  const status = document.getElementById("enquiryStatus");
+
+  if(!/^[6-9]\d{9}$/.test(phone)){
+    status.textContent = "Please enter a valid 10-digit WhatsApp number.";
+    return;
+  }
+
+  const whatsappNumber = "917237868633";
+  const text = "Hi AlphaEdge, I am interested in your services.";
+
+  const url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(text);
+
+  status.textContent = "Opening WhatsApp…";
+  window.location.href = url;
+});
+
+// Payment confirmation → WhatsApp
+function sendPaymentConfirmation(event, amount){
+  event.preventDefault();
+
+  const name = document.getElementById("cname" + amount).value.trim();
+  const utr = document.getElementById("cref" + amount).value.trim();
+
+  if(!name || !utr) return;
+
+  const whatsappNumber = "917237868633";
+  const text =
+    "Hi AlphaEdge!\\n\\n" +
+    "Payment Confirmation\\n" +
+    "Name: " + name + "\\n" +
+    "Plan Amount: ₹" + amount + "\\n" +
+    "UPI Transaction ID / UTR: " + utr;
+
+  const url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(text);
+  window.location.href = url;
+}
+
+// MSG91 OTP registration flow
+let msg91Ready = false;
+let msg91Config = null;
+let pendingOtpAccessToken = null;
+
+async function loadMSG91Widget() {
+  if (msg91Ready && typeof window.sendOtp === "function" && typeof window.verifyOtp === "function") {
+    return;
+  }
+
+  const cfgResponse = await api("/api/msg91-config", {method:"GET", headers:{}});
+  msg91Config = cfgResponse;
+
+  await new Promise((resolve, reject) => {
+    if (typeof window.initSendOTP === "function") {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://verify.msg91.com/otp-provider.js";
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error("Could not load MSG91 OTP service."));
+    document.head.appendChild(script);
+  });
+
+  const configuration = {
+    widgetId: msg91Config.widgetId,
+    tokenAuth: msg91Config.tokenAuth,
+    exposeMethods: true,
+    success: () => {},
+    failure: () => {}
+  };
+
+  try {
+    window.initSendOTP(configuration);
+  } catch (err) {
+    throw new Error("MSG91 OTP widget could not initialize.");
+  }
+
+  if (typeof window.sendOtp !== "function" || typeof window.verifyOtp !== "function") {
+    throw new Error("MSG91 OTP methods are not available. Check the widget configuration.");
+  }
+
+  msg91Ready = true;
+}
+
+document.getElementById("sendOtpBtn").addEventListener("click", async function(){
+  const name = document.getElementById("registerName").value.trim();
+  const mobile = document.getElementById("registerMobile").value.replace(/\D/g,"").slice(-10);
+
+  if(!name){
+    setAuthMessage("registerMessage","Enter your name."); return;
+  }
+  if(!/^[6-9]\d{9}$/.test(mobile)){
+    setAuthMessage("registerMessage","Enter a valid 10-digit Indian mobile number."); return;
+  }
+
+  try {
+    await loadMSG91Widget();
+
+    window.sendOtp(
+      "91" + mobile,
+      () => {
+        document.getElementById("otpMobileDisplay").textContent = "+91 " + mobile;
+        document.getElementById("registerStep1").style.display = "none";
+        document.getElementById("registerStep2").style.display = "block";
+        setAuthMessage("registerOtpMessage","OTP sent successfully.",true);
+        document.getElementById("registerOtp").focus();
+      },
+      (error) => {
+        setAuthMessage("registerMessage", error?.message || "Unable to send OTP.");
+      }
+    );
+  } catch(err) {
+    setAuthMessage("registerMessage", err.message || "Unable to initialize OTP.");
+  }
+});
+
+document.getElementById("changeMobileBtn").addEventListener("click",function(){
+  document.getElementById("registerStep2").style.display="none";
+  document.getElementById("registerStep1").style.display="block";
+  document.getElementById("registerOtp").value="";
+  document.getElementById("registerPassword").value="";
+  document.getElementById("registerConfirm").value="";
+  pendingOtpAccessToken = null;
+  setAuthMessage("registerOtpMessage","");
+});
+
 document.getElementById("registerForm").addEventListener("submit", async function(e){
   e.preventDefault();
-  const name=document.getElementById("registerName").value.trim();
-  const mobile=normalizeMobile(document.getElementById("registerMobile").value);
-  const password=document.getElementById("registerPassword").value;
-  const confirm=document.getElementById("registerConfirm").value;
-  if(!/^[6-9]\d{9}$/.test(mobile)){ setAuthMessage("registerMessage","Enter a valid 10-digit Indian mobile number."); return; }
-  if(password.length<6){ setAuthMessage("registerMessage","Password must be at least 6 characters."); return; }
-  if(password!==confirm){ setAuthMessage("registerMessage","Passwords do not match."); return; }
-  const users=getUsers();
-  if(users.some(u=>u.mobile===mobile)){ setAuthMessage("registerMessage","An account with this mobile number already exists."); return; }
-  const passwordHash=await hashPassword(password);
-  users.push({id:Date.now().toString(),name,mobile,passwordHash,createdAt:new Date().toISOString()});
-  saveUsers(users);
-  setAuthMessage("registerMessage","Account created successfully. You can now login.",true);
-  document.getElementById("loginMobile").value=mobile;
-  document.getElementById("registerForm").reset();
-  setTimeout(()=>switchAuth("login"),700);
+
+  const name = document.getElementById("registerName").value.trim();
+  const mobile = document.getElementById("registerMobile").value.replace(/\D/g,"").slice(-10);
+  const otp = document.getElementById("registerOtp").value.trim();
+  const password = document.getElementById("registerPassword").value;
+  const confirm = document.getElementById("registerConfirm").value;
+
+  if(!/^\d{4,8}$/.test(otp)){
+    setAuthMessage("registerOtpMessage","Enter the OTP you received."); return;
+  }
+  if(password.length < 6){
+    setAuthMessage("registerOtpMessage","Password must be at least 6 characters."); return;
+  }
+  if(password !== confirm){
+    setAuthMessage("registerOtpMessage","Passwords do not match."); return;
+  }
+
+  try {
+    await loadMSG91Widget();
+
+    window.verifyOtp(
+      otp,
+      async (data) => {
+        try {
+          const accessToken = data?.accessToken || data?.access_token || data?.token || data?.message;
+          if(!accessToken){
+            throw new Error("MSG91 did not return a verification token.");
+          }
+
+          pendingOtpAccessToken = accessToken;
+
+          const result = await api("/api/register", {
+            method:"POST",
+            body: JSON.stringify({
+              name,
+              mobile,
+              password,
+              accessToken
+            })
+          });
+
+          document.getElementById("registerForm").reset();
+          document.getElementById("registerStep2").style.display="none";
+          document.getElementById("registerStep1").style.display="block";
+          document.getElementById("loginMobile").value=mobile;
+          pendingOtpAccessToken = null;
+
+          setAuthMessage("registerMessage","Account created successfully. You can now login.",true);
+          setTimeout(()=>switchAuth("login"),700);
+        } catch(err) {
+          setAuthMessage("registerOtpMessage", err.message || "Account creation failed.");
+        }
+      },
+      (error) => {
+        setAuthMessage("registerOtpMessage", error?.message || "Invalid or expired OTP.");
+      }
+    );
+  } catch(err) {
+    setAuthMessage("registerOtpMessage", err.message || "OTP verification is unavailable.");
+  }
 });
 
 document.getElementById("loginForm").addEventListener("submit", async function(e){
   e.preventDefault();
-  const mobile=normalizeMobile(document.getElementById("loginMobile").value);
-  const password=document.getElementById("loginPassword").value;
-  if(!/^[6-9]\d{9}$/.test(mobile)){ setAuthMessage("loginMessage","Enter a valid 10-digit Indian mobile number."); return; }
-  const users=getUsers();
-  const user=users.find(u=>u.mobile===mobile);
-  if(!user){ setAuthMessage("loginMessage","No account found. Please register first."); return; }
-  const passwordHash=await hashPassword(password);
-  if(passwordHash!==user.passwordHash){ setAuthMessage("loginMessage","Incorrect mobile number or password."); return; }
-  localStorage.setItem(AUTH_SESSION_KEY,JSON.stringify({id:user.id,name:user.name,mobile:user.mobile,loggedInAt:new Date().toISOString()}));
-  document.getElementById("loginForm").reset();
-  closeAuth(); updateAuthUI();
+  const mobile = document.getElementById("loginMobile").value.replace(/\D/g,"").slice(-10);
+  const password = document.getElementById("loginPassword").value;
+
+  if(!/^[6-9]\d{9}$/.test(mobile)){
+    setAuthMessage("loginMessage","Enter a valid 10-digit Indian mobile number."); return;
+  }
+
+  try {
+    const data = await api("/api/login", {
+      method:"POST",
+      body: JSON.stringify({mobile, password})
+    });
+    document.getElementById("loginForm").reset();
+    closeAuth();
+    updateAuthUI(data.user);
+  } catch (err) {
+    setAuthMessage("loginMessage", err.message);
+  }
 });
 
-document.getElementById("logoutBtn").addEventListener("click",function(){
-  localStorage.removeItem(AUTH_SESSION_KEY); updateAuthUI();
+document.getElementById("logoutBtn").addEventListener("click", async function(){
+  try {
+    await api("/api/logout", {method:"POST", body:"{}"});
+  } finally {
+    updateAuthUI(null);
+  }
 });
 
-document.getElementById("authModal").addEventListener("click",function(e){ if(e.target===this) closeAuth(); });
-document.addEventListener("keydown",function(e){ if(e.key==="Escape") closeAuth(); });
-updateAuthUI();
+document.getElementById("authModal").addEventListener("click", function(e){
+  if(e.target === this) closeAuth();
+});
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape") closeAuth();
+});
+
+setInterval(updateGreeting, 60000);
+loadSession();
 </script>
+
 
 <div class="disclaimer" style="margin:30px auto;padding:14px 16px;max-width:1100px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);color:#8f9bad;font-size:11px;line-height:1.6;text-align:center;"><strong style="color:#b8c1cf;">Disclaimer:</strong> This content is for educational and informational purposes only. It is not investment advice, and no returns or profits are guaranteed. Please do your own research and consult a qualified financial professional before making investment decisions.</div>
 </body>
