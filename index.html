@@ -21,16 +21,6 @@ button,input,textarea{font:inherit}button{cursor:pointer}
 .contact-note{color:#71879a;font-size:11px;margin-top:10px}
 @media(max-width:750px){.side{width:155px}.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}.top{padding:0 14px}.content{padding:14px}.user span{display:none}}
 @media(max-width:520px){.side{width:120px}.logo{font-size:17px}.nav button{font-size:11px}.top{height:68px}.title{font-size:17px}}
-.login-overlay.show{display:flex;flex-direction:column}.login{flex:0 0 auto}
-.login-disclaimer{display:block;flex:0 0 auto;width:min(300px,calc(100% - 20px));padding:8px 5px 0;text-align:center;font-size:8px;line-height:1.45;color:#71879a}
-.login-disclaimer .risk{margin-bottom:2px}
-.login-disclaimer .rights{color:#607487}
-.photo-remove-btn{display:none}
-.photo-menu{display:none;position:absolute;left:0;top:calc(100% + 6px);z-index:20;padding:6px;border:1px solid #294258;background:#0d1d2b;border-radius:9px;box-shadow:0 8px 20px rgba(0,0,0,.3)}
-.photo-menu.show{display:flex;gap:5px}
-.photo-menu button{padding:7px 10px;border:1px solid #294258;background:#12283a;color:#dce8f1;border-radius:7px;font-size:11px;cursor:pointer}
-.photo-menu button:last-child{border-color:#5a3440;background:#21151b;color:#df7184}.photo-menu-btn{display:block;padding:7px 10px;border:1px solid #294258;background:#12283a;color:#dce8f1;border-radius:7px;font-size:11px;cursor:pointer}
-.profile-photo-wrap{position:relative;display:inline-block;cursor:pointer}
 </style>
 </head>
 <body>
@@ -117,10 +107,6 @@ button,input,textarea{font:inherit}button{cursor:pointer}
       <p style="text-align:center;color:#8296a9;font-size:11px;margin:18px 0 0">Already registered? <a href="#" onclick="switchAuth('login');return false" style="color:#55dcb8">Login here</a></p>
     </div>
   </div>
-  <div class="login-disclaimer">
-    <div class="risk">Market Risk: Trading and investing involve risk, including the possible loss of capital. Past performance does not guarantee future results.</div>
-    <div class="rights">© 2026 AlphaEdge. All Rights Reserved.</div>
-  </div>
 </div>
 <div class="legal-overlay" id="forgotClientModal">
   <div class="legal-box" style="width:min(470px,100%)">
@@ -195,10 +181,10 @@ button,input,textarea{font:inherit}button{cursor:pointer}
 </section>
 
 <section class="page" id="market"><div class="panel"><h3>Market Overview</h3><div class="cards">
-<div class="card"><div class="label">Nifty 50</div><div class="value" id="marketNiftyValue">Data unavailable</div><div id="marketNiftyChange" class="contact-note">—</div></div>
-<div class="card"><div class="label">Sensex</div><div class="value" id="marketSensexValue">Data unavailable</div><div id="marketSensexChange" class="contact-note">—</div></div>
-<div class="card"><div class="label">Bank Nifty</div><div class="value" id="marketBankNiftyValue">Data unavailable</div><div id="marketBankNiftyChange" class="contact-note">—</div></div></div>
-<p class="contact-note" id="marketFeedStatus">Connecting to live market data…</p></div></section>
+<div class="card"><div class="label">Nifty 50</div><div class="value">25,689.90</div><div class="up">+0.62%</div></div>
+<div class="card"><div class="label">Sensex</div><div class="value">83,330.58</div><div class="up">+0.58%</div></div>
+<div class="card"><div class="label">Bank Nifty</div><div class="value">58,214.20</div><div class="down">-0.14%</div></div></div>
+<p class="contact-note">Market values will be connected to a legitimate live market-data source separately.</p></div></section>
 
 <section class="page" id="watchlist"><div class="panel"><h3>My Watchlist</h3><div id="fullWatch"></div></div></section>
 
@@ -239,13 +225,7 @@ button,input,textarea{font:inherit}button{cursor:pointer}
 </section>
 
 <section class="page" id="profile"><div class="panel profilebox"><h3>My Profile</h3>
-<div class="profile-photo"><div class="profile-photo-wrap" id="profilePhotoWrap">
-  <div class="big-avatar" id="profileAvatar">AE</div>
-  <div class="photo-menu" id="photoMenu">
-    <label class="photo-menu-btn">Change<input id="photoInput" type="file" accept="image/*" hidden></label>
-    <button type="button" id="removePhotoBtn">Remove</button>
-  </div>
-</div><div></div></div>
+<div class="profile-photo"><div class="big-avatar" id="profileAvatar">AE</div><div><label class="photo-btn">Choose Photo<input id="photoInput" type="file" accept="image/*" hidden></label><div class="contact-note">JPG/PNG photo</div></div></div>
 <form class="form" id="profileForm">
 <label>Full Name<input id="profileName" type="text" placeholder="Your full name" required></label>
 <label>Mobile Number<input id="profileMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required></label>
@@ -272,39 +252,11 @@ const WHATSAPP_NUMBER="917237868633"; // Replace with your WhatsApp number, e.g.
 const symbols=[['RELIANCE','+1.12%','up'],['HDFCBANK','+0.44%','up'],['INFY','-0.31%','down'],['ICICIBANK','+0.76%','up'],['TCS','-0.18%','down']];
 const titles={dashboard:'Market Dashboard',market:'Market',watchlist:'My Watchlist',research:'Research Centre',education:'Education',profile:'My Profile',contact:'Contact Us',article:'AlphaEdge Research', 'payment-confirmation':'Payment Confirmation'};
 
-function formatMarketNumber(value){return typeof value==='number'&&Number.isFinite(value)?value.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}):'Data unavailable';}
-function updateMarketCard(valueId,changeId,item){
- const v=document.getElementById(valueId), c=document.getElementById(changeId);
- if(!v||!c)return;
- if(!item||typeof item.ltp!=='number'){v.textContent='Data unavailable';c.textContent='—';c.className='contact-note';return;}
- v.textContent=formatMarketNumber(item.ltp);
- const pct=typeof item.changePct==='number'?`${item.changePct>=0?'+':''}${item.changePct.toFixed(2)}%`:'—';
- c.textContent=pct;c.className=item.changePct>=0?'up':'down';
-}
-function applyLiveMarket(data){
- updateMarketCard('marketNiftyValue','marketNiftyChange',data.nifty);
- updateMarketCard('marketSensexValue','marketSensexChange',data.sensex);
- updateMarketCard('marketBankNiftyValue','marketBankNiftyChange',data.banknifty);
- const status=document.getElementById('marketFeedStatus');
- if(!status)return;
- if(data.connected){status.textContent=data.updatedAt?'Live market data • Last update '+new Date(data.updatedAt).toLocaleTimeString('en-IN'):'Live market data connected';}
- else if(data.error){status.textContent='Live market data unavailable';}
- else{status.textContent='Connecting to live market data…';}
-}
-function startLiveMarket(){
- fetch('/api/market',{cache:'no-store'}).then(r=>r.json()).then(applyLiveMarket).catch(()=>{});
- if(!window.EventSource)return;
- const source=new EventSource('/api/market-stream');
- source.onmessage=e=>{try{applyLiveMarket(JSON.parse(e.data))}catch(_){}};
- source.onerror=()=>{const s=document.getElementById('marketFeedStatus');if(s)s.textContent='Live market data unavailable';};
-}
-
 function renderWatch(){
  document.getElementById('miniWatch').innerHTML=symbols.map(x=>`<div class="watch"><span>${x[0]}</span><span class="${x[2]}">${x[1]}</span></div>`).join('');
  document.getElementById('fullWatch').innerHTML=symbols.map(x=>`<div class="watch"><b>${x[0]}</b><span class="${x[2]}">${x[1]}</span></div>`).join('');
 }
 renderWatch();
-startLiveMarket();
 
 function showPage(id){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -423,6 +375,46 @@ document.getElementById('forgotPasswordForm').addEventListener('submit',e=>{
   document.getElementById('loginPassword').value='';
 });
 
+document.getElementById('registerForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const name=document.getElementById('regName').value.trim();
+ const mobile=document.getElementById('regMobile').value.replace(/\D/g,'');
+ const email=document.getElementById('regEmail').value.trim().toLowerCase();
+ const password=document.getElementById('regPassword').value;
+ const confirm=document.getElementById('regConfirm').value;
+ const err=document.getElementById('registerError');
+ const ok=document.getElementById('registerSuccess');
+ err.style.display='none'; ok.style.display='none';
+
+ if(!name){err.textContent='Please enter your full name.';err.style.display='block';return}
+ if(!/^\d{10}$/.test(mobile)){err.textContent='Enter a valid 10-digit mobile number.';err.style.display='block';return}
+ if(!/^\S+@\S+\.\S+$/.test(email)){err.textContent='Enter a valid email address.';err.style.display='block';return}
+ if(password.length<8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[@#₹]/.test(password)){
+   err.textContent='Password must be minimum 8 characters and contain 1 uppercase, 1 number and 1 special character (@/#/₹).';err.style.display='block';return
+ }
+ if(password!==confirm){err.textContent='Passwords do not match.';err.style.display='block';return}
+ if(!document.getElementById('regTerms').checked){err.textContent='Please accept the Terms & Conditions and Privacy Policy.';err.style.display='block';return}
+
+ const users=getUsers();
+ if(users.some(u=>String(u.mobile||'').replace(/\D/g,'')===mobile)){err.textContent='This mobile number is already registered.';err.style.display='block';return}
+ if(users.some(u=>String(u.email||'').trim().toLowerCase()===email)){err.textContent='This email address is already registered.';err.style.display='block';return}
+
+ let maxId=100000;
+ users.forEach(u=>{
+   const n=parseInt(String(u.clientId||'').replace(/^AE/i,''),10);
+   if(Number.isFinite(n)) maxId=Math.max(maxId,n);
+ });
+ const clientId='AE'+String(maxId+1).padStart(6,'0');
+ users.push({name,mobile,email,clientId,password});
+ saveUsers(users);
+
+ ok.innerHTML='Account created successfully. Your Client ID is <strong>'+clientId+'</strong>. Please save it for login.';
+ ok.style.display='block';
+ document.getElementById('loginClientId').value=clientId;
+ document.getElementById('loginPassword').value='';
+ setTimeout(()=>switchAuth('login'),1400);
+});
+
 document.getElementById('loginForm').addEventListener('submit',e=>{
  e.preventDefault();
  const clientId=document.getElementById('loginClientId').value.trim().toUpperCase();
@@ -459,21 +451,9 @@ document.getElementById('logout').addEventListener('click',()=>{
 
 
 
-document.getElementById('profilePhotoWrap').addEventListener('click',e=>{
- if(e.target.closest('.photo-menu'))return;
- document.getElementById('photoMenu').classList.toggle('show');
-});
 document.getElementById('photoInput').addEventListener('change',e=>{
  const file=e.target.files[0];if(!file)return;
- const reader=new FileReader();reader.onload=()=>{document.getElementById('profileAvatar').innerHTML=`<img src="${reader.result}">`;document.getElementById('topAvatar').innerHTML=`<img src="${reader.result}">`;localStorage.setItem('alphaedge_photo',reader.result);document.getElementById('photoMenu').classList.remove('show')};reader.readAsDataURL(file);
-});
-document.getElementById('removePhotoBtn').addEventListener('click',e=>{
- e.stopPropagation();
- document.getElementById('profileAvatar').textContent='AE';
- document.getElementById('topAvatar').textContent='AE';
- document.getElementById('photoInput').value='';
- localStorage.removeItem('alphaedge_photo');
- document.getElementById('photoMenu').classList.remove('show');
+ const reader=new FileReader();reader.onload=()=>{document.getElementById('profileAvatar').innerHTML=`<img src="${reader.result}">`;document.getElementById('topAvatar').innerHTML=`<img src="${reader.result}">`;localStorage.setItem('alphaedge_photo',reader.result)};reader.readAsDataURL(file);
 });
 document.getElementById('profileForm').addEventListener('submit',e=>{
  e.preventDefault();
