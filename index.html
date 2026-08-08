@@ -222,21 +222,21 @@ document.getElementById('leadForm').addEventListener('submit',function(e){
  const plan=document.getElementById('plan').value;
 
  // AlphaEdge WhatsApp destination
- const http://wa.me/7237868633
+ const whatsappNumber = '917237868633';
 
- const message =
-   'Hi AlphaEdge!\\n' +
-   'Name: ' + n + '\\n' +
-   'WhatsApp: ' + p + '\\n' +
-   'Stock: ' + s + '\\n' +
-   'Plan: ' + plan;
+const message =
+  'Hi AlphaEdge!\\n' +
+  'Name: ' + n + '\\n' +
+  'WhatsApp: ' + p + '\\n' +
+  'Stock: ' + s + '\\n' +
+  'Plan: ' + plan;
 
- const url='https://wa.me/7237868633' + wa + '?text=' + encodeURIComponent(message);
+const url = 'https://wa.me/' + whatsappNumber + '?text=' +
+  encodeURIComponent(message);
 
- document.getElementById('msg').textContent='Opening WhatsApp…';
+document.getElementById('msg').textContent = 'Opening WhatsApp...';
 
- // Direct navigation works more reliably on Android/local HTML than window.open.
- window.location.href=url;
+window.location.href = url;
 });
 </script>
 
