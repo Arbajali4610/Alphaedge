@@ -57,6 +57,28 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:#758196;font-size:1
 
 @media(max-width:850px){.navlinks{display:none}.hero,.lead{grid-template-columns:1fr}.hero{padding-top:65px}.terminal{transform:none}.ticker,.features,.pricing{grid-template-columns:1fr 1fr}h1{letter-spacing:-2.5px}}
 @media(max-width:520px){.wrap{padding:0 16px}.ticker,.features,.pricing{grid-template-columns:1fr}.sectionhead{display:block}.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}.foot{display:block}.foot div+div{margin-top:8px}}
+
+/* Authentication */
+.auth-actions{display:flex;gap:8px;align-items:center}
+.auth-user{display:none;align-items:center;gap:8px}
+.auth-user .user-name{color:#dce5f0;font-size:13px;font-weight:800}
+.auth-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);z-index:100}
+.auth-modal.open{display:flex}
+.auth-card{width:min(440px,100%);background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 30px 100px rgba(0,0,0,.55);position:relative}
+.auth-close{position:absolute;right:16px;top:14px;border:0;background:transparent;color:#9aa7b8;font-size:25px;cursor:pointer}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}
+.auth-tab{padding:11px;border:1px solid var(--line);border-radius:10px;background:#0b111a;color:#aeb9c8;font-weight:800;cursor:pointer}
+.auth-tab.active{background:rgba(50,230,161,.12);border-color:rgba(50,230,161,.4);color:var(--green)}
+.auth-form{display:grid;gap:12px}
+.auth-form label{font-size:12px;color:#9aa7b8;font-weight:700;margin-bottom:-6px}
+.auth-form input{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:#080d14;color:white;outline:none}
+.auth-form input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(50,230,161,.08)}
+.auth-message{min-height:20px;font-size:12px;margin:2px 0 0;color:#ff8794}
+.auth-message.success{color:var(--green)}
+.auth-note{font-size:11px;line-height:1.5;color:#748297;margin-top:10px}
+@media(max-width:520px){.auth-actions .btn{padding:9px 11px;font-size:12px}.auth-user .user-name{display:none}.auth-card{padding:22px}}
+.login-greeting{display:none;margin:0 0 16px;font-size:18px;font-weight:800;color:var(--text)}
+.login-greeting span{background:linear-gradient(100deg,#fff 25%,#9caeff 65%,#32e6a1);-webkit-background-clip:text;color:transparent}
 </style>
 
 <style>
@@ -75,16 +97,54 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:#758196;font-size:1
 <nav><div class="wrap" style="width:100%;display:flex;justify-content:space-between;align-items:center">
 <a class="logo" href="#">ALPHA<span>EDGE</span></a>
 <div class="navlinks"><a href="#markets">Markets</a><a href="#research">Research</a><a href="#plans">Plans</a><a href="#contact">Contact</a></div>
-<a class="btn primary" href="#contact">Get Analysis</a></div></nav>
+<div class="auth-actions">
+  <div class="auth-user" id="authUser"><span class="user-name" id="authUserName"></span><button class="btn" type="button" id="logoutBtn">Logout</button></div>
+  <div id="guestActions"><button class="btn" type="button" onclick="openAuth('login')">Login</button><button class="btn primary" type="button" onclick="openAuth('register')">Register</button></div>
+</div></div></nav>
+
+<div class="auth-modal" id="authModal" aria-hidden="true">
+  <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button class="auth-close" type="button" onclick="closeAuth()" aria-label="Close">×</button>
+    <div class="eyebrow">AlphaEdge Account</div>
+    <h2 id="authTitle" style="font-size:30px">Welcome back</h2>
+    <p class="muted" id="authSubtitle">Login with your mobile number and password.</p>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="loginTab" type="button" onclick="switchAuth('login')">Login</button>
+      <button class="auth-tab" id="registerTab" type="button" onclick="switchAuth('register')">Register</button>
+    </div>
+    <form class="auth-form" id="loginForm">
+      <label for="loginMobile">Mobile Number</label>
+      <input id="loginMobile" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number" maxlength="10" required>
+      <label for="loginPassword">Password</label>
+      <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter your password" minlength="6" required>
+      <div class="auth-message" id="loginMessage"></div>
+      <button class="btn primary" type="submit">Login →</button>
+    </form>
+    <form class="auth-form" id="registerForm" style="display:none">
+      <label for="registerName">Full Name</label>
+      <input id="registerName" type="text" autocomplete="name" placeholder="Your name" maxlength="60" required>
+      <label for="registerMobile">Mobile Number</label>
+      <input id="registerMobile" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile number" maxlength="10" required>
+      <label for="registerPassword">Password</label>
+      <input id="registerPassword" type="password" autocomplete="new-password" placeholder="Minimum 6 characters" minlength="6" required>
+      <label for="registerConfirm">Confirm Password</label>
+      <input id="registerConfirm" type="password" autocomplete="new-password" placeholder="Re-enter password" minlength="6" required>
+      <div class="auth-message" id="registerMessage"></div>
+      <button class="btn primary" type="submit">Create Account →</button>
+    </form>
+    <p class="auth-note">Demo mode: accounts are stored in this browser's local storage. For production, connect this UI to a secure backend/database and never store raw passwords client-side.</p>
+  </div>
+</div>
 
 <main>
 <section class="hero wrap">
 <div>
+<div class="login-greeting" id="loginGreeting" aria-live="polite"><span id="loginGreetingText">Good afternoon</span>, <span id="loginGreetingName"></span> 👋</div>
 <div class="badge">● MARKET INTELLIGENCE • BUILT FOR INDIA</div>
 <h1>Trade with a<br><span class="gradient">clearer edge.</span></h1>
 <p>Premium stock-market research, watchlists and educational insights—presented simply so you can understand the market before making your own decisions.</p>
 <div class="actions"><a class="btn primary" href="#contact">Request a Stock Report →</a><a class="btn" href="#markets">Explore Dashboard</a></div>
-<p style="font-size:12px;margin-top:18px">Educational content only • No guaranteed returns</p>
+<p style="font-size:12px;margin-top:18px"></p>
 </div>
 <div class="terminal">
 <div class="topbar"><span>ALPHAEDGE / MARKET DESK</span><span class="live">● LIVE VIEW</span></div>
@@ -130,6 +190,28 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:#758196;font-size:1
 <div class="card price"><h3>Custom</h3><div class="amount">Talk <small>to us</small></div><ul class="list"><li>Custom research format</li><li>Portfolio education</li><li>Dedicated support</li></ul><a class="btn" href="#contact">Enquire</a></div>
 </div></div></section>
 
+
+<section id="contact">
+  <div class="wrap">
+    <div class="sectionhead"><div><div class="eyebrow">Enquiry</div><h2>Tell us what you need.</h2><p class="muted">Fill in your details and we’ll open WhatsApp with your enquiry ready to send.</p></div></div>
+    <div class="card leadbox" style="max-width:720px;margin:0 auto;">
+      <form id="enquiryForm" class="form">
+        <input id="enquiryName" type="text" placeholder="Your name" required>
+        <input id="enquiryPhone" type="tel" inputmode="numeric" placeholder="WhatsApp number" required>
+        <input id="enquiryStock" type="text" placeholder="Stock / sector you want to enquire about" required>
+        <select id="enquiryPlan" required>
+          <option value="">Select plan</option>
+          <option>Starter</option>
+          <option>Pro Desk</option>
+          <option>Custom</option>
+        </select>
+        <textarea id="enquiryMessage" rows="4" placeholder="Your enquiry / message" style="width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:#080d14;color:white;outline:none;resize:vertical;"></textarea>
+        <button class="btn primary" type="submit">Send Enquiry on WhatsApp →</button>
+      </form>
+      <p id="enquiryStatus" class="muted" style="margin-top:12px;font-size:13px;"></p>
+    </div>
+  </div>
+</section>
 
 <section id="pay499" class="payment-page">
   <div class="wrap">
@@ -200,85 +282,6 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:#758196;font-size:1
   </div>
 </section>
 
-<!DOCTYPE html>
-<html>
-<head>
-<title>AlphaEdge Lead Form</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-
-<body>
-
-<h2>Want a stock analysed?</h2>
-<p>Send your details and we will contact you.</p>
-
-<form id="leadForm">
-
-<input id="name" type="text" placeholder="Your name" required>
-<br><br>
-
-<input id="phone" type="tel" placeholder="WhatsApp number" required>
-<br><br>
-
-<input id="stock" type="text" placeholder="Stock / sector you want analysed" required>
-<br><br>
-
-<select id="plan">
-<option>Starter</option>
-<option>Pro Desk</option>
-<option>Custom</option>
-</select>
-
-<br><br>
-
-<button type="submit">Send Request →</button>
-
-</form>
-
-<p id="msg"></p>
-
-
-<script>
-
-document.getElementById("leadForm").addEventListener("submit", function(e){
-
-    e.preventDefault();
-
-    let name = document.getElementById("name").value;
-    let phone = document.getElementById("phone").value;
-    let stock = document.getElementById("stock").value;
-    let plan = document.getElementById("plan").value;
-
-
-    // Your WhatsApp number
-    let whatsappNumber = "917237868633";
-
-
-    let message =
-    "Hi AlphaEdge!\n\n" +
-    "Name: " + name + "\n" +
-    "Customer WhatsApp: " + phone + "\n" +
-    "Stock: " + stock + "\n" +
-    "Plan: " + plan;
-
-
-    let url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(message);
-
-
-    document.getElementById("msg").innerHTML = "Opening WhatsApp...";
-
-
-    window.location.href = url;
-
-});
-
-</script>
-
-</body>
-</html>
-});
-</script>
-
 <script>
 const MARKET_API = "/api/stocks";
 const SYMBOLS = ["RELIANCE","TCS","HDFCBANK","INFY"];
@@ -339,7 +342,7 @@ async function refreshMarket(){
     document.querySelectorAll(".live-change").forEach(x => {
       x.textContent = "No quote";
       x.className = "live-change muted";
-    Educational purpose only. Market investments involve risk. No return is guaranteed.
+    });
   }
 }
 
@@ -347,5 +350,158 @@ refreshMarket();
 setInterval(refreshMarket, 30000);
 </script>
 
+<script>
+/* AlphaEdge Login + Register */
+const AUTH_USERS_KEY = "alphaedge_users_v1";
+const AUTH_SESSION_KEY = "alphaedge_session_v1";
+
+function getUsers(){
+  try { return JSON.parse(localStorage.getItem(AUTH_USERS_KEY) || "[]"); }
+  catch(e){ return []; }
+}
+function saveUsers(users){ localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users)); }
+function normalizeMobile(value){ return String(value || "").replace(/\D/g, "").slice(-10); }
+async function hashPassword(password){
+  if(window.crypto && crypto.subtle){
+    const data = new TextEncoder().encode(password);
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  }
+  return btoa(unescape(encodeURIComponent(password)));
+}
+
+// Enquiry → WhatsApp
+document.getElementById("enquiryForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const name = document.getElementById("enquiryName").value.trim();
+  const phone = document.getElementById("enquiryPhone").value.trim();
+  const stock = document.getElementById("enquiryStock").value.trim();
+  const plan = document.getElementById("enquiryPlan").value;
+  const message = document.getElementById("enquiryMessage").value.trim();
+  const status = document.getElementById("enquiryStatus");
+  const digits = phone.replace(/\D/g, "");
+  if(!/^[6-9]\d{9}$/.test(digits)){
+    status.textContent = "Please enter a valid 10-digit WhatsApp number.";
+    return;
+  }
+  const whatsappNumber = "917237868633";
+  const text =
+    "Hi AlphaEdge!\n\n" +
+    "Enquiry\n" +
+    "Name: " + name + "\n" +
+    "Customer WhatsApp: +91 " + digits + "\n" +
+    "Stock / Sector: " + stock + "\n" +
+    "Plan: " + plan + "\n" +
+    (message ? "Message: " + message + "\n" : "");
+  const url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(text);
+  status.textContent = "Opening WhatsApp…";
+  window.location.href = url;
+});
+
+setInterval(updateGreeting, 60000);
+
+function setAuthMessage(id, text, success=false){
+  const el=document.getElementById(id);
+  el.textContent=text; el.className="auth-message"+(success?" success":"");
+}
+function openAuth(mode="login"){
+  document.getElementById("authModal").classList.add("open");
+  document.getElementById("authModal").setAttribute("aria-hidden","false");
+  switchAuth(mode);
+  setTimeout(()=>{ const el=document.getElementById(mode==="login"?"loginMobile":"registerName"); if(el) el.focus(); },50);
+}
+function closeAuth(){
+  document.getElementById("authModal").classList.remove("open");
+  document.getElementById("authModal").setAttribute("aria-hidden","true");
+}
+function switchAuth(mode){
+  const login=mode==="login";
+  document.getElementById("loginForm").style.display=login?"grid":"none";
+  document.getElementById("registerForm").style.display=login?"none":"grid";
+  document.getElementById("loginTab").classList.toggle("active",login);
+  document.getElementById("registerTab").classList.toggle("active",!login);
+  document.getElementById("authTitle").textContent=login?"Welcome back":"Create your account";
+  document.getElementById("authSubtitle").textContent=login?"Login with your mobile number and password.":"Register with your mobile number and create a password.";
+  setAuthMessage("loginMessage",""); setAuthMessage("registerMessage","");
+}
+function getTimeGreeting(){
+  const hour=new Date().getHours();
+  if(hour>=5 && hour<12) return "Good morning";
+  if(hour>=12 && hour<17) return "Good afternoon";
+  if(hour>=17 && hour<21) return "Good evening";
+  return "Good night";
+}
+function updateGreeting(){
+  const greetingText=document.getElementById("loginGreetingText");
+  if(greetingText) greetingText.textContent=getTimeGreeting();
+}
+function updateAuthUI(){
+  updateGreeting();
+  const session=localStorage.getItem(AUTH_SESSION_KEY);
+  const guest=document.getElementById("guestActions");
+  const user=document.getElementById("authUser");
+  const name=document.getElementById("authUserName");
+  const greeting=document.getElementById("loginGreeting");
+  const greetingName=document.getElementById("loginGreetingName");
+  if(session){
+    let data; try{data=JSON.parse(session)}catch(e){data=null}
+    const displayName=(data?.name || "User").trim();
+    guest.style.display="none"; user.style.display="flex"; name.textContent="Hi, "+displayName;
+    if(greeting && greetingName){
+      greetingName.textContent=displayName;
+      greeting.style.display="block";
+    }
+  }else{
+    guest.style.display="flex"; user.style.display="none"; name.textContent="";
+    if(greeting){ greeting.style.display="none"; }
+    if(greetingName){ greetingName.textContent=""; }
+  }
+}
+
+document.getElementById("registerForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  const name=document.getElementById("registerName").value.trim();
+  const mobile=normalizeMobile(document.getElementById("registerMobile").value);
+  const password=document.getElementById("registerPassword").value;
+  const confirm=document.getElementById("registerConfirm").value;
+  if(!/^[6-9]\d{9}$/.test(mobile)){ setAuthMessage("registerMessage","Enter a valid 10-digit Indian mobile number."); return; }
+  if(password.length<6){ setAuthMessage("registerMessage","Password must be at least 6 characters."); return; }
+  if(password!==confirm){ setAuthMessage("registerMessage","Passwords do not match."); return; }
+  const users=getUsers();
+  if(users.some(u=>u.mobile===mobile)){ setAuthMessage("registerMessage","An account with this mobile number already exists."); return; }
+  const passwordHash=await hashPassword(password);
+  users.push({id:Date.now().toString(),name,mobile,passwordHash,createdAt:new Date().toISOString()});
+  saveUsers(users);
+  setAuthMessage("registerMessage","Account created successfully. You can now login.",true);
+  document.getElementById("loginMobile").value=mobile;
+  document.getElementById("registerForm").reset();
+  setTimeout(()=>switchAuth("login"),700);
+});
+
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  const mobile=normalizeMobile(document.getElementById("loginMobile").value);
+  const password=document.getElementById("loginPassword").value;
+  if(!/^[6-9]\d{9}$/.test(mobile)){ setAuthMessage("loginMessage","Enter a valid 10-digit Indian mobile number."); return; }
+  const users=getUsers();
+  const user=users.find(u=>u.mobile===mobile);
+  if(!user){ setAuthMessage("loginMessage","No account found. Please register first."); return; }
+  const passwordHash=await hashPassword(password);
+  if(passwordHash!==user.passwordHash){ setAuthMessage("loginMessage","Incorrect mobile number or password."); return; }
+  localStorage.setItem(AUTH_SESSION_KEY,JSON.stringify({id:user.id,name:user.name,mobile:user.mobile,loggedInAt:new Date().toISOString()}));
+  document.getElementById("loginForm").reset();
+  closeAuth(); updateAuthUI();
+});
+
+document.getElementById("logoutBtn").addEventListener("click",function(){
+  localStorage.removeItem(AUTH_SESSION_KEY); updateAuthUI();
+});
+
+document.getElementById("authModal").addEventListener("click",function(e){ if(e.target===this) closeAuth(); });
+document.addEventListener("keydown",function(e){ if(e.key==="Escape") closeAuth(); });
+updateAuthUI();
+</script>
+
+<div class="disclaimer" style="margin:30px auto;padding:14px 16px;max-width:1100px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);color:#8f9bad;font-size:11px;line-height:1.6;text-align:center;"><strong style="color:#b8c1cf;">Disclaimer:</strong> This content is for educational and informational purposes only. It is not investment advice, and no returns or profits are guaranteed. Please do your own research and consult a qualified financial professional before making investment decisions.</div>
 </body>
 </html>
