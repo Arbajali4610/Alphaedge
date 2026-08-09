@@ -665,4 +665,4 @@ console.log(AlphaEdge running on port ${PORT});
 await initDatabase();
 
 startUpstox();
-})
+});
