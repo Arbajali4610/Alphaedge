@@ -57,6 +57,27 @@ async function initDatabase() {
         status VARCHAR(20) NOT NULL DEFAULT 'active',
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
+      CREATE TABLE IF NOT EXISTS payment_confirmations (
+        id BIGSERIAL PRIMARY KEY,
+        client_id VARCHAR(30) NOT NULL REFERENCES clients(client_id) ON DELETE CASCADE,
+        course VARCHAR(120) NOT NULL,
+        amount NUMERIC(10,2) NOT NULL DEFAULT 999.00,
+        utr VARCHAR(100) NOT NULL,
+        slip_name VARCHAR(255),
+        slip_data TEXT,
+        status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS market_snapshots (
+        id BIGSERIAL PRIMARY KEY,
+        symbol VARCHAR(30) NOT NULL,
+        ltp NUMERIC(14,4) NOT NULL,
+        close NUMERIC(14,4),
+        change_pct NUMERIC(10,4),
+        captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS market_snapshots_symbol_time_idx
+        ON market_snapshots(symbol, captured_at DESC);
     `);
 
     databaseReady = true;
@@ -120,6 +141,18 @@ let latest = {
   error: ACCESS_TOKEN ? null : 'UPSTOX_ACCESS_TOKEN is not configured'
 };
 
+async function saveMarketSnapshot(name, value) {
+  if (!pool || !databaseReady || !value) return;
+  try {
+    await pool.query(
+      `INSERT INTO market_snapshots(symbol, ltp, close, change_pct) VALUES($1,$2,$3,$4)`,
+      [name, value.ltp, value.close, value.changePct]
+    );
+  } catch (err) {
+    console.error('Market snapshot save failed:', err.message);
+  }
+}
+
 const clients = new Set();
 
 app.use(express.static(__dirname));
@@ -127,6 +160,23 @@ app.use(express.static(__dirname));
 app.get('/api/market', (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json(latest);
+});
+
+app.get('/api/market/history', async (req, res) => {
+  if (!pool || !databaseReady) return res.json({ success: true, history: [] });
+  const symbol = String(req.query.symbol || 'nifty').toLowerCase();
+  const allowed = ['nifty','sensex','banknifty'];
+  if (!allowed.includes(symbol)) return res.status(400).json({success:false,message:'Invalid symbol'});
+  try {
+    const result = await pool.query(
+      `SELECT ltp, close, change_pct, captured_at FROM market_snapshots
+       WHERE symbol=$1 ORDER BY captured_at DESC LIMIT 120`, [symbol]
+    );
+    res.set('Cache-Control','no-store');
+    res.json({success:true, history:result.rows.reverse()});
+  } catch (err) {
+    res.status(500).json({success:false,message:'Unable to load market history'});
+  }
 });
 
 app.get('/api/market-stream', (req, res) => {
@@ -210,6 +260,7 @@ function applyFeed(message) {
 
     latest.updatedAt = Date.now();
     latest.error = null;
+    saveMarketSnapshot(name, latest[name]);
   }
 
   broadcast();
@@ -553,6 +604,46 @@ app.get('/api/auth/me', requireLogin, async (req, res) => {
       message: 'Unable to load account'
     });
   }
+});
+
+/* =========================
+   PROFILE UPDATE
+========================= */
+app.put('/api/auth/profile', requireLogin, async (req, res) => {
+  try {
+    const name=String(req.body.name||'').trim();
+    const phone=normalizePhone(req.body.phone);
+    const email=normalizeEmail(req.body.email);
+    const password=String(req.body.password||'');
+    if(!name || !/^\d{10}$/.test(phone) || !/^\S+@\S+\.\S+$/.test(email))
+      return res.status(400).json({success:false,message:'Valid name, mobile and email are required'});
+    if(password && password.length<8) return res.status(400).json({success:false,message:'Password must contain at least 8 characters'});
+    const fields=['name=$1','phone=$2','email=$3']; const vals=[name,phone,email];
+    if(password){ fields.push('password_hash=$4'); vals.push(await bcrypt.hash(password,12)); }
+    vals.push(req.session.clientId);
+    const result=await pool.query(`UPDATE clients SET ${fields.join(', ')} WHERE client_id=$${vals.length} RETURNING client_id,name,phone,email`,vals);
+    if(!result.rows.length) return res.status(404).json({success:false,message:'Account not found'});
+    res.json({success:true,client:result.rows[0]});
+  } catch(err){ console.error('Profile update error:',err.message); res.status(500).json({success:false,message:'Profile update failed'}); }
+});
+
+/* =========================
+   PAYMENT CONFIRMATION
+========================= */
+app.post('/api/payments/confirm', requireLogin, async (req,res)=>{
+  if(!pool || !databaseReady) return res.status(503).json({success:false,message:'Database unavailable'});
+  try {
+    const course=String(req.body.course||'').trim();
+    const utr=String(req.body.utr||'').trim();
+    const slipName=String(req.body.slipName||'').trim();
+    const slipData=String(req.body.slipData||'');
+    if(!course || !utr || !slipName || !slipData) return res.status(400).json({success:false,message:'Payment details are required'});
+    const result=await pool.query(
+      `INSERT INTO payment_confirmations(client_id,course,amount,utr,slip_name,slip_data) VALUES($1,$2,999,$3,$4,$5) RETURNING id,created_at`,
+      [req.session.clientId,course,utr,slipName,slipData]
+    );
+    res.status(201).json({success:true,paymentId:result.rows[0].id,createdAt:result.rows[0].created_at});
+  } catch(err){ console.error('Payment confirmation error:',err.message); res.status(500).json({success:false,message:'Payment confirmation failed'}); }
 });
 
 /* =========================

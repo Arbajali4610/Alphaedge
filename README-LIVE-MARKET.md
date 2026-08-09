@@ -1,20 +1,9 @@
-# AlphaEdge — Live Market Integration
+# AlphaEdge live backend
 
-This version keeps the existing AlphaEdge page and adds a protected server-side market-feed layer.
+Required Render environment variables:
+- DATABASE_URL: Render PostgreSQL internal connection string
+- SESSION_SECRET: generated/long random session secret
+- UPSTOX_ACCESS_TOKEN: valid Upstox market-data access token
 
-## Provider
-Upstox Market Data Feed V3 is used for the live feed. The browser never receives the Upstox access token.
-
-## Render
-1. Upload this folder to your GitHub repository.
-2. In Render, create a Web Service from that repository.
-3. Build command: `npm install`
-4. Start command: `npm start`
-5. Add Environment Variable:
-   - `UPSTOX_ACCESS_TOKEN` = your Upstox access token
-6. Deploy.
-
-## Important
-The live feed will remain unavailable until `UPSTOX_ACCESS_TOKEN` is configured. The site does not show fake live values when the feed is unavailable.
-
-The token is a secret and must be stored only in Render Environment Variables, never inside `index.html` or GitHub.
+The server creates clients, payment_confirmations and market_snapshots tables automatically.
+Live market endpoints: /api/market, /api/market/history, /api/market-stream, /api/health.

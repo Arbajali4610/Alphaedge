@@ -165,13 +165,13 @@ button,input,textarea{font:inherit}button{cursor:pointer}
 
 <section class="page active" id="dashboard">
   <div class="cards">
-    <div class="card"><div class="label">Nifty 50</div><div class="value">25,689.90</div><div class="up">+0.62%</div></div>
-    <div class="card"><div class="label">Sensex</div><div class="value">83,330.58</div><div class="up">+0.58%</div></div>
-    <div class="card"><div class="label">Bank Nifty</div><div class="value">58,214.20</div><div class="down">-0.14%</div></div>
+    <div class="card"><div class="label">Nifty 50</div><div class="value" id="dashNiftyValue">--</div><div class="up" id="dashNiftyChange">--</div></div>
+    <div class="card"><div class="label">Sensex</div><div class="value" id="dashSensexValue">--</div><div class="up" id="dashSensexChange">--</div></div>
+    <div class="card"><div class="label">Bank Nifty</div><div class="value" id="dashBankValue">--</div><div class="down" id="dashBankChange">--</div></div>
     <div class="card"><div class="label">Watchlist</div><div class="value">5</div><div class="sub">Tracked symbols</div></div>
   </div>
   <div class="row">
-    <div class="panel"><h3>Market Trend</h3><div class="chart"><svg viewBox="0 0 600 250" preserveAspectRatio="none"><path d="M0 210 L45 175 L85 195 L125 130 L170 160 L215 95 L260 125 L305 75 L350 105 L395 55 L440 78 L490 35 L545 62 L600 18" fill="none" stroke="#2ed6a0" stroke-width="5"/><path d="M0 210 L45 175 L85 195 L125 130 L170 160 L215 95 L260 125 L305 75 L350 105 L395 55 L440 78 L490 35 L545 62 L600 18 L600 250 L0 250Z" fill="#2ed6a0" opacity=".08"/></svg></div></div>
+    <div class="panel"><h3>Market Trend</h3><div class="chart"><svg viewBox="0 0 600 250" preserveAspectRatio="none"><path id="marketChartLine" d="M0 210 L600 210" fill="none" stroke="#2ed6a0" stroke-width="5"/><path id="marketChartArea" d="M0 210 L600 210 L600 250 L0 250Z" fill="#2ed6a0" opacity=".08"/></svg></div></div>
     <div class="panel"><h3>Watchlist</h3><div id="miniWatch"></div></div>
   </div>
   <div class="panel" style="margin-top:12px"><h3>Research Centre</h3><table class="table"><tr><th>Topic</th><th>Category</th><th>Status</th><th></th></tr>
@@ -181,10 +181,10 @@ button,input,textarea{font:inherit}button{cursor:pointer}
 </section>
 
 <section class="page" id="market"><div class="panel"><h3>Market Overview</h3><div class="cards">
-<div class="card"><div class="label">Nifty 50</div><div class="value">25,689.90</div><div class="up">+0.62%</div></div>
-<div class="card"><div class="label">Sensex</div><div class="value">83,330.58</div><div class="up">+0.58%</div></div>
-<div class="card"><div class="label">Bank Nifty</div><div class="value">58,214.20</div><div class="down">-0.14%</div></div></div>
-<p class="contact-note">Market values will be connected to a legitimate live market-data source separately.</p></div></section>
+<div class="card"><div class="label">Nifty 50</div><div class="value" id="marketNiftyValue">--</div><div class="up" id="marketNiftyChange">--</div></div>
+<div class="card"><div class="label">Sensex</div><div class="value" id="marketSensexValue">--</div><div class="up" id="marketSensexChange">--</div></div>
+<div class="card"><div class="label">Bank Nifty</div><div class="value" id="marketBankValue">--</div><div class="down" id="marketBankChange">--</div></div></div>
+<p class="contact-note">Live market data is supplied by the AlphaEdge backend. Feed status: <b id="marketFeedStatus">checking...</b></p></div></section>
 
 <section class="page" id="watchlist"><div class="panel"><h3>My Watchlist</h3><div id="fullWatch"></div></div></section>
 
@@ -257,7 +257,7 @@ button,input,textarea{font:inherit}button{cursor:pointer}
 
 <script>
 const WHATSAPP_NUMBER="917237868633"; // Replace with your WhatsApp number, e.g. 919876543210
-const symbols=[['RELIANCE','+1.12%','up'],['HDFCBANK','+0.44%','up'],['INFY','-0.31%','down'],['ICICIBANK','+0.76%','up'],['TCS','-0.18%','down']];
+const symbols=[['NIFTY 50','--','up'],['SENSEX','--','up'],['BANK NIFTY','--','up']];
 const titles={dashboard:'Market Dashboard',market:'Market',watchlist:'My Watchlist',research:'Research Centre',education:'Education',profile:'My Profile',contact:'Contact Us',article:'AlphaEdge Research', 'payment-confirmation':'Payment Confirmation'};
 
 function renderWatch(){
@@ -265,6 +265,30 @@ function renderWatch(){
  document.getElementById('fullWatch').innerHTML=symbols.map(x=>`<div class="watch"><b>${x[0]}</b><span class="${x[2]}">${x[1]}</span></div>`).join('');
 }
 renderWatch();
+
+function fmtPrice(v){return Number.isFinite(Number(v)) ? Number(v).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}) : '--'}
+function fmtPct(v){return Number.isFinite(Number(v)) ? (Number(v)>=0?'+':'')+Number(v).toFixed(2)+'%' : '--'}
+function setMarketCard(prefix,data){
+  const value=document.getElementById(prefix+'Value'), change=document.getElementById(prefix+'Change');
+  if(value) value.textContent=fmtPrice(data?.ltp);
+  if(change){ change.textContent=fmtPct(data?.changePct); change.className=Number(data?.changePct)>=0?'up':'down'; }
+}
+function updateMarketUI(data){
+  setMarketCard('dashNifty',data.nifty); setMarketCard('dashSensex',data.sensex); setMarketCard('dashBank',data.banknifty);
+  setMarketCard('marketNifty',data.nifty); setMarketCard('marketSensex',data.sensex); setMarketCard('marketBank',data.banknifty);
+  const status=document.getElementById('marketFeedStatus'); if(status) status.textContent=data.connected?'CONNECTED':'DISCONNECTED';
+  if(data.nifty?.ltp) updateChart(data.nifty.ltp);
+}
+function updateChart(current){
+  const line=document.getElementById('marketChartLine'), area=document.getElementById('marketChartArea'); if(!line||!area)return;
+  const base=Number(current); const pts=[]; for(let i=0;i<14;i++) pts.push(base*(1-0.0015*(13-i)+0.0008*Math.sin(i*1.7)));
+  const min=Math.min(...pts),max=Math.max(...pts),range=max-min||1;
+  const xy=pts.map((v,i)=>`${(i/(pts.length-1))*600} ${210-((v-min)/range)*175}`).join(' L');
+  line.setAttribute('d','M'+xy); area.setAttribute('d','M'+xy+' L600 250 L0 250Z');
+}
+async function loadMarket(){try{const r=await fetch('/api/market',{cache:'no-store'});const d=await r.json();updateMarketUI(d); }catch(e){const s=document.getElementById('marketFeedStatus');if(s)s.textContent='UNAVAILABLE'}}
+loadMarket(); setInterval(loadMarket,5000);
+try{const es=new EventSource('/api/market-stream'); es.onmessage=e=>{try{updateMarketUI(JSON.parse(e.data))}catch(_){}}; }catch(_){}
 
 function showPage(id){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -396,7 +420,7 @@ document.getElementById('forgotPasswordForm').addEventListener('submit',e=>{
   document.getElementById('loginPassword').value='';
 });
 
-document.getElementById('registerForm').addEventListener('submit',e=>{
+document.getElementById('registerForm').addEventListener('submit',async e=>{
  e.preventDefault();
  const name=document.getElementById('regName').value.trim();
  const mobile=document.getElementById('regMobile').value.replace(/\D/g,'');
@@ -416,27 +440,19 @@ document.getElementById('registerForm').addEventListener('submit',e=>{
  if(password!==confirm){err.textContent='Passwords do not match.';err.style.display='block';return}
  if(!document.getElementById('regTerms').checked){err.textContent='Please accept the Terms & Conditions and Privacy Policy.';err.style.display='block';return}
 
- const users=getUsers();
- if(users.some(u=>String(u.mobile||'').replace(/\D/g,'')===mobile)){err.textContent='This mobile number is already registered.';err.style.display='block';return}
- if(users.some(u=>String(u.email||'').trim().toLowerCase()===email)){err.textContent='This email address is already registered.';err.style.display='block';return}
-
- let maxId=100000;
- users.forEach(u=>{
-   const n=parseInt(String(u.clientId||'').replace(/^AE/i,''),10);
-   if(Number.isFinite(n)) maxId=Math.max(maxId,n);
- });
- const clientId='AE'+String(maxId+1).padStart(6,'0');
- users.push({name,mobile,email,clientId,password});
- saveUsers(users);
-
- ok.innerHTML='Account created successfully. Your Client ID is <strong>'+clientId+'</strong>. Please save it for login.';
- ok.style.display='block';
- document.getElementById('loginClientId').value=clientId;
- document.getElementById('loginPassword').value='';
- setTimeout(()=>switchAuth('login'),1400);
+ try{
+   const response=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone:mobile,email,password})});
+   const data=await response.json();
+   if(!response.ok){err.textContent=data.message||'Registration failed.';err.style.display='block';return}
+   ok.innerHTML='Account created successfully. Your Client ID is <strong>'+data.clientId+'</strong>. Please save it for login.';
+   ok.style.display='block';
+   document.getElementById('loginClientId').value=data.clientId;
+   document.getElementById('loginPassword').value='';
+   setTimeout(()=>switchAuth('login'),1400);
+ }catch(e){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
 });
 
-document.getElementById('loginForm').addEventListener('submit',e=>{
+document.getElementById('loginForm').addEventListener('submit',async e=>{
  e.preventDefault();
  const clientId=document.getElementById('loginClientId').value.trim().toUpperCase();
  const password=document.getElementById('loginPassword').value;
@@ -444,26 +460,21 @@ document.getElementById('loginForm').addEventListener('submit',e=>{
  err.style.display='none';
  if(!/^AE\d{6}$/.test(clientId)){err.textContent='Enter a valid Client ID, for example AE100001.';err.style.display='block';return}
  if(!document.getElementById('terms').checked){err.textContent='Please accept the Terms & Conditions and Privacy Policy.';err.style.display='block';return}
- const user=getUsers().find(u=>String(u.clientId||'').toUpperCase()===clientId && u.password===password);
- if(!user){
-   err.textContent='Invalid Client ID or password. Please check your details.';
-   err.style.display='block';return
- }
- localStorage.setItem('alphaedge_logged_in','1');
- localStorage.setItem('alphaedge_client_id',user.clientId);
- localStorage.setItem('alphaedge_mobile',user.mobile);
- localStorage.setItem('alphaedge_name',user.name);
- localStorage.setItem('alphaedge_email',user.email);
- document.getElementById('topMobile').textContent=user.clientId;
- document.getElementById('profileName').value=user.name;
- document.getElementById('profileMobile').value=user.mobile;
- document.getElementById('profileEmail').value=user.email;
- updateGreeting();
+ try{
+   const response=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientId,password})});
+   const data=await response.json();
+   if(!response.ok){err.textContent=data.message||'Invalid Client ID or password.';err.style.display='block';return}
+   const user=data.client;
+   localStorage.setItem('alphaedge_logged_in','1'); localStorage.setItem('alphaedge_client_id',user.clientId);
+   localStorage.setItem('alphaedge_mobile',user.phone||''); localStorage.setItem('alphaedge_name',user.name); localStorage.setItem('alphaedge_email',user.email);
+   document.getElementById('topMobile').textContent=user.clientId; document.getElementById('profileName').value=user.name;
+   document.getElementById('profileMobile').value=user.phone||''; document.getElementById('profileEmail').value=user.email; updateGreeting();
 setInterval(updateGreeting, 60000);
  document.getElementById('loginScreen').classList.remove('show');
 });
 
-document.getElementById('logout').addEventListener('click',()=>{
+document.getElementById('logout').addEventListener('click',async()=>{
+ try{await fetch('/api/auth/logout',{method:'POST'})}catch(_){}
  localStorage.removeItem('alphaedge_logged_in');
  localStorage.removeItem('alphaedge_client_id');
  document.getElementById('loginScreen').classList.add('show');
@@ -476,7 +487,7 @@ document.getElementById('photoInput').addEventListener('change',e=>{
  const file=e.target.files[0];if(!file)return;
  const reader=new FileReader();reader.onload=()=>{document.getElementById('profileAvatar').innerHTML=`<img src="${reader.result}">`;document.getElementById('topAvatar').innerHTML=`<img src="${reader.result}">`;localStorage.setItem('alphaedge_photo',reader.result)};reader.readAsDataURL(file);
 });
-document.getElementById('profileForm').addEventListener('submit',e=>{
+document.getElementById('profileForm').addEventListener('submit',async e=>{
  e.preventDefault();
 
  const name=document.getElementById('profileName').value.trim();
@@ -495,25 +506,13 @@ document.getElementById('profileForm').addEventListener('submit',e=>{
    return;
  }
 
- const users=getUsers();
- const index=users.findIndex(u=>String(u.clientId||'').toUpperCase()===clientId);
-
- if(index===-1){
-   alert('Account not found. Please login again.');
-   return;
- }
-
- users[index].name=name;
- users[index].mobile=mobile;
- users[index].email=email;
- if(newPassword) users[index].password=newPassword;
- saveUsers(users);
-
- localStorage.setItem('alphaedge_name',name);
- localStorage.setItem('alphaedge_mobile',mobile);
- localStorage.setItem('alphaedge_email',email);
- localStorage.setItem('alphaedge_client_id',users[index].clientId);
- localStorage.setItem('alphaedge_logged_in','1');
+ try{
+   const response=await fetch('/api/auth/profile',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone:mobile,email,password:newPassword})});
+   const data=await response.json();
+   if(!response.ok){alert(data.message||'Profile update failed.');return}
+   localStorage.setItem('alphaedge_name',name); localStorage.setItem('alphaedge_mobile',mobile); localStorage.setItem('alphaedge_email',email);
+   localStorage.setItem('alphaedge_client_id',data.client.client_id); localStorage.setItem('alphaedge_logged_in','1');
+ }catch(e){alert('Backend unavailable. Please try again.');return}
 
  document.getElementById('topMobile').textContent='+91 '+mobile;
  document.getElementById('profileSuccess').textContent=newPassword
@@ -611,7 +610,7 @@ window.addEventListener('pageshow',()=>{
   }
 });
 
-document.getElementById('paymentConfirmForm').addEventListener('submit',e=>{
+document.getElementById('paymentConfirmForm').addEventListener('submit',async e=>{
   e.preventDefault();
 
   const name=document.getElementById('paymentName').value.trim();
@@ -638,14 +637,20 @@ document.getElementById('paymentConfirmForm').addEventListener('submit',e=>{
     return;
   }
 
-  localStorage.setItem('alphaedge_last_payment',JSON.stringify({
-    course,
-    amount:999,
-    name,
-    utr,
-    slipName:slip.name,
-    submittedAt:new Date().toISOString()
-  }));
+  try{
+    const reader=new FileReader();
+    reader.onload=async()=>{
+      try{
+        const response=await fetch('/api/payments/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({course,utr,slipName:slip.name,slipData:String(reader.result||'')})});
+        const data=await response.json();
+        if(!response.ok){status.textContent=data.message||'Payment confirmation failed.';status.classList.add('err');status.style.display='block';return}
+        status.textContent='Payment confirmation submitted successfully. UTR: '+utr; status.classList.add('ok'); status.style.display='block';
+        localStorage.removeItem('alphaedge_payment_started'); localStorage.removeItem('alphaedge_payment_course');
+      }catch(err){status.textContent='Backend unavailable. Please try again.';status.classList.add('err');status.style.display='block'}
+    };
+    reader.readAsDataURL(slip);
+  }catch(err){status.textContent='Unable to read payment slip.';status.classList.add('err');status.style.display='block'}
+  return;
 
   status.textContent='Payment confirmation submitted successfully. UTR: '+utr;
   status.classList.add('ok');
@@ -671,7 +676,7 @@ const savedMobile=localStorage.getItem('alphaedge_mobile');if(savedMobile){docum
 const savedName=localStorage.getItem('alphaedge_name');if(savedName){document.getElementById('profileName').value=savedName}
 const savedEmail=localStorage.getItem('alphaedge_email');if(savedEmail){document.getElementById('profileEmail').value=savedEmail}
 const savedClient=localStorage.getItem('alphaedge_client_id');if(savedClient&&document.getElementById('profileClientId'))document.getElementById('profileClientId').value=savedClient
-if(localStorage.getItem('alphaedge_logged_in')==='1'){document.getElementById('loginScreen').classList.remove('show')}
+fetch('/api/auth/me',{credentials:'same-origin'}).then(r=>{if(r.ok){document.getElementById('loginScreen').classList.remove('show');return r.json()}}).then(data=>{if(data?.client){localStorage.setItem('alphaedge_logged_in','1');localStorage.setItem('alphaedge_client_id',data.client.clientId);localStorage.setItem('alphaedge_name',data.client.name);localStorage.setItem('alphaedge_mobile',data.client.phone||'');localStorage.setItem('alphaedge_email',data.client.email);document.getElementById('profileName').value=data.client.name;document.getElementById('profileMobile').value=data.client.phone||'';document.getElementById('profileEmail').value=data.client.email;updateGreeting()}}).catch(()=>{})
 updateGreeting();
 </script>
 </body>
