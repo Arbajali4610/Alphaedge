@@ -1,378 +1,428 @@
-<!DOCTYPE html>  <html lang="en">    <head>    
-<meta charset="UTF-8">    
-<meta name="viewport" content="width=device-width,initial-scale=1.0">    
-<title>AlphaEdge</title>    
-<style>    
-*{box-sizing:border-box}body{margin:0;background:#07111b;color:#eaf2f8;font-family:Arial,Helvetica,sans-serif}    
-button,input,textarea{font:inherit}button{cursor:pointer}    
-.app{display:flex;min-height:100vh}.side{width:190px;background:#08131e;border-right:1px solid #203142;padding:22px 12px;flex-shrink:0}.logo{font-size:20px;font-weight:800;padding:0 7px 25px}.logo span{color:#28d5a0}    
-.nav{display:flex;flex-direction:column;gap:7px}.nav button{border:0;background:transparent;color:#8fa0b1;text-align:left;padding:11px 9px;border-radius:9px}.nav button:hover,.nav button.active{background:#10283a;color:#fff}.logout{margin-top:25px!important}    
-.main{flex:1;min-width:0}.top{height:76px;border-bottom:1px solid #1d2d3d;display:flex;align-items:center;justify-content:space-between;padding:0 25px}.title{font-size:20px}.sub{font-size:11px;color:#708396;margin-top:3px}.user{display:flex;align-items:center;gap:10px;color:#8fa0b1;font-size:12px}.avatar{width:34px;height:34px;border-radius:50%;background:#16364a;display:grid;place-items:center;color:#8eead0;overflow:hidden;cursor:pointer;border:1px solid transparent}.avatar:hover{border-color:#28d5a0;box-shadow:0 0 0 2px #28d5a022}.avatar img{width:100%;height:100%;object-fit:cover}    
-.content{padding:25px;max-width:1100px}.page{display:none}.page.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card,.panel{background:#0b1926;border:1px solid #1b2e40;border-radius:13px}.card{padding:16px}.label{font-size:10px;color:#71879b;text-transform:uppercase}.value{font-size:20px;font-weight:700;margin-top:7px}.up{color:#2ed6a0;font-size:11px}.down{color:#df7184;font-size:11px}    
-.row{display:grid;grid-template-columns:1.35fr .85fr;gap:12px;margin-top:12px}.panel{padding:16px}.panel h3{font-size:13px;margin:0 0 16px}.chart{height:230px}.chart svg{width:100%;height:100%}.market-chart-meta{display:flex;justify-content:space-between;align-items:center;margin-top:7px;font-size:9px;color:#71879b}.market-chart-live{color:#55dcb8}.watch{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #182b3b;font-size:12px}.footer{margin-top:28px;padding:18px 4px 8px;border-top:1px solid #1b2e40;text-align:center;color:#71879b;font-size:9px;line-height:1.7}.footer .disclaimer{max-width:900px;margin:0 auto 5px}.footer .rights{color:#8fa0b1}.login-footer{width:min(430px,100%);margin:14px auto 0;padding:10px 4px 0;text-align:center;color:#71879b;font-size:9px;line-height:1.6}.login-footer .disclaimer{max-width:430px;margin:0 auto 5px}.login-footer .rights{color:#8fa0b1}    
-.table{width:100%;border-collapse:collapse;font-size:11px}.table th{color:#73889b;text-align:left;font-weight:normal}.table th,.table td{padding:11px 7px;border-bottom:1px solid #182b3b}.pill{display:inline-block;background:#0c4b3d;color:#55dcb8;border-radius:12px;padding:4px 8px;font-size:9px}    
-.action{border:1px solid #274054;background:#102132;color:#dce8f2;padding:9px 13px;border-radius:8px}.action:hover{background:#163249}.payment-confirm{margin-top:10px;padding:12px;background:#0b1b29;border:1px solid #1d3548;border-radius:9px}.payment-confirm h4{margin:0 0 8px;font-size:12px}.payment-confirm input{width:100%;margin-top:6px;padding:9px 10px;background:#071521;border:1px solid #24394c;border-radius:8px;color:#fff;outline:none}.payment-confirm input:focus{border-color:#2ed6a0}.payment-confirm .slip{font-size:10px;color:#8296a9;margin-top:7px}.confirm-status{font-size:10px;margin-top:8px;display:none}.confirm-status.ok{color:#2ed6a0}.confirm-status.err{color:#df7184}.confirm-btn{margin-top:9px;border:0;background:#28d5a0;color:#06131b;font-weight:700;padding:9px 12px;border-radius:8px;font-size:10px}.pay-btn{border:0;background:#28d5a0;color:#06131b;font-weight:700;padding:8px 12px;border-radius:8px;font-size:10px;margin-left:6px}.pay-btn:hover{opacity:.9}.confirm-link{border:0;background:transparent;color:#7fdcc3;font-size:9px;padding:4px 5px;margin-left:3px;text-decoration:underline;cursor:pointer}.confirm-link:hover{color:#fff}.payment-page-note{font-size:11px;color:#8093a6;line-height:1.6;margin:-7px 0 15px}.payment-page-total{font-size:18px;font-weight:700;color:#2ed6a0;margin:5px 0 18px}.payment-page-back{margin-bottom:12px}.wa-note{font-size:10px;color:#7f91a3;line-height:1.5}    
-.profilebox{max-width:650px}.form{display:grid;gap:13px}.form label{font-size:11px;color:#8da0b3}.required-star{color:#ff4d5f;font-weight:800;margin-left:3px}.form input,.form textarea{width:100%;margin-top:6px;padding:11px 12px;background:#071521;border:1px solid #24394c;border-radius:8px;color:#fff;outline:none}.form input:focus,.form textarea:focus{border-color:#2ed6a0}.form textarea{min-height:110px;resize:vertical}    
-.profile-photo{display:flex;align-items:center;gap:16px;margin-bottom:18px}.big-avatar{width:76px;height:76px;border-radius:50%;background:#16364a;display:grid;place-items:center;overflow:hidden;border:1px solid #29465b}.big-avatar img{width:100%;height:100%;object-fit:cover}.photo-btn{display:inline-block;padding:8px 11px;border:1px solid #274054;background:#102132;border-radius:8px;font-size:11px;cursor:pointer}    
-.article h2{font-size:22px;margin-top:0}.article h3{font-size:15px;color:#cce7e0;margin-top:22px}.article p,.article li{color:#9dafc0;font-size:13px;line-height:1.8}.article ul{padding-left:20px}    
-.legal-overlay{position:fixed;inset:0;background:#06101acc;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.legal-overlay.show{display:flex}.legal-box{width:min(650px,100%);max-height:82vh;overflow:auto;background:#0b1926;border:1px solid #1d3548;border-radius:16px;padding:24px}.legal-box h2{margin-top:0}.legal-box h3{font-size:14px;color:#cce7e0;margin-top:20px}.legal-box p,.legal-box li{color:#9dafc0;font-size:12px;line-height:1.7}.legal-close{float:right;background:#102132;border:1px solid #274054;color:#fff;border-radius:7px;padding:7px 11px;cursor:pointer}.terms a{color:#55dcb8;text-decoration:underline}.legal-link{border:0;background:none;padding:0;color:#55dcb8;text-decoration:underline;font-size:11px;cursor:pointer;display:inline}.login-overlay{position:fixed;inset:0;background:#06101a;display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.login-overlay.show{display:flex}.login{width:min(430px,100%);background:#0b1926;border:1px solid #1d3548;border-radius:18px;padding:28px}.login .logo{padding:0 0 20px}.auth-tab{background:#102132}.auth-tab.active{background:#28d5a0;color:#06131b;border-color:#28d5a0}.terms{display:flex;gap:8px;align-items:flex-start;color:#8296a9;font-size:11px;margin:4px 0}.terms input{margin-top:2px}.error{color:#df7184;font-size:11px;display:none}.success{color:#2ed6a0;font-size:11px;display:none}    
-.contact-note{color:#71879a;font-size:11px;margin-top:10px}    
-@media(max-width:750px){.side{width:155px}.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}.top{padding:0 14px}.content{padding:14px}.user span{display:none}}    
-@media(max-width:520px){.side{width:120px}.logo{font-size:17px}.nav button{font-size:11px}.top{height:68px}.title{font-size:17px}}    
-</style>    
-<style id="login-loading-style">    
-#loginLoading{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,12,22,.72);backdrop-filter:blur(5px);z-index:99999}    
-#loginLoading.show{display:flex}.login-loading-box{min-width:230px;padding:24px 28px;border-radius:16px;text-align:center;background:#111827;color:#fff;box-shadow:0 15px 45px rgba(0,0,0,.35)}    
-.login-spinner{width:30px;height:30px;margin:0 auto 12px;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:loginSpin .75s linear infinite}    
-@keyframes loginSpin{to{transform:rotate(360deg)}}.login-loading-text{font-size:15px;font-weight:600}    
-</style>    
-<style id="logout-loading-style">    
-#logoutLoading{position:fixed;inset:0;display:none;align-items:center;justify-content:center;    
-background:rgba(8,12,22,.72);backdrop-filter:blur(5px);z-index:100000}    
-#logoutLoading.show{display:flex}    
-.logout-loading-box{min-width:230px;padding:24px 28px;border-radius:16px;text-align:center;    
-background:#111827;color:#fff;box-shadow:0 15px 45px rgba(0,0,0,.35)}    
-.logout-spinner{width:30px;height:30px;margin:0 auto 12px;border:3px solid rgba(255,255,255,.25);    
-border-top-color:#fff;border-radius:50%;animation:logoutSpin .75s linear infinite}    
-@keyframes logoutSpin{to{transform:rotate(360deg)}}    
-</style>    
-</head>    
-<body>  <!-- Legal modals -->  <div class="legal-overlay" id="termsModal">    
-  <div class="legal-box">    
-    <button class="legal-close" type="button" onclick="closeLegal()">Close</button>    
-    <h2>AlphaEdge Terms &amp; Conditions</h2>    
-    <h3>1. Acceptance</h3>    
-    <p>By creating an account or using AlphaEdge, you agree to these Terms &amp; Conditions.</p>    
-    <h3>2. Educational Information</h3>    
-    <p>AlphaEdge content is provided for general educational and informational purposes only. It is not investment, financial, legal, or tax advice.</p>    
-    <h3>3. Market Risk</h3>    
-    <p>Trading and investing involve risk, including the possible loss of capital. Past performance does not guarantee future results.</p>    
-    <h3>4. Account Responsibility</h3>    
-    <p>You are responsible for keeping your Client ID and password confidential and for activity performed through your account.</p>    
-    <h3>5. Use of the Platform</h3>    
-    <p>You agree to use AlphaEdge lawfully and not to misuse, disrupt, or attempt to gain unauthorized access to the platform.</p>    
-    <h3>6. Changes</h3>    
-    <p>AlphaEdge may update these terms from time to time. Continued use of the platform after an update constitutes acceptance of the revised terms.</p>    
-  </div>    
-</div>  <div class="legal-overlay" id="privacyModal">    
-  <div class="legal-box">    
-    <button class="legal-close" type="button" onclick="closeLegal()">Close</button>    
-    <h2>AlphaEdge Privacy Policy</h2>    
-    <h3>1. Information We Store</h3>    
-    <p>Information entered into the application, such as your name, mobile number, email, Client ID and profile information, may be stored locally in your browser.</p>    
-    <h3>2. Use of Information</h3>    
-    <p>The information is used to provide account, profile, login and application functionality.</p>    
-    <h3>3. Local Storage</h3>    
-    <p>AlphaEdge uses browser local storage for account and profile data in this version. Clearing browser storage may remove locally stored information.</p>    
-    <h3>4. Security</h3>    
-    <p>Keep your account credentials confidential and use a strong password. Account and profile data in this version is stored in your browser's local storage.</p>    
-    <h3>5. Updates</h3>    
-    <p>This policy may be updated when application functionality changes.</p>    
-  </div>    
-</div>  <div class="login-overlay show" id="loginScreen">    
-  <div class="login">    
-    <div class="logo">Alpha<span>Edge</span></div>  <div style="display:flex;gap:8px;margin-bottom:22px">    
-  <button class="action auth-tab active" id="loginTab" onclick="switchAuth('login')" style="flex:1">Login</button>    
-  <button class="action auth-tab" id="registerTab" onclick="switchAuth('register')" style="flex:1">Register</button>    
-</div>    <div id="loginPanel">    
-  <h2 style="font-size:22px;margin:0 0 5px">Welcome back</h2>    
-  <p style="color:#8296a9;font-size:12px;margin:0 0 20px">Login to your AlphaEdge workspace</p>    
-  <form class="form" id="loginForm">    
-    <label>Client ID <span class="required-star">*</span><input id="loginClientId" type="text" placeholder="e.g. AE100001" autocomplete="username" required></label>    
-    <label>Password <span class="required-star">*</span><input id="loginPassword" type="password" minlength="8" placeholder="Enter password" autocomplete="current-password" required></label>    
-    <div style="display:flex;justify-content:space-between;gap:12px;margin-top:-5px;margin-bottom:2px;flex-wrap:wrap">    
-      <button type="button" class="legal-link" id="forgotClientBtn" style="font-size:11px">Forgot Client ID?</button>    
-      <button type="button" class="legal-link" id="forgotPasswordBtn" style="font-size:11px">Forgot Password?</button>    
-    </div>    
-    <label class="terms"><input id="terms" type="checkbox" required><span>I agree to the <button type="button" class="legal-link termsLink">AlphaEdge Terms &amp; Conditions</button> and <button type="button" class="legal-link privacyLink">Privacy Policy</button>.</span></label>    
-    <div class="error" id="loginError"></div>    
-    <button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700;padding:12px" type="submit">Login</button>    
-  </form>    
-  <p style="text-align:center;color:#8296a9;font-size:11px;margin:12px 0 0">New to AlphaEdge? <a href="#" onclick="switchAuth('register');return false" style="color:#55dcb8">Create an account</a></p>    
-  <div class="login-footer">    
-    <div class="disclaimer"><b>Disclaimer:</b> AlphaEdge provides market information and educational content for general informational purposes only. It is not investment, financial, legal, or tax advice. Trading and investing involve risk, and past performance does not guarantee future results.</div>    
-    <div class="rights">© <span id="footerYear"></span> AlphaEdge. All rights reserved.</div>    
-  </div>    
-</div>    <div id="registerPanel" style="display:none">    
-  <h2 style="font-size:22px;margin:0 0 5px">Create your account</h2>    
-  <p style="color:#8296a9;font-size:12px;margin:0 0 20px">Register once, then use your credentials to login.</p>    
-  <form class="form" id="registerForm">    
-    <label>Full Name <span class="required-star">*</span><input id="regName" type="text" placeholder="Your full name" required></label>    
-    <label>Mobile Number <span class="required-star">*</span><input id="regMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required></label>    
-    <label>Email ID <span class="required-star">*</span><input id="regEmail" type="email" placeholder="you@example.com" required></label>    
-    <div style="background:#0b1b29;border:1px solid #1d3548;border-radius:9px;padding:11px;color:#8fa5b7;font-size:11px">Your unique Client ID will be generated automatically after registration.</div>    
-    <label>Password <span class="required-star">*</span><input id="regPassword" type="password" minlength="8" placeholder="Create password" required><div class="contact-note">Minimum 8 characters, 1 uppercase, 1 special character (@/#/₹), and 1 number.</div></label>    
-    <label>Confirm Password <span class="required-star">*</span><input id="regConfirm" type="password" minlength="8" placeholder="Confirm password" required></label>    
-    <label class="terms"><input id="regTerms" type="checkbox" required><span>I agree to the <button type="button" class="legal-link termsLink">AlphaEdge Terms &amp; Conditions</button> and <button type="button" class="legal-link privacyLink">Privacy Policy</button>.</span></label>    
-    <div class="error" id="registerError"></div>    
-    <div class="success" id="registerSuccess"></div>    
-    <button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700;padding:12px" type="submit">Create Account</button>    
-  </form>    
-  <p style="text-align:center;color:#8296a9;font-size:11px;margin:18px 0 0">Already registered? <a href="#" onclick="switchAuth('login');return false" style="color:#55dcb8">Login here</a></p>    
-</div>    </div>    
-</div>    
-<div class="legal-overlay" id="forgotClientModal">    
-  <div class="legal-box" style="width:min(470px,100%)">    
-    <button class="legal-close" type="button" id="forgotClientClose">Close</button>    
-    <h2>Forgot Client ID</h2>    
-    <p style="color:#9dafc0;font-size:12px;line-height:1.6">Enter your registered mobile number or email to recover your Client ID.</p>    
-    <form class="form" id="forgotClientForm">    
-      <label>Registered Mobile or Email <span class="required-star">*</span><input id="forgotClientContact" type="text" placeholder="10-digit mobile or email" autocomplete="email" required></label>    
-      <div class="error" id="forgotClientError"></div>    
-      <div class="success" id="forgotClientSuccess"></div>    
-      <button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700;padding:12px" type="submit">Recover Client ID</button>    
-    </form>    
-  </div>    
-</div>  <div class="legal-overlay" id="forgotPasswordModal">    
-  <div class="legal-box" style="width:min(470px,100%)">    
-    <button class="legal-close" type="button" id="forgotPasswordClose">Close</button>    
-    <h2>Forgot Password</h2>    
-    <p style="color:#9dafc0;font-size:12px;line-height:1.6">Verify your Client ID and registered mobile/email, then create a new password.</p>    
-    <form class="form" id="forgotPasswordForm">    
-      <label>Client ID <span class="required-star">*</span><input id="forgotPasswordClientId" type="text" placeholder="e.g. AE100001" required></label>    
-      <label>Registered Mobile or Email <span class="required-star">*</span><input id="forgotPasswordContact" type="text" placeholder="10-digit mobile or email" autocomplete="email" required></label>    
-      <label>New Password <span class="required-star">*</span><input id="forgotPasswordNew" type="password" minlength="8" placeholder="New password" required></label>    
-      <div class="contact-note">Minimum 8 characters, 1 uppercase, 1 special character (@/#/₹), and 1 number.</div>    
-      <label>Confirm New Password <span class="required-star">*</span><input id="forgotPasswordConfirm" type="password" minlength="8" placeholder="Confirm new password" required></label>    
-      <div class="error" id="forgotPasswordError"></div>    
-      <div class="success" id="forgotPasswordSuccess"></div>    
-      <button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700;padding:12px" type="submit">Reset Password</button>    
-    </form>    
-  </div>    
-</div>  <div class="app">    
-<aside class="side">    
-  <div class="logo">Alpha<span>Edge</span></div>    
-  <nav class="nav">    
-    <button class="active" data-page="dashboard">Dashboard</button>    
-    <button data-page="market">Market</button>    
-    <button data-page="watchlist">Watchlist</button>    
-    <button data-page="research">Research</button>    
-    <button data-page="education">Education</button>    
-    <button data-page="profile">Profile</button>    
-    <button data-page="contact">Contact Us</button>    
-    <button class="logout" id="logout">Logout</button>    
-  </nav>    
-</aside>  <main class="main">    
-<header class="top">    
-  <div><div class="title" id="greetingTitle">Welcome to AlphaEdge</div><div class="sub" id="greetingSub">Your AlphaEdge workspace</div></div>    
-  <div class="user"><span id="topMobile">+91 72XXXXXX33</span><div class="avatar" id="topAvatar">AE</div></div>    
-</header>  <div class="content">  <section class="page active" id="dashboard">    
-  <div class="cards">    
-    <div class="card"><div class="label">Nifty 50</div><div class="value" id="dashNiftyValue">--</div><div class="up" id="dashNiftyChange">--</div></div>    
-    <div class="card"><div class="label">Sensex</div><div class="value" id="dashSensexValue">--</div><div class="up" id="dashSensexChange">--</div></div>    
-    <div class="card"><div class="label">Bank Nifty</div><div class="value" id="dashBankValue">--</div><div class="down" id="dashBankChange">--</div></div>    
-    <div class="card"><div class="label">Watchlist</div><div class="value">5</div><div class="sub">Tracked symbols</div></div>    
-  </div>    
-  <div class="row">    
-    <div class="panel"><h3>Market Trend</h3><div class="chart"><svg viewBox="0 0 600 250" preserveAspectRatio="none"><path id="marketChartLine" d="M0 210 L600 210" fill="none" stroke="#2ed6a0" stroke-width="5"/><path id="marketChartArea" d="M0 210 L600 210 L600 250 L0 250Z" fill="#2ed6a0" opacity=".08"/></svg></div><div class="market-chart-meta"><span>Live NIFTY 50 trend</span><span class="market-chart-live">● <span id="marketChartTime">Updating...</span></span></div></div>    
-    <div class="panel"><h3>Watchlist</h3><div id="miniWatch"></div></div>    
-  </div>    
-  <div class="panel" style="margin-top:12px"><h3>Research Centre</h3><table class="table"><tr><th>Topic</th><th>Category</th><th>Status</th><th></th></tr>    
-  <tr><td>Understanding Market Trends</td><td>Education</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('trends')">Open</button></td></tr>    
-  <tr><td>Risk Management Framework</td><td>Research</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('risk')">Open</button></td></tr>    
-  <tr><td>Technical Analysis Basics</td><td>Education</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('technical')">Open</button></td></tr></table></div>    
-</section>  <section class="page" id="market"><div class="panel"><h3>Market Overview</h3><div class="cards">    
-<div class="card"><div class="label">Nifty 50</div><div class="value" id="marketNiftyValue">--</div><div class="up" id="marketNiftyChange">--</div></div>    
-<div class="card"><div class="label">Sensex</div><div class="value" id="marketSensexValue">--</div><div class="up" id="marketSensexChange">--</div></div>    
-<div class="card"><div class="label">Bank Nifty</div><div class="value" id="marketBankValue">--</div><div class="down" id="marketBankChange">--</div></div></div>    
-<p class="contact-note">Live market data is supplied by the AlphaEdge backend. Feed status: <b id="marketFeedStatus">checking...</b></p></div></section>  <section class="page" id="watchlist"><div class="panel"><h3>My Watchlist</h3><div id="fullWatch"></div></div></section>  <section class="page" id="research"><div class="panel"><h3>Research Centre</h3><table class="table">    
-<tr><th>Research</th><th>Type</th><th>Status</th><th></th></tr>    
-<tr><td>Understanding Market Trends</td><td>Education</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('trends')">Open</button></td></tr>    
-<tr><td>Risk Management Framework</td><td>Research</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('risk')">Open</button></td></tr>    
-<tr><td>Technical Analysis Basics</td><td>Education</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('technical')">Open</button></td></tr></table></div></section>  <section class="page" id="article"><div class="panel article" id="articleContent"></div></section>  <section class="page" id="education"><div class="panel"><h3>AlphaEdge Education Modules</h3><table class="table">    
-<tr><th>Module</th><th>Level</th><th>Status</th><th></th></tr>    
-<tr><td>Trading Fundamentals</td><td>Beginner</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openModule('fundamentals')">Browse / Open</button><button class="pay-btn" type="button" onclick="payModule('Trading Fundamentals')">Pay ₹999</button><button class="confirm-link" type="button" onclick="openPaymentPage('Trading Fundamentals')">Confirm</button></td></tr>    
-<tr><td>Technical Analysis</td><td>Intermediate</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openModule('ta')">Browse / Open</button><button class="pay-btn" type="button" onclick="payModule('Technical Analysis')">Pay ₹999</button><button class="confirm-link" type="button" onclick="openPaymentPage('Technical Analysis')">Confirm</button></td></tr>    
-<tr><td>Risk Management</td><td>Beginner</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openModule('rm')">Browse / Open</button><button class="pay-btn" type="button" onclick="payModule('Risk Management')">Pay ₹999</button><button class="confirm-link" type="button" onclick="openPaymentPage('Risk Management')">Confirm</button></td></tr>    
-<tr><td>Trading Psychology</td><td>Intermediate</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openModule('psych')">Browse / Open</button><button class="pay-btn" type="button" onclick="payModule('Trading Psychology')">Pay ₹999</button><button class="confirm-link" type="button" onclick="openPaymentPage('Trading Psychology')">Confirm</button></td></tr>    
-</table></div></section>  <section class="page" id="payment-confirmation">    
-  <div class="panel profilebox">    
-    <button class="action payment-page-back" type="button" onclick="showPage('education')">← Back to Education</button>    
-    <h3>Payment</h3>    
-    <div class="payment-page-note">Pay ₹999 for the selected course, then enter the transaction details below to confirm your payment.</div>    
-    <div class="payment-page-total">₹999 <span style="font-size:11px;font-weight:400;color:#8194a7" id="selectedModuleLabel">Course payment</span></div>    
-    <div style="background:#081722;border:1px solid #1d3548;border-radius:12px;padding:16px;margin-bottom:16px">    
-      <div style="font-size:11px;color:#8da0b3;margin-bottom:8px">UPI PAYMENT</div>    
-      <div style="font-size:14px;font-weight:700;margin-bottom:10px">Pay ₹999 using your UPI app</div>    
-      <button class="pay-btn" type="button" onclick="startUpiPayment()">Pay ₹999</button>    
-      <span id="paymentOpened" style="font-size:10px;color:#8296a9;margin-left:8px"></span>    
-      <div class="wa-note" style="margin-top:10px">After payment, return here and submit your UTR / Transaction ID.</div>    
-    </div>    
-    <button class="confirm-btn" id="showConfirmBtn" type="button" style="display:none;margin-bottom:12px">I Have Completed Payment — Confirm</button>    
-    <div id="paymentReturnNote" class="wa-note" style="display:none;margin-bottom:12px">Payment app se wapas aane ke baad neeche UTR aur payment slip submit karke payment confirm karein.</div>    
-    <form class="form" id="paymentConfirmForm" style="display:none">    
-      <label>Course<input id="paymentModule" type="text" readonly></label>    
-      <label>Name <span class="required-star">*</span><input id="paymentName" type="text" placeholder="Your name" required></label>    
-      <label>UTR / Transaction ID <span class="required-star">*</span><input id="paymentUtr" type="text" placeholder="Enter UTR / Transaction ID" required></label>    
-      <label>Payment Slip <span class="required-star">*</span><input id="paymentSlip" type="file" accept="image/*,.pdf" required></label>    
-      <div class="slip">JPG/PNG/PDF receipt accepted.</div>    
-      <button class="confirm-btn" type="submit">Confirm Payment</button>    
-      <div class="confirm-status" id="confirmStatus"></div>    
-    </form>    
-  </div>    
-</section>  <section class="page" id="profile"><div class="panel profilebox"><h3>My Profile</h3>    
-<div class="profile-photo"><div class="big-avatar" id="profileAvatar">AE</div><div><label class="photo-btn">Choose Photo<input id="photoInput" type="file" accept="image/*" hidden></label><div class="contact-note">JPG/PNG photo</div></div></div>    
-<form class="form" id="profileForm">    
-<label>Full Name <span class="required-star">*</span><input id="profileName" type="text" placeholder="Your full name" required></label>    
-<label>Mobile Number <span class="required-star">*</span><input id="profileMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required></label>    
-<label>Email ID <span class="required-star">*</span><input id="profileEmail" type="email" placeholder="you@example.com" required></label>    
-        <label>Client ID<input id="profileClientId" type="text" readonly></label>    
-<label>Password<input id="profilePassword" type="password" minlength="6" placeholder="New password"></label>    
-<button class="action" type="submit">Save Changes</button>    
-<div class="success" id="profileSuccess">Profile updated successfully.</div>    
-</form></div></section>  <section class="page" id="contact"><div class="panel profilebox"><h3>Contact AlphaEdge</h3><p class="contact-note">Fill the form and submit. WhatsApp will open with your message prepared.</p>    
-<form class="form" id="contactForm" style="margin-top:15px">    
-<label>Name <span class="required-star">*</span><input id="contactName" required placeholder="Your name"></label>    
-<label>Mobile Number <span class="required-star">*</span><input id="contactMobile" required inputmode="numeric" maxlength="10" placeholder="10-digit mobile number"></label>    
-<label>Email ID <span class="required-star">*</span><input id="contactEmail" type="email" required placeholder="you@example.com"></label>    
-<label>Message <span class="required-star">*</span><textarea id="contactMessage" required placeholder="How can we help you?"></textarea></label>    
-<button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700" type="submit">Submit &amp; Continue to WhatsApp</button>    
-</form></div></section>  </main></div>  <script>    
-const WHATSAPP_NUMBER="917237868633"; // Replace with your WhatsApp number, e.g. 919876543210    
-const symbols=[['NIFTY 50','--','up'],['SENSEX','--','up'],['BANK NIFTY','--','up']];    
-const titles={dashboard:'Market Dashboard',market:'Market',watchlist:'My Watchlist',research:'Research Centre',education:'Education',profile:'My Profile',contact:'Contact Us',article:'AlphaEdge Research', 'payment-confirmation':'Payment Confirmation'};    function renderWatch(){
-document.getElementById('miniWatch').innerHTML=symbols.map(x=><div class="watch"><span>${x[0]}</span><span class="${x[2]}">${x[1]}</span></div>).join('');
-document.getElementById('fullWatch').innerHTML=symbols.map(x=><div class="watch"><b>${x[0]}</b><span class="${x[2]}">${x[1]}</span></div>).join('');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AlphaEdge</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#07111b;color:#eaf2f8;font-family:Arial,Helvetica,sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}
+.app{display:flex;min-height:100vh}.side{width:190px;background:#08131e;border-right:1px solid #203142;padding:22px 12px;flex-shrink:0}.logo{font-size:20px;font-weight:800;padding:0 7px 25px}.logo span{color:#28d5a0}
+.nav{display:flex;flex-direction:column;gap:7px}.nav button{border:0;background:transparent;color:#8fa0b1;text-align:left;padding:11px 9px;border-radius:9px}.nav button:hover,.nav button.active{background:#10283a;color:#fff}.logout{margin-top:25px!important}
+.main{flex:1;min-width:0}.top{height:76px;border-bottom:1px solid #1d2d3d;display:flex;align-items:center;justify-content:space-between;padding:0 25px}.title{font-size:20px}.sub{font-size:11px;color:#708396;margin-top:3px}.user{display:flex;align-items:center;gap:10px;color:#8fa0b1;font-size:12px}.avatar{width:34px;height:34px;border-radius:50%;background:#16364a;display:grid;place-items:center;color:#8eead0;overflow:hidden;cursor:pointer;border:1px solid transparent}.avatar:hover{border-color:#28d5a0;box-shadow:0 0 0 2px #28d5a022}.avatar img{width:100%;height:100%;object-fit:cover}
+.content{padding:25px;max-width:1100px}.page{display:none}.page.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card,.panel{background:#0b1926;border:1px solid #1b2e40;border-radius:13px}.card{padding:16px}.label{font-size:10px;color:#71879b;text-transform:uppercase}.value{font-size:20px;font-weight:700;margin-top:7px}.up{color:#2ed6a0;font-size:11px}.down{color:#df7184;font-size:11px}
+.row{display:grid;grid-template-columns:1.35fr .85fr;gap:12px;margin-top:12px}.panel{padding:16px}.panel h3{font-size:13px;margin:0 0 16px}.chart{height:230px}.chart svg{width:100%;height:100%}.market-chart-meta{display:flex;justify-content:space-between;align-items:center;margin-top:7px;font-size:9px;color:#71879b}.market-chart-live{color:#55dcb8}.watch{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #182b3b;font-size:12px}.footer{margin-top:28px;padding:18px 4px 8px;border-top:1px solid #1b2e40;text-align:center;color:#71879b;font-size:9px;line-height:1.7}.footer .disclaimer{max-width:900px;margin:0 auto 5px}.footer .rights{color:#8fa0b1}.login-footer{width:min(430px,100%);margin:14px auto 0;padding:10px 4px 0;text-align:center;color:#71879b;font-size:9px;line-height:1.6}.login-footer .disclaimer{max-width:430px;margin:0 auto 5px}.login-footer .rights{color:#8fa0b1}
+.table{width:100%;border-collapse:collapse;font-size:11px}.table th{color:#73889b;text-align:left;font-weight:normal}.table th,.table td{padding:11px 7px;border-bottom:1px solid #182b3b}.pill{display:inline-block;background:#0c4b3d;color:#55dcb8;border-radius:12px;padding:4px 8px;font-size:9px}
+.action{border:1px solid #274054;background:#102132;color:#dce8f2;padding:9px 13px;border-radius:8px}.action:hover{background:#163249}.payment-confirm{margin-top:10px;padding:12px;background:#0b1b29;border:1px solid #1d3548;border-radius:9px}.payment-confirm h4{margin:0 0 8px;font-size:12px}.payment-confirm input{width:100%;margin-top:6px;padding:9px 10px;background:#071521;border:1px solid #24394c;border-radius:8px;color:#fff;outline:none}.payment-confirm input:focus{border-color:#2ed6a0}.payment-confirm .slip{font-size:10px;color:#8296a9;margin-top:7px}.confirm-status{font-size:10px;margin-top:8px;display:none}.confirm-status.ok{color:#2ed6a0}.confirm-status.err{color:#df7184}.confirm-btn{margin-top:9px;border:0;background:#28d5a0;color:#06131b;font-weight:700;padding:9px 12px;border-radius:8px;font-size:10px}.pay-btn{border:0;background:#28d5a0;color:#06131b;font-weight:700;padding:8px 12px;border-radius:8px;font-size:10px;margin-left:6px}.pay-btn:hover{opacity:.9}.confirm-link{border:0;background:transparent;color:#7fdcc3;font-size:9px;padding:4px 5px;margin-left:3px;text-decoration:underline;cursor:pointer}.confirm-link:hover{color:#fff}.payment-page-note{font-size:11px;color:#8093a6;line-height:1.6;margin:-7px 0 15px}.payment-page-total{font-size:18px;font-weight:700;color:#2ed6a0;margin:5px 0 18px}.payment-page-back{margin-bottom:12px}.wa-note{font-size:10px;color:#7f91a3;line-height:1.5}
+.profilebox{max-width:650px}.form{display:grid;gap:13px}.form label{font-size:11px;color:#8da0b3}.required-star{color:#ff4d5f;font-weight:800;margin-left:3px}.form input,.form textarea{width:100%;margin-top:6px;padding:11px 12px;background:#071521;border:1px solid #24394c;border-radius:8px;color:#fff;outline:none}.form input:focus,.form textarea:focus{border-color:#2ed6a0}.form textarea{min-height:110px;resize:vertical}
+.profile-photo{display:flex;align-items:center;gap:16px;margin-bottom:18px}.big-avatar{width:76px;height:76px;border-radius:50%;background:#16364a;display:grid;place-items:center;overflow:hidden;border:1px solid #29465b}.big-avatar img{width:100%;height:100%;object-fit:cover}.photo-btn{display:inline-block;padding:8px 11px;border:1px solid #274054;background:#102132;border-radius:8px;font-size:11px;cursor:pointer}
+.article h2{font-size:22px;margin-top:0}.article h3{font-size:15px;color:#cce7e0;margin-top:22px}.article p,.article li{color:#9dafc0;font-size:13px;line-height:1.8}.article ul{padding-left:20px}
+.legal-overlay{position:fixed;inset:0;background:#06101acc;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.legal-overlay.show{display:flex}.legal-box{width:min(650px,100%);max-height:82vh;overflow:auto;background:#0b1926;border:1px solid #1d3548;border-radius:16px;padding:24px}.legal-box h2{margin-top:0}.legal-box h3{font-size:14px;color:#cce7e0;margin-top:20px}.legal-box p,.legal-box li{color:#9dafc0;font-size:12px;line-height:1.7}.legal-close{float:right;background:#102132;border:1px solid #274054;color:#fff;border-radius:7px;padding:7px 11px;cursor:pointer}.terms a{color:#55dcb8;text-decoration:underline}.legal-link{border:0;background:none;padding:0;color:#55dcb8;text-decoration:underline;font-size:11px;cursor:pointer;display:inline}.login-overlay{position:fixed;inset:0;background:#06101a;display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.login-overlay.show{display:flex}.login{width:min(430px,100%);background:#0b1926;border:1px solid #1d3548;border-radius:18px;padding:28px}.login .logo{padding:0 0 20px}.auth-tab{background:#102132}.auth-tab.active{background:#28d5a0;color:#06131b;border-color:#28d5a0}.terms{display:flex;gap:8px;align-items:flex-start;color:#8296a9;font-size:11px;margin:4px 0}.terms input{margin-top:2px}.error{color:#df7184;font-size:11px;display:none}.success{color:#2ed6a0;font-size:11px;display:none}
+.contact-note{color:#71879a;font-size:11px;margin-top:10px}
+@media(max-width:750px){.side{width:155px}.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}.top{padding:0 14px}.content{padding:14px}.user span{display:none}}
+@media(max-width:520px){.side{width:120px}.logo{font-size:17px}.nav button{font-size:11px}.top{height:68px}.title{font-size:17px}}
+</style>
+<style id="login-loading-style">
+#loginLoading{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,12,22,.72);backdrop-filter:blur(5px);z-index:99999}
+#loginLoading.show{display:flex}.login-loading-box{min-width:230px;padding:24px 28px;border-radius:16px;text-align:center;background:#111827;color:#fff;box-shadow:0 15px 45px rgba(0,0,0,.35)}
+.login-spinner{width:30px;height:30px;margin:0 auto 12px;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:loginSpin .75s linear infinite}
+@keyframes loginSpin{to{transform:rotate(360deg)}}.login-loading-text{font-size:15px;font-weight:600}
+</style>
+<style id="logout-loading-style">
+#logoutLoading{position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+background:rgba(8,12,22,.72);backdrop-filter:blur(5px);z-index:100000}
+#logoutLoading.show{display:flex}
+.logout-loading-box{min-width:230px;padding:24px 28px;border-radius:16px;text-align:center;
+background:#111827;color:#fff;box-shadow:0 15px 45px rgba(0,0,0,.35)}
+.logout-spinner{width:30px;height:30px;margin:0 auto 12px;border:3px solid rgba(255,255,255,.25);
+border-top-color:#fff;border-radius:50%;animation:logoutSpin .75s linear infinite}
+@keyframes logoutSpin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+
+<!-- Legal modals -->
+<div class="legal-overlay" id="termsModal">
+  <div class="legal-box">
+    <button class="legal-close" type="button" onclick="closeLegal()">Close</button>
+    <h2>AlphaEdge Terms &amp; Conditions</h2>
+    <h3>1. Acceptance</h3>
+    <p>By creating an account or using AlphaEdge, you agree to these Terms &amp; Conditions.</p>
+    <h3>2. Educational Information</h3>
+    <p>AlphaEdge content is provided for general educational and informational purposes only. It is not investment, financial, legal, or tax advice.</p>
+    <h3>3. Market Risk</h3>
+    <p>Trading and investing involve risk, including the possible loss of capital. Past performance does not guarantee future results.</p>
+    <h3>4. Account Responsibility</h3>
+    <p>You are responsible for keeping your Client ID and password confidential and for activity performed through your account.</p>
+    <h3>5. Use of the Platform</h3>
+    <p>You agree to use AlphaEdge lawfully and not to misuse, disrupt, or attempt to gain unauthorized access to the platform.</p>
+    <h3>6. Changes</h3>
+    <p>AlphaEdge may update these terms from time to time. Continued use of the platform after an update constitutes acceptance of the revised terms.</p>
+  </div>
+</div>
+
+<div class="legal-overlay" id="privacyModal">
+  <div class="legal-box">
+    <button class="legal-close" type="button" onclick="closeLegal()">Close</button>
+    <h2>AlphaEdge Privacy Policy</h2>
+    <h3>1. Information We Store</h3>
+    <p>Information entered into the application, such as your name, mobile number, email, Client ID and profile information, may be stored locally in your browser.</p>
+    <h3>2. Use of Information</h3>
+    <p>The information is used to provide account, profile, login and application functionality.</p>
+    <h3>3. Local Storage</h3>
+    <p>AlphaEdge uses browser local storage for account and profile data in this version. Clearing browser storage may remove locally stored information.</p>
+    <h3>4. Security</h3>
+    <p>Keep your account credentials confidential and use a strong password. Account and profile data in this version is stored in your browser's local storage.</p>
+    <h3>5. Updates</h3>
+    <p>This policy may be updated when application functionality changes.</p>
+  </div>
+</div>
+
+<div class="login-overlay show" id="loginScreen">
+  <div class="login">
+    <div class="logo">Alpha<span>Edge</span></div>
+
+    <div style="display:flex;gap:8px;margin-bottom:22px">
+      <button class="action auth-tab active" id="loginTab" onclick="switchAuth('login')" style="flex:1">Login</button>
+      <button class="action auth-tab" id="registerTab" onclick="switchAuth('register')" style="flex:1">Register</button>
+    </div>
+
+    <div id="loginPanel">
+      <h2 style="font-size:22px;margin:0 0 5px">Welcome back</h2>
+      <p style="color:#8296a9;font-size:12px;margin:0 0 20px">Login to your AlphaEdge workspace</p>
+      <form class="form" id="loginForm">
+        <label>Client ID <span class="required-star">*</span><input id="loginClientId" type="text" placeholder="e.g. AE100001" autocomplete="username" required></label>
+        <label>Password <span class="required-star">*</span><input id="loginPassword" type="password" minlength="8" placeholder="Enter password" autocomplete="current-password" required></label>
+        <div style="display:flex;justify-content:space-between;gap:12px;margin-top:-5px;margin-bottom:2px;flex-wrap:wrap">
+          <button type="button" class="legal-link" id="forgotClientBtn" style="font-size:11px">Forgot Client ID?</button>
+          <button type="button" class="legal-link" id="forgotPasswordBtn" style="font-size:11px">Forgot Password?</button>
+        </div>
+        <label class="terms"><input id="terms" type="checkbox" required><span>I agree to the <button type="button" class="legal-link termsLink">AlphaEdge Terms &amp; Conditions</button> and <button type="button" class="legal-link privacyLink">Privacy Policy</button>.</span></label>
+        <div class="error" id="loginError"></div>
+        <button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700;padding:12px" type="submit">Login</button>
+      </form>
+      <p style="text-align:center;color:#8296a9;font-size:11px;margin:12px 0 0">New to AlphaEdge? <a href="#" onclick="switchAuth('register');return false" style="color:#55dcb8">Create an account</a></p>
+      <div class="login-footer">
+        <div class="disclaimer"><b>Disclaimer:</b> AlphaEdge provides market information and educational content for general informational purposes only. It is not investment, financial, legal, or tax advice. Trading and investing involve risk, and past performance does not guarantee future results.</div>
+        <div class="rights">© <span id="footerYear"></span> AlphaEdge. All rights reserved.</div>
+      </div>
+    </div>
+
+    <div id="registerPanel" style="display:none">
+      <h2 style="font-size:22px;margin:0 0 5px">Create your account</h2>
+      <p style="color:#8296a9;font-size:12px;margin:0 0 20px">Register once, then use your credentials to login.</p>
+      <form class="form" id="registerForm">
+        <label>Full Name <span class="required-star">*</span><input id="regName" type="text" placeholder="Your full name" required></label>
+        <label>Mobile Number <span class="required-star">*</span><input id="regMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required></label>
+        <label>Email ID <span class="required-star">*</span><input id="regEmail" type="email" placeholder="you@example.com" required></label>
+        <div style="background:#0b1b29;border:1px solid #1d3548;border-radius:9px;padding:11px;color:#8fa5b7;font-size:11px">Your unique Client ID will be generated automatically after registration.</div>
+        <label>Password <span class="required-star">*</span><input id="regPassword" type="password" minlength="8" placeholder="Create password" required><div class="contact-note">Minimum 8 characters, 1 uppercase, 1 special character (@/#/₹), and 1 number.</div></label>
+        <label>Confirm Password <span class="required-star">*</span><input id="regConfirm" type="password" minlength="8" placeholder="Confirm password" required></label>
+        <label class="terms"><input id="regTerms" type="checkbox" required><span>I agree to the <button type="button" class="legal-link termsLink">AlphaEdge Terms &amp; Conditions</button> and <button type="button" class="legal-link privacyLink">Privacy Policy</button>.</span></label>
+        <div class="error" id="registerError"></div>
+        <div class="success" id="registerSuccess"></div>
+        <button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700;padding:12px" type="submit">Create Account</button>
+      </form>
+      <p style="text-align:center;color:#8296a9;font-size:11px;margin:18px 0 0">Already registered? <a href="#" onclick="switchAuth('login');return false" style="color:#55dcb8">Login here</a></p>
+    </div>
+  </div>
+</div>
+<div class="legal-overlay" id="forgotClientModal">
+  <div class="legal-box" style="width:min(470px,100%)">
+    <button class="legal-close" type="button" id="forgotClientClose">Close</button>
+    <h2>Forgot Client ID</h2>
+    <p style="color:#9dafc0;font-size:12px;line-height:1.6">Enter your registered mobile number or email to recover your Client ID.</p>
+    <form class="form" id="forgotClientForm">
+      <label>Registered Mobile or Email <span class="required-star">*</span><input id="forgotClientContact" type="text" placeholder="10-digit mobile or email" autocomplete="email" required></label>
+      <div class="error" id="forgotClientError"></div>
+      <div class="success" id="forgotClientSuccess"></div>
+      <button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700;padding:12px" type="submit">Recover Client ID</button>
+    </form>
+  </div>
+</div>
+
+<div class="legal-overlay" id="forgotPasswordModal">
+  <div class="legal-box" style="width:min(470px,100%)">
+    <button class="legal-close" type="button" id="forgotPasswordClose">Close</button>
+    <h2>Forgot Password</h2>
+    <p style="color:#9dafc0;font-size:12px;line-height:1.6">Verify your Client ID and registered mobile/email, then create a new password.</p>
+    <form class="form" id="forgotPasswordForm">
+      <label>Client ID <span class="required-star">*</span><input id="forgotPasswordClientId" type="text" placeholder="e.g. AE100001" required></label>
+      <label>Registered Mobile or Email <span class="required-star">*</span><input id="forgotPasswordContact" type="text" placeholder="10-digit mobile or email" autocomplete="email" required></label>
+      <label>New Password <span class="required-star">*</span><input id="forgotPasswordNew" type="password" minlength="8" placeholder="New password" required></label>
+      <div class="contact-note">Minimum 8 characters, 1 uppercase, 1 special character (@/#/₹), and 1 number.</div>
+      <label>Confirm New Password <span class="required-star">*</span><input id="forgotPasswordConfirm" type="password" minlength="8" placeholder="Confirm new password" required></label>
+      <div class="error" id="forgotPasswordError"></div>
+      <div class="success" id="forgotPasswordSuccess"></div>
+      <button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700;padding:12px" type="submit">Reset Password</button>
+    </form>
+  </div>
+</div>
+
+<div class="app">
+<aside class="side">
+  <div class="logo">Alpha<span>Edge</span></div>
+  <nav class="nav">
+    <button class="active" data-page="dashboard">Dashboard</button>
+    <button data-page="market">Market</button>
+    <button data-page="watchlist">Watchlist</button>
+    <button data-page="research">Research</button>
+    <button data-page="education">Education</button>
+    <button data-page="profile">Profile</button>
+    <button data-page="contact">Contact Us</button>
+    <button class="logout" id="logout">Logout</button>
+  </nav>
+</aside>
+
+<main class="main">
+<header class="top">
+  <div><div class="title" id="greetingTitle">Welcome to AlphaEdge</div><div class="sub" id="greetingSub">Your AlphaEdge workspace</div></div>
+  <div class="user"><span id="topMobile">+91 72XXXXXX33</span><div class="avatar" id="topAvatar">AE</div></div>
+</header>
+
+<div class="content">
+
+<section class="page active" id="dashboard">
+  <div class="cards">
+    <div class="card"><div class="label">Nifty 50</div><div class="value" id="dashNiftyValue">--</div><div class="up" id="dashNiftyChange">--</div></div>
+    <div class="card"><div class="label">Sensex</div><div class="value" id="dashSensexValue">--</div><div class="up" id="dashSensexChange">--</div></div>
+    <div class="card"><div class="label">Bank Nifty</div><div class="value" id="dashBankValue">--</div><div class="down" id="dashBankChange">--</div></div>
+    <div class="card"><div class="label">Watchlist</div><div class="value">5</div><div class="sub">Tracked symbols</div></div>
+  </div>
+  <div class="row">
+    <div class="panel"><h3>Market Trend</h3><div class="chart"><svg viewBox="0 0 600 250" preserveAspectRatio="none"><path id="marketChartLine" d="M0 210 L600 210" fill="none" stroke="#2ed6a0" stroke-width="5"/><path id="marketChartArea" d="M0 210 L600 210 L600 250 L0 250Z" fill="#2ed6a0" opacity=".08"/></svg></div><div class="market-chart-meta"><span>Live NIFTY 50 trend</span><span class="market-chart-live">● <span id="marketChartTime">Updating...</span></span></div></div>
+    <div class="panel"><h3>Watchlist</h3><div id="miniWatch"></div></div>
+  </div>
+  <div class="panel" style="margin-top:12px"><h3>Research Centre</h3><table class="table"><tr><th>Topic</th><th>Category</th><th>Status</th><th></th></tr>
+  <tr><td>Understanding Market Trends</td><td>Education</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('trends')">Open</button></td></tr>
+  <tr><td>Risk Management Framework</td><td>Research</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('risk')">Open</button></td></tr>
+  <tr><td>Technical Analysis Basics</td><td>Education</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('technical')">Open</button></td></tr></table></div>
+</section>
+
+<section class="page" id="market"><div class="panel"><h3>Market Overview</h3><div class="cards">
+<div class="card"><div class="label">Nifty 50</div><div class="value" id="marketNiftyValue">--</div><div class="up" id="marketNiftyChange">--</div></div>
+<div class="card"><div class="label">Sensex</div><div class="value" id="marketSensexValue">--</div><div class="up" id="marketSensexChange">--</div></div>
+<div class="card"><div class="label">Bank Nifty</div><div class="value" id="marketBankValue">--</div><div class="down" id="marketBankChange">--</div></div></div>
+<p class="contact-note">Live market data is supplied by the AlphaEdge backend. Feed status: <b id="marketFeedStatus">checking...</b></p></div></section>
+
+<section class="page" id="watchlist"><div class="panel"><h3>My Watchlist</h3><div id="fullWatch"></div></div></section>
+
+<section class="page" id="research"><div class="panel"><h3>Research Centre</h3><table class="table">
+<tr><th>Research</th><th>Type</th><th>Status</th><th></th></tr>
+<tr><td>Understanding Market Trends</td><td>Education</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('trends')">Open</button></td></tr>
+<tr><td>Risk Management Framework</td><td>Research</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('risk')">Open</button></td></tr>
+<tr><td>Technical Analysis Basics</td><td>Education</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openResearch('technical')">Open</button></td></tr></table></div></section>
+
+<section class="page" id="article"><div class="panel article" id="articleContent"></div></section>
+
+<section class="page" id="education"><div class="panel"><h3>AlphaEdge Education Modules</h3><table class="table">
+<tr><th>Module</th><th>Level</th><th>Status</th><th></th></tr>
+<tr><td>Trading Fundamentals</td><td>Beginner</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openModule('fundamentals')">Browse / Open</button><button class="pay-btn" type="button" onclick="payModule('Trading Fundamentals')">Pay ₹999</button><button class="confirm-link" type="button" onclick="openPaymentPage('Trading Fundamentals')">Confirm</button></td></tr>
+<tr><td>Technical Analysis</td><td>Intermediate</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openModule('ta')">Browse / Open</button><button class="pay-btn" type="button" onclick="payModule('Technical Analysis')">Pay ₹999</button><button class="confirm-link" type="button" onclick="openPaymentPage('Technical Analysis')">Confirm</button></td></tr>
+<tr><td>Risk Management</td><td>Beginner</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openModule('rm')">Browse / Open</button><button class="pay-btn" type="button" onclick="payModule('Risk Management')">Pay ₹999</button><button class="confirm-link" type="button" onclick="openPaymentPage('Risk Management')">Confirm</button></td></tr>
+<tr><td>Trading Psychology</td><td>Intermediate</td><td><span class="pill">Available</span></td><td><button class="action" onclick="openModule('psych')">Browse / Open</button><button class="pay-btn" type="button" onclick="payModule('Trading Psychology')">Pay ₹999</button><button class="confirm-link" type="button" onclick="openPaymentPage('Trading Psychology')">Confirm</button></td></tr>
+</table></div></section>
+
+
+<section class="page" id="payment-confirmation">
+  <div class="panel profilebox">
+    <button class="action payment-page-back" type="button" onclick="showPage('education')">← Back to Education</button>
+    <h3>Payment</h3>
+    <div class="payment-page-note">Pay ₹999 for the selected course, then enter the transaction details below to confirm your payment.</div>
+    <div class="payment-page-total">₹999 <span style="font-size:11px;font-weight:400;color:#8194a7" id="selectedModuleLabel">Course payment</span></div>
+    <div style="background:#081722;border:1px solid #1d3548;border-radius:12px;padding:16px;margin-bottom:16px">
+      <div style="font-size:11px;color:#8da0b3;margin-bottom:8px">UPI PAYMENT</div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px">Pay ₹999 using your UPI app</div>
+      <button class="pay-btn" type="button" onclick="startUpiPayment()">Pay ₹999</button>
+      <span id="paymentOpened" style="font-size:10px;color:#8296a9;margin-left:8px"></span>
+      <div class="wa-note" style="margin-top:10px">After payment, return here and submit your UTR / Transaction ID.</div>
+    </div>
+    <button class="confirm-btn" id="showConfirmBtn" type="button" style="display:none;margin-bottom:12px">I Have Completed Payment — Confirm</button>
+    <div id="paymentReturnNote" class="wa-note" style="display:none;margin-bottom:12px">Payment app se wapas aane ke baad neeche UTR aur payment slip submit karke payment confirm karein.</div>
+    <form class="form" id="paymentConfirmForm" style="display:none">
+      <label>Course<input id="paymentModule" type="text" readonly></label>
+      <label>Name <span class="required-star">*</span><input id="paymentName" type="text" placeholder="Your name" required></label>
+      <label>UTR / Transaction ID <span class="required-star">*</span><input id="paymentUtr" type="text" placeholder="Enter UTR / Transaction ID" required></label>
+      <label>Payment Slip <span class="required-star">*</span><input id="paymentSlip" type="file" accept="image/*,.pdf" required></label>
+      <div class="slip">JPG/PNG/PDF receipt accepted.</div>
+      <button class="confirm-btn" type="submit">Confirm Payment</button>
+      <div class="confirm-status" id="confirmStatus"></div>
+    </form>
+  </div>
+</section>
+
+<section class="page" id="profile"><div class="panel profilebox"><h3>My Profile</h3>
+<div class="profile-photo"><div class="big-avatar" id="profileAvatar">AE</div><div><label class="photo-btn">Choose Photo<input id="photoInput" type="file" accept="image/*" hidden></label><div class="contact-note">JPG/PNG photo</div></div></div>
+<form class="form" id="profileForm">
+<label>Full Name <span class="required-star">*</span><input id="profileName" type="text" placeholder="Your full name" required></label>
+<label>Mobile Number <span class="required-star">*</span><input id="profileMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required></label>
+<label>Email ID <span class="required-star">*</span><input id="profileEmail" type="email" placeholder="you@example.com" required></label>
+        <label>Client ID<input id="profileClientId" type="text" readonly></label>
+<label>Password<input id="profilePassword" type="password" minlength="6" placeholder="New password"></label>
+<button class="action" type="submit">Save Changes</button>
+<div class="success" id="profileSuccess">Profile updated successfully.</div>
+</form></div></section>
+
+<section class="page" id="contact"><div class="panel profilebox"><h3>Contact AlphaEdge</h3><p class="contact-note">Fill the form and submit. WhatsApp will open with your message prepared.</p>
+<form class="form" id="contactForm" style="margin-top:15px">
+<label>Name <span class="required-star">*</span><input id="contactName" required placeholder="Your name"></label>
+<label>Mobile Number <span class="required-star">*</span><input id="contactMobile" required inputmode="numeric" maxlength="10" placeholder="10-digit mobile number"></label>
+<label>Email ID <span class="required-star">*</span><input id="contactEmail" type="email" required placeholder="you@example.com"></label>
+<label>Message <span class="required-star">*</span><textarea id="contactMessage" required placeholder="How can we help you?"></textarea></label>
+<button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700" type="submit">Submit &amp; Continue to WhatsApp</button>
+</form></div></section>
+
+</main></div>
+
+<script>
+const WHATSAPP_NUMBER="917237868633"; // Replace with your WhatsApp number, e.g. 919876543210
+const symbols=[['NIFTY 50','--','up'],['SENSEX','--','up'],['BANK NIFTY','--','up']];
+const titles={dashboard:'Market Dashboard',market:'Market',watchlist:'My Watchlist',research:'Research Centre',education:'Education',profile:'My Profile',contact:'Contact Us',article:'AlphaEdge Research', 'payment-confirmation':'Payment Confirmation'};
+
+function renderWatch(){
+ document.getElementById('miniWatch').innerHTML=symbols.map(x=>`<div class="watch"><span>${x[0]}</span><span class="${x[2]}">${x[1]}</span></div>`).join('');
+ document.getElementById('fullWatch').innerHTML=symbols.map(x=>`<div class="watch"><b>${x[0]}</b><span class="${x[2]}">${x[1]}</span></div>`).join('');
 }
 renderWatch();
 
 function fmtPrice(v){return Number.isFinite(Number(v)) ? Number(v).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}) : '--'}
 function fmtPct(v){return Number.isFinite(Number(v)) ? (Number(v)>=0?'+':'')+Number(v).toFixed(2)+'%' : '--'}
 function setMarketCard(prefix,data){
-const value=document.getElementById(prefix+'Value'), change=document.getElementById(prefix+'Change');
-if(value) value.textContent=fmtPrice(data?.ltp);
-if(change){ change.textContent=fmtPct(data?.changePct); change.className=Number(data?.changePct)>=0?'up':'down'; }
+  const value=document.getElementById(prefix+'Value'), change=document.getElementById(prefix+'Change');
+  if(value) value.textContent=fmtPrice(data?.ltp);
+  if(change){ change.textContent=fmtPct(data?.changePct); change.className=Number(data?.changePct)>=0?'up':'down'; }
 }
 function updateMarketUI(data){
-setMarketCard('dashNifty',data.nifty); setMarketCard('dashSensex',data.sensex); setMarketCard('dashBank',data.banknifty);
-setMarketCard('marketNifty',data.nifty); setMarketCard('marketSensex',data.sensex); setMarketCard('marketBank',data.banknifty);
-const status=document.getElementById('marketFeedStatus'); if(status) status.textContent=data.connected?'CONNECTED':'DISCONNECTED';
-if(data.nifty?.ltp) updateChart(data.nifty.ltp);
+  setMarketCard('dashNifty',data.nifty); setMarketCard('dashSensex',data.sensex); setMarketCard('dashBank',data.banknifty);
+  setMarketCard('marketNifty',data.nifty); setMarketCard('marketSensex',data.sensex); setMarketCard('marketBank',data.banknifty);
+  const status=document.getElementById('marketFeedStatus'); if(status) status.textContent=data.connected?'CONNECTED':'DISCONNECTED';
+  if(data.nifty?.ltp) updateChart(data.nifty.ltp);
 }
 const marketHistory=[];
 function getMarketTime(){
-return new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date());
+  return new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date());
 }
 function updateChart(current){
-const line=document.getElementById('marketChartLine'), area=document.getElementById('marketChartArea'); if(!line||!area)return;
-const value=Number(current); if(!Number.isFinite(value))return;
-const now=getMarketTime();
-marketHistory.push({value,time:now});
-if(marketHistory.length>30) marketHistory.shift();
-const pts=marketHistory.slice(-14);
-const values=pts.map(p=>p.value);
-const min=Math.min(...values),max=Math.max(...values),range=max-min||Math.max(1,Math.abs(min)*0.001);
-const xy=pts.map((p,i)=>${(i/(Math.max(1,pts.length-1)))*600} ${210-((p.value-min)/range)*175}).join(' L');
-line.setAttribute('d','M'+xy); area.setAttribute('d','M'+xy+' L600 250 L0 250Z');
-const timeEl=document.getElementById('marketChartTime');
-if(timeEl) timeEl.textContent='Live • '+now+' IST';
+  const line=document.getElementById('marketChartLine'), area=document.getElementById('marketChartArea'); if(!line||!area)return;
+  const value=Number(current); if(!Number.isFinite(value))return;
+  const now=getMarketTime();
+  marketHistory.push({value,time:now});
+  if(marketHistory.length>30) marketHistory.shift();
+  const pts=marketHistory.slice(-14);
+  const values=pts.map(p=>p.value);
+  const min=Math.min(...values),max=Math.max(...values),range=max-min||Math.max(1,Math.abs(min)*0.001);
+  const xy=pts.map((p,i)=>`${(i/(Math.max(1,pts.length-1)))*600} ${210-((p.value-min)/range)*175}`).join(' L');
+  line.setAttribute('d','M'+xy); area.setAttribute('d','M'+xy+' L600 250 L0 250Z');
+  const timeEl=document.getElementById('marketChartTime');
+  if(timeEl) timeEl.textContent='Live • '+now+' IST';
 }
 async function loadMarket(){
-try{
-const r=await fetch('/api/market',{cache:'no-store'});
-if(!r.ok) throw new Error('market unavailable');
-const d=await r.json();
-updateMarketUI(d);
-}catch(e){
-const s=document.getElementById('marketFeedStatus');
-if(s)s.textContent='UNAVAILABLE';
-}
+  try{
+    const r=await fetch('/api/market',{cache:'no-store'});
+    if(!r.ok) throw new Error('market unavailable');
+    const d=await r.json();
+    updateMarketUI(d);
+  }catch(e){
+    const s=document.getElementById('marketFeedStatus');
+    if(s)s.textContent='UNAVAILABLE';
+  }
 }
 loadMarket(); setInterval(loadMarket,5000);
-try{const es=new EventSource('/api/market-stream'); es.onmessage=e=>{try{updateMarketUI(JSON.parse(e.data))}catch(){}}; }catch(){}
+try{const es=new EventSource('/api/market-stream'); es.onmessage=e=>{try{updateMarketUI(JSON.parse(e.data))}catch(_){}}; }catch(_){}
 
 function showPage(id){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-const page=document.getElementById(id);
-if(!page) return;
-page.classList.add('active');
-const pageTitle=document.getElementById('pageTitle');
-if(pageTitle) pageTitle.textContent=titles[id]||'AlphaEdge';
-const greetingTitle=document.getElementById('greetingTitle');
-if(greetingTitle && id==='payment-confirmation') greetingTitle.textContent='Payment Confirmation';
-window.scrollTo({top:0,behavior:'smooth'});
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ const page=document.getElementById(id);
+ if(!page) return;
+ page.classList.add('active');
+ const pageTitle=document.getElementById('pageTitle');
+ if(pageTitle) pageTitle.textContent=titles[id]||'AlphaEdge';
+ const greetingTitle=document.getElementById('greetingTitle');
+ if(greetingTitle && id==='payment-confirmation') greetingTitle.textContent='Payment Confirmation';
+ window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('.nav button[data-page]').forEach(btn=>btn.addEventListener('click',()=>{
-document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');showPage(btn.dataset.page);
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');showPage(btn.dataset.page);
 }));
 
 document.getElementById('topAvatar').addEventListener('click',()=>{
-document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-const profileNav=document.querySelector('.nav button[data-page="profile"]');
-if(profileNav) profileNav.classList.add('active');
-showPage('profile');
-document.getElementById('profileName')?.focus();
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  const profileNav=document.querySelector('.nav button[data-page="profile"]');
+  if(profileNav) profileNav.classList.add('active');
+  showPage('profile');
+  document.getElementById('profileName')?.focus();
 });
 
 const articles={
-trends:<h2>Understanding Market Trends</h2><p>Trading means buying and selling financial instruments with the aim of benefiting from changes in their prices. A market trend describes the general direction in which prices are moving over a period of time.</p><h3>How traders study a trend</h3><ul><li><b>Uptrend:</b> prices generally form higher highs and higher lows.</li><li><b>Downtrend:</b> prices generally form lower highs and lower lows.</li><li><b>Sideways:</b> price moves within a relatively defined range.</li></ul><h3>Important</h3><p>Charts and indicators are tools for analysis, not guarantees of profit. Every trade carries risk.</p>,
-risk:<h2>Risk Management Framework</h2><p>Risk management is a core part of trading. The objective is to control potential losses rather than trying to predict every market move.</p><h3>Basic principles</h3><ul><li>Decide how much capital you are prepared to risk before entering a trade.</li><li>Use a predefined exit or risk limit appropriate to your strategy.</li><li>Avoid concentrating all available capital in one position.</li><li>Keep a record of trades and review decisions objectively.</li></ul><p>There is no risk-free trading strategy.</p>,
-technical:<h2>Technical Analysis Basics</h2><p>Technical analysis studies price and volume information to identify possible patterns and market behaviour.</p><h3>Common concepts</h3><ul><li>Support and resistance</li><li>Trendlines and price structure</li><li>Moving averages</li><li>Volume</li><li>Momentum indicators</li></ul><p>Technical analysis should be combined with sound risk management and should not be treated as a guarantee of future returns.</p>
+ trends:`<h2>Understanding Market Trends</h2><p>Trading means buying and selling financial instruments with the aim of benefiting from changes in their prices. A market trend describes the general direction in which prices are moving over a period of time.</p><h3>How traders study a trend</h3><ul><li><b>Uptrend:</b> prices generally form higher highs and higher lows.</li><li><b>Downtrend:</b> prices generally form lower highs and lower lows.</li><li><b>Sideways:</b> price moves within a relatively defined range.</li></ul><h3>Important</h3><p>Charts and indicators are tools for analysis, not guarantees of profit. Every trade carries risk.</p>`,
+ risk:`<h2>Risk Management Framework</h2><p>Risk management is a core part of trading. The objective is to control potential losses rather than trying to predict every market move.</p><h3>Basic principles</h3><ul><li>Decide how much capital you are prepared to risk before entering a trade.</li><li>Use a predefined exit or risk limit appropriate to your strategy.</li><li>Avoid concentrating all available capital in one position.</li><li>Keep a record of trades and review decisions objectively.</li></ul><p>There is no risk-free trading strategy.</p>`,
+ technical:`<h2>Technical Analysis Basics</h2><p>Technical analysis studies price and volume information to identify possible patterns and market behaviour.</p><h3>Common concepts</h3><ul><li>Support and resistance</li><li>Trendlines and price structure</li><li>Moving averages</li><li>Volume</li><li>Momentum indicators</li></ul><p>Technical analysis should be combined with sound risk management and should not be treated as a guarantee of future returns.</p>`
 };
-function openResearch(key){document.getElementById('articleContent').innerHTML=articles[key]+<br><button class="action" onclick="showPage('research')">← Back to Research</button>;showPage('article')}
+function openResearch(key){document.getElementById('articleContent').innerHTML=articles[key]+`<br><button class="action" onclick="showPage('research')">← Back to Research</button>`;showPage('article')}
 
 const modules={
-fundamentals:<h2>Trading Fundamentals</h2><p>Learn what stocks, exchanges, orders, bids, asks, market orders and limit orders mean.</p><h3>Lesson 1: What is trading?</h3><p>Trading involves buying and selling financial instruments. Your result depends on the entry price, exit price, costs and market movement.</p>,
-ta:<h2>Technical Analysis</h2><p>Learn price charts, trends, support/resistance, volume and commonly used indicators.</p><h3>Lesson 1: Reading a chart</h3><p>Start by identifying the timeframe, trend and important price levels before looking at indicators.</p>,
-rm:<h2>Risk Management</h2><p>Learn position sizing, risk limits, diversification and trade journaling.</p><h3>Lesson 1: Control risk</h3><p>A good trading process focuses on limiting downside and following predefined rules.</p>,
-psych:<h2>Trading Psychology</h2><p>Learn how emotions, discipline and decision-making can influence trading behaviour.</p><h3>Lesson 1: Follow a process</h3><p>Having written rules can help reduce impulsive decisions and keep your approach consistent.</p>
+ fundamentals:`<h2>Trading Fundamentals</h2><p>Learn what stocks, exchanges, orders, bids, asks, market orders and limit orders mean.</p><h3>Lesson 1: What is trading?</h3><p>Trading involves buying and selling financial instruments. Your result depends on the entry price, exit price, costs and market movement.</p>`,
+ ta:`<h2>Technical Analysis</h2><p>Learn price charts, trends, support/resistance, volume and commonly used indicators.</p><h3>Lesson 1: Reading a chart</h3><p>Start by identifying the timeframe, trend and important price levels before looking at indicators.</p>`,
+ rm:`<h2>Risk Management</h2><p>Learn position sizing, risk limits, diversification and trade journaling.</p><h3>Lesson 1: Control risk</h3><p>A good trading process focuses on limiting downside and following predefined rules.</p>`,
+ psych:`<h2>Trading Psychology</h2><p>Learn how emotions, discipline and decision-making can influence trading behaviour.</p><h3>Lesson 1: Follow a process</h3><p>Having written rules can help reduce impulsive decisions and keep your approach consistent.</p>`
 };
-function openModule(key){document.getElementById('articleContent').innerHTML=modules[key]+<br><button class="action" onclick="showPage('education')">← Back to Education</button>;showPage('article')}
+function openModule(key){document.getElementById('articleContent').innerHTML=modules[key]+`<br><button class="action" onclick="showPage('education')">← Back to Education</button>`;showPage('article')}
 
 function openTerms(e){e.preventDefault();document.getElementById('termsModal').classList.add('show')}
 function openPrivacy(e){e.preventDefault();document.getElementById('privacyModal').classList.add('show')}
 function closeLegal(){document.querySelectorAll('.legal-overlay').forEach(x=>x.classList.remove('show'))}
 function getGreeting(){
-const hour = new Date().getHours();
-if(hour >= 5 && hour < 12) return 'Good Morning';
-if(hour >= 12 && hour < 17) return 'Good Afternoon';
-if(hour >= 17 && hour < 21) return 'Good Evening';
-return 'Good Night';
+  const hour = new Date().getHours();
+  if(hour >= 5 && hour < 12) return 'Good Morning';
+  if(hour >= 12 && hour < 17) return 'Good Afternoon';
+  if(hour >= 17 && hour < 21) return 'Good Evening';
+  return 'Good Night';
 }
 function updateGreeting(){
-const name = localStorage.getItem('alphaedge_name') || '';
-const title = document.getElementById('greetingTitle');
-const sub = document.getElementById('greetingSub');
-if(title) title.textContent = name ? getGreeting() + ', ' + name : getGreeting();
-if(sub) sub.textContent = 'Welcome to your AlphaEdge workspace';
+  const name = localStorage.getItem('alphaedge_name') || '';
+  const title = document.getElementById('greetingTitle');
+  const sub = document.getElementById('greetingSub');
+  if(title) title.textContent = name ? getGreeting() + ', ' + name : getGreeting();
+  if(sub) sub.textContent = 'Welcome to your AlphaEdge workspace';
 }
 function switchAuth(mode){
-const login=document.getElementById('loginPanel'), reg=document.getElementById('registerPanel');
-const lt=document.getElementById('loginTab'), rt=document.getElementById('registerTab');
-const showLogin=mode==='login';
-login.style.display=showLogin?'block':'none'; reg.style.display=showLogin?'none':'block';
-lt.classList.toggle('active',showLogin); rt.classList.toggle('active',!showLogin);
+ const login=document.getElementById('loginPanel'), reg=document.getElementById('registerPanel');
+ const lt=document.getElementById('loginTab'), rt=document.getElementById('registerTab');
+ const showLogin=mode==='login';
+ login.style.display=showLogin?'block':'none'; reg.style.display=showLogin?'none':'block';
+ lt.classList.toggle('active',showLogin); rt.classList.toggle('active',!showLogin);
 }
 function getUsers(){try{return JSON.parse(localStorage.getItem('alphaedge_users')||'[]')}catch(e){return []}}
 function saveUsers(users){localStorage.setItem('alphaedge_users',JSON.stringify(users))}
 function recoveryContactMatches(user,contact){
-const c=contact.trim().toLowerCase();
-const mobile=String(user.mobile||'').replace(/\D/g,'');
-return c===String(user.email||'').trim().toLowerCase() || c.replace(/\D/g,'')===mobile;
+  const c=contact.trim().toLowerCase();
+  const mobile=String(user.mobile||'').replace(/\D/g,'');
+  return c===String(user.email||'').trim().toLowerCase() || c.replace(/\D/g,'')===mobile;
 }
 
 function closeRecoveryModals(){
-document.getElementById('forgotClientModal').classList.remove('show');
-document.getElementById('forgotPasswordModal').classList.remove('show');
+  document.getElementById('forgotClientModal').classList.remove('show');
+  document.getElementById('forgotPasswordModal').classList.remove('show');
 }
 
 document.getElementById('forgotClientBtn').addEventListener('click',()=>{
-document.getElementById('forgotClientContact').value='';
-document.getElementById('forgotClientError').style.display='none';
-document.getElementById('forgotClientSuccess').style.display='none';
-document.getElementById('forgotClientModal').classList.add('show');
-setTimeout(()=>document.getElementById('forgotClientContact').focus(),50);
+  document.getElementById('forgotClientContact').value='';
+  document.getElementById('forgotClientError').style.display='none';
+  document.getElementById('forgotClientSuccess').style.display='none';
+  document.getElementById('forgotClientModal').classList.add('show');
+  setTimeout(()=>document.getElementById('forgotClientContact').focus(),50);
 });
 
 document.getElementById('forgotPasswordBtn').addEventListener('click',()=>{
-document.getElementById('forgotPasswordClientId').value='';
-document.getElementById('forgotPasswordContact').value='';
-document.getElementById('forgotPasswordNew').value='';
-document.getElementById('forgotPasswordConfirm').value='';
-document.getElementById('forgotPasswordError').style.display='none';
-document.getElementById('forgotPasswordSuccess').style.display='none';
-document.getElementById('forgotPasswordModal').classList.add('show');
-setTimeout(()=>document.getElementById('forgotPasswordClientId').focus(),50);
+  document.getElementById('forgotPasswordClientId').value='';
+  document.getElementById('forgotPasswordContact').value='';
+  document.getElementById('forgotPasswordNew').value='';
+  document.getElementById('forgotPasswordConfirm').value='';
+  document.getElementById('forgotPasswordError').style.display='none';
+  document.getElementById('forgotPasswordSuccess').style.display='none';
+  document.getElementById('forgotPasswordModal').classList.add('show');
+  setTimeout(()=>document.getElementById('forgotPasswordClientId').focus(),50);
 });
 
 document.getElementById('forgotClientClose').addEventListener('click',closeRecoveryModals);
@@ -381,308 +431,310 @@ document.getElementById('forgotClientModal').addEventListener('click',e=>{if(e.t
 document.getElementById('forgotPasswordModal').addEventListener('click',e=>{if(e.target.id==='forgotPasswordModal')closeRecoveryModals()});
 
 document.getElementById('forgotClientForm').addEventListener('submit',async e=>{
-e.preventDefault();
-const contact=document.getElementById('forgotClientContact').value;
-const err=document.getElementById('forgotClientError'),ok=document.getElementById('forgotClientSuccess');
-err.style.display='none'; ok.style.display='none';
-try{
-const response=await fetch('/api/auth/forgot-client',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact})});
-const data=await response.json();
-if(!response.ok){err.textContent=data.message||'No account found.';err.style.display='block';return}
-ok.textContent='Your Client ID is '+data.clientId+'. Please save it for login.';ok.style.display='block';
-}catch(_){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
+  e.preventDefault();
+  const contact=document.getElementById('forgotClientContact').value;
+  const err=document.getElementById('forgotClientError'),ok=document.getElementById('forgotClientSuccess');
+  err.style.display='none'; ok.style.display='none';
+  try{
+    const response=await fetch('/api/auth/forgot-client',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact})});
+    const data=await response.json();
+    if(!response.ok){err.textContent=data.message||'No account found.';err.style.display='block';return}
+    ok.textContent='Your Client ID is '+data.clientId+'. Please save it for login.';ok.style.display='block';
+  }catch(_){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
 });
 
 document.getElementById('forgotPasswordForm').addEventListener('submit',async e=>{
-e.preventDefault();
-const clientId=document.getElementById('forgotPasswordClientId').value.trim().toUpperCase();
-const contact=document.getElementById('forgotPasswordContact').value;
-const pass=document.getElementById('forgotPasswordNew').value;
-const confirm=document.getElementById('forgotPasswordConfirm').value;
-const err=document.getElementById('forgotPasswordError'),ok=document.getElementById('forgotPasswordSuccess');
-err.style.display='none'; ok.style.display='none';
-if(!/^AE\d{6}$/.test(clientId)){err.textContent='Enter a valid Client ID, for example AE100001.';err.style.display='block';return}
-if(pass.length<8 || !/[A-Z]/.test(pass) || !/[0-9]/.test(pass) || !/[@#₹]/.test(pass)){err.textContent='Password must be minimum 8 characters and contain 1 uppercase, 1 number and 1 special character (@/#/₹).';err.style.display='block';return}
-if(pass!==confirm){err.textContent='Passwords do not match.';err.style.display='block';return}
-try{
-const response=await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientId,contact,password:pass})});
-const data=await response.json();
-if(!response.ok){err.textContent=data.message||'Password reset failed.';err.style.display='block';return}
-ok.textContent='Password reset successfully. You can now login with '+clientId+'.';ok.style.display='block';
-document.getElementById('loginClientId').value=clientId; document.getElementById('loginPassword').value='';
-}catch(_){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
+  e.preventDefault();
+  const clientId=document.getElementById('forgotPasswordClientId').value.trim().toUpperCase();
+  const contact=document.getElementById('forgotPasswordContact').value;
+  const pass=document.getElementById('forgotPasswordNew').value;
+  const confirm=document.getElementById('forgotPasswordConfirm').value;
+  const err=document.getElementById('forgotPasswordError'),ok=document.getElementById('forgotPasswordSuccess');
+  err.style.display='none'; ok.style.display='none';
+  if(!/^AE\d{6}$/.test(clientId)){err.textContent='Enter a valid Client ID, for example AE100001.';err.style.display='block';return}
+  if(pass.length<8 || !/[A-Z]/.test(pass) || !/[0-9]/.test(pass) || !/[@#₹]/.test(pass)){err.textContent='Password must be minimum 8 characters and contain 1 uppercase, 1 number and 1 special character (@/#/₹).';err.style.display='block';return}
+  if(pass!==confirm){err.textContent='Passwords do not match.';err.style.display='block';return}
+  try{
+    const response=await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientId,contact,password:pass})});
+    const data=await response.json();
+    if(!response.ok){err.textContent=data.message||'Password reset failed.';err.style.display='block';return}
+    ok.textContent='Password reset successfully. You can now login with '+clientId+'.';ok.style.display='block';
+    document.getElementById('loginClientId').value=clientId; document.getElementById('loginPassword').value='';
+  }catch(_){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
 });
 
 document.getElementById('registerForm').addEventListener('submit',async e=>{
-e.preventDefault();
-const name=document.getElementById('regName').value.trim();
-const mobile=document.getElementById('regMobile').value.replace(/\D/g,'');
-const email=document.getElementById('regEmail').value.trim().toLowerCase();
-const password=document.getElementById('regPassword').value;
-const confirm=document.getElementById('regConfirm').value;
-const err=document.getElementById('registerError'),ok=document.getElementById('registerSuccess');
-err.style.display='none'; ok.style.display='none';
-if(!name){err.textContent='Please enter your full name.';err.style.display='block';return}
-if(!/^\d{10}$/.test(mobile)){err.textContent='Enter a valid 10-digit mobile number.';err.style.display='block';return}
-if(!/^\S+@\S+.\S+$/.test(email)){err.textContent='Enter a valid email address.';err.style.display='block';return}
-if(password.length<8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[@#₹]/.test(password)){err.textContent='Password must be minimum 8 characters and contain 1 uppercase, 1 number and 1 special character (@/#/₹).';err.style.display='block';return}
-if(password!==confirm){err.textContent='Passwords do not match.';err.style.display='block';return}
-if(!document.getElementById('regTerms').checked){err.textContent='Please accept the Terms & Conditions and Privacy Policy.';err.style.display='block';return}
-try{
-const response=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,mobile,email,password})});
-const data=await response.json();
-if(!response.ok){err.textContent=data.message||'Registration failed.';err.style.display='block';return}
-const clientId=data.client.client_id;
-ok.innerHTML='Account created successfully. Your Client ID is <strong>'+clientId+'</strong>. Please save it for login.';ok.style.display='block';
-document.getElementById('loginClientId').value=clientId; document.getElementById('loginPassword').value='';
-setTimeout(()=>switchAuth('login'),1400);
-}catch(_){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
+  e.preventDefault();
+  const name=document.getElementById('regName').value.trim();
+  const mobile=document.getElementById('regMobile').value.replace(/\D/g,'');
+  const email=document.getElementById('regEmail').value.trim().toLowerCase();
+  const password=document.getElementById('regPassword').value;
+  const confirm=document.getElementById('regConfirm').value;
+  const err=document.getElementById('registerError'),ok=document.getElementById('registerSuccess');
+  err.style.display='none'; ok.style.display='none';
+  if(!name){err.textContent='Please enter your full name.';err.style.display='block';return}
+  if(!/^\d{10}$/.test(mobile)){err.textContent='Enter a valid 10-digit mobile number.';err.style.display='block';return}
+  if(!/^\S+@\S+\.\S+$/.test(email)){err.textContent='Enter a valid email address.';err.style.display='block';return}
+  if(password.length<8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[@#₹]/.test(password)){err.textContent='Password must be minimum 8 characters and contain 1 uppercase, 1 number and 1 special character (@/#/₹).';err.style.display='block';return}
+  if(password!==confirm){err.textContent='Passwords do not match.';err.style.display='block';return}
+  if(!document.getElementById('regTerms').checked){err.textContent='Please accept the Terms & Conditions and Privacy Policy.';err.style.display='block';return}
+  try{
+    const response=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,mobile,email,password})});
+    const data=await response.json();
+    if(!response.ok){err.textContent=data.message||'Registration failed.';err.style.display='block';return}
+    const clientId=data.client.client_id;
+    ok.innerHTML='Account created successfully. Your Client ID is <strong>'+clientId+'</strong>. Please save it for login.';ok.style.display='block';
+    document.getElementById('loginClientId').value=clientId; document.getElementById('loginPassword').value='';
+    setTimeout(()=>switchAuth('login'),1400);
+  }catch(_){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
 });
 
 document.getElementById('loginForm').addEventListener('submit',async e=>{
-e.preventDefault();
-const clientId=document.getElementById('loginClientId').value.trim().toUpperCase();
-const password=document.getElementById('loginPassword').value;
-const err=document.getElementById('loginError');
-const loader=document.getElementById('loginLoading');
-err.style.display='none';
-if(!/^AE\d{6}$/.test(clientId)){err.textContent='Enter a valid Client ID, for example AE100001.';err.style.display='block';return}
-if(!document.getElementById('terms').checked){err.textContent='Please accept the Terms & Conditions and Privacy Policy.';err.style.display='block';return}
-loader.classList.add('show');
+ e.preventDefault();
+ const clientId=document.getElementById('loginClientId').value.trim().toUpperCase();
+ const password=document.getElementById('loginPassword').value;
+ const err=document.getElementById('loginError');
+ const loader=document.getElementById('loginLoading');
+ err.style.display='none';
+ if(!/^AE\d{6}$/.test(clientId)){err.textContent='Enter a valid Client ID, for example AE100001.';err.style.display='block';return}
+ if(!document.getElementById('terms').checked){err.textContent='Please accept the Terms & Conditions and Privacy Policy.';err.style.display='block';return}
+ loader.classList.add('show');
 
-try{
-let user=null;
-try{
-const response=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientId,password})});
-if(response.ok){const data=await response.json();if(data?.client)user=data.client}
-else if(response.status!==404&&response.status!==405){let d={};try{d=await response.json()}catch(){};err.textContent=d.message||'Invalid Client ID or password.';err.style.display='block';loader.classList.remove('show');return}
-}catch(){}
+ try{
+  let user=null;
+  try{
+   const response=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientId,password})});
+   if(response.ok){const data=await response.json();if(data?.client)user=data.client}
+   else if(response.status!==404&&response.status!==405){let d={};try{d=await response.json()}catch(_){};err.textContent=d.message||'Invalid Client ID or password.';err.style.display='block';loader.classList.remove('show');return}
+  }catch(_){}
 
-if(!user){
-const users=typeof getUsers==='function'?getUsers():[];
-user=users.find(u=>String(u.clientId||'').toUpperCase()===clientId&&u.password===password);
-}
-if(!user){err.textContent='Invalid Client ID or password.';err.style.display='block';loader.classList.remove('show');return}
+  if(!user){
+   const users=typeof getUsers==='function'?getUsers():[];
+   user=users.find(u=>String(u.clientId||'').toUpperCase()===clientId&&u.password===password);
+  }
+  if(!user){err.textContent='Invalid Client ID or password.';err.style.display='block';loader.classList.remove('show');return}
 
-await new Promise(r=>setTimeout(r,1200));
-localStorage.setItem('alphaedge_logged_in','1');
-localStorage.setItem('alphaedge_client_id',user.clientId);
-localStorage.setItem('alphaedge_mobile',user.phone||user.mobile||'');
-localStorage.setItem('alphaedge_name',user.name||'');
-localStorage.setItem('alphaedge_email',user.email||'');
-document.getElementById('topMobile').textContent=user.clientId;
-document.getElementById('profileName').value=user.name||'';
-document.getElementById('profileMobile').value=user.phone||user.mobile||'';
-document.getElementById('profileEmail').value=user.email||'';
-if(document.getElementById('profileClientId'))document.getElementById('profileClientId').value=user.clientId;
-updateGreeting();
-document.getElementById('loginScreen').classList.remove('show');
-}catch(e){err.textContent='Login failed. Please try again.';err.style.display='block'}
-finally{loader.classList.remove('show')}
+  await new Promise(r=>setTimeout(r,1200));
+  localStorage.setItem('alphaedge_logged_in','1');
+  localStorage.setItem('alphaedge_client_id',user.clientId);
+  localStorage.setItem('alphaedge_mobile',user.phone||user.mobile||'');
+  localStorage.setItem('alphaedge_name',user.name||'');
+  localStorage.setItem('alphaedge_email',user.email||'');
+  document.getElementById('topMobile').textContent=user.clientId;
+  document.getElementById('profileName').value=user.name||'';
+  document.getElementById('profileMobile').value=user.phone||user.mobile||'';
+  document.getElementById('profileEmail').value=user.email||'';
+  if(document.getElementById('profileClientId'))document.getElementById('profileClientId').value=user.clientId;
+  updateGreeting();
+  document.getElementById('loginScreen').classList.remove('show');
+ }catch(e){err.textContent='Login failed. Please try again.';err.style.display='block'}
+ finally{loader.classList.remove('show')}
 });
 document.getElementById('logout').addEventListener('click',async()=>{
-const loader=document.getElementById('logoutLoading');
-if(loader) loader.classList.add('show');
+  const loader=document.getElementById('logoutLoading');
+  if(loader) loader.classList.add('show');
 
-try{await fetch('/api/auth/logout',{method:'POST'})}catch(_){}
+  try{await fetch('/api/auth/logout',{method:'POST'})}catch(_){}
 
-// Keep the logout animation visible briefly before returning to login.
-await new Promise(r=>setTimeout(r,900));
+  // Keep the logout animation visible briefly before returning to login.
+  await new Promise(r=>setTimeout(r,900));
 
-localStorage.removeItem('alphaedge_logged_in');
-localStorage.removeItem('alphaedge_client_id');
-localStorage.removeItem('alphaedge_mobile');
-localStorage.removeItem('alphaedge_name');
-localStorage.removeItem('alphaedge_email');
+  localStorage.removeItem('alphaedge_logged_in');
+  localStorage.removeItem('alphaedge_client_id');
+  localStorage.removeItem('alphaedge_mobile');
+  localStorage.removeItem('alphaedge_name');
+  localStorage.removeItem('alphaedge_email');
 
-document.getElementById('loginScreen').classList.add('show');
-switchAuth('login');
+  document.getElementById('loginScreen').classList.add('show');
+  switchAuth('login');
 
-if(loader) loader.classList.remove('show');
+  if(loader) loader.classList.remove('show');
 });
+
+
 
 document.getElementById('photoInput').addEventListener('change',e=>{
-const file=e.target.files[0];if(!file)return;
-const reader=new FileReader();reader.onload=()=>{document.getElementById('profileAvatar').innerHTML=<img src="${reader.result}">;document.getElementById('topAvatar').innerHTML=<img src="${reader.result}">;localStorage.setItem('alphaedge_photo',reader.result)};reader.readAsDataURL(file);
+ const file=e.target.files[0];if(!file)return;
+ const reader=new FileReader();reader.onload=()=>{document.getElementById('profileAvatar').innerHTML=`<img src="${reader.result}">`;document.getElementById('topAvatar').innerHTML=`<img src="${reader.result}">`;localStorage.setItem('alphaedge_photo',reader.result)};reader.readAsDataURL(file);
 });
 document.getElementById('profileForm').addEventListener('submit',async e=>{
-e.preventDefault();
+ e.preventDefault();
 
-const name=document.getElementById('profileName').value.trim();
-const mobile=document.getElementById('profileMobile').value.replace(/\D/g,'');
-const email=document.getElementById('profileEmail').value.trim().toLowerCase();
-const clientId=(document.getElementById('profileClientId').value||localStorage.getItem('alphaedge_client_id')||'').trim().toUpperCase();
-const newPassword=document.getElementById('profilePassword').value;
+ const name=document.getElementById('profileName').value.trim();
+ const mobile=document.getElementById('profileMobile').value.replace(/\D/g,'');
+ const email=document.getElementById('profileEmail').value.trim().toLowerCase();
+ const clientId=(document.getElementById('profileClientId').value||localStorage.getItem('alphaedge_client_id')||'').trim().toUpperCase();
+ const newPassword=document.getElementById('profilePassword').value;
 
-if(mobile.length!==10){
-alert('Enter a valid 10-digit mobile number.');
-return;
-}
+ if(mobile.length!==10){
+   alert('Enter a valid 10-digit mobile number.');
+   return;
+ }
 
-if(newPassword && (newPassword.length<8 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[@#₹]/.test(newPassword))){
-alert('Password must be minimum 8 characters and contain at least 1 uppercase, 1 special character (@/#/₹), and 1 number.');
-return;
-}
+ if(newPassword && (newPassword.length<8 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword) || !/[@#₹]/.test(newPassword))){
+   alert('Password must be minimum 8 characters and contain at least 1 uppercase, 1 special character (@/#/₹), and 1 number.');
+   return;
+ }
 
-try{
-const response=await fetch('/api/auth/profile',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone:mobile,email,password:newPassword})});
-const data=await response.json();
-if(!response.ok){alert(data.message||'Profile update failed.');return}
-localStorage.setItem('alphaedge_name',name); localStorage.setItem('alphaedge_mobile',mobile); localStorage.setItem('alphaedge_email',email);
-localStorage.setItem('alphaedge_client_id',data.client.client_id); localStorage.setItem('alphaedge_logged_in','1');
-}catch(e){alert('Backend unavailable. Please try again.');return}
+ try{
+   const response=await fetch('/api/auth/profile',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone:mobile,email,password:newPassword})});
+   const data=await response.json();
+   if(!response.ok){alert(data.message||'Profile update failed.');return}
+   localStorage.setItem('alphaedge_name',name); localStorage.setItem('alphaedge_mobile',mobile); localStorage.setItem('alphaedge_email',email);
+   localStorage.setItem('alphaedge_client_id',data.client.client_id); localStorage.setItem('alphaedge_logged_in','1');
+ }catch(e){alert('Backend unavailable. Please try again.');return}
 
-document.getElementById('topMobile').textContent='+91 '+mobile;
-document.getElementById('profileSuccess').textContent=newPassword
-? 'Profile and password updated successfully. Use the new password next time you login.'
-: 'Profile updated successfully.';
-document.getElementById('profileSuccess').style.display='block';
-document.getElementById('profilePassword').value='';
-setTimeout(()=>document.getElementById('profileSuccess').style.display='none',3000);
+ document.getElementById('topMobile').textContent='+91 '+mobile;
+ document.getElementById('profileSuccess').textContent=newPassword
+   ? 'Profile and password updated successfully. Use the new password next time you login.'
+   : 'Profile updated successfully.';
+ document.getElementById('profileSuccess').style.display='block';
+ document.getElementById('profilePassword').value='';
+ setTimeout(()=>document.getElementById('profileSuccess').style.display='none',3000);
 });
 function resetPaymentConfirmation(){
-const form=document.getElementById('paymentConfirmForm');
-const showBtn=document.getElementById('showConfirmBtn');
-const note=document.getElementById('paymentReturnNote');
-if(form) form.style.display='none';
-if(showBtn) showBtn.style.display='none';
-if(note) note.style.display='none';
+  const form=document.getElementById('paymentConfirmForm');
+  const showBtn=document.getElementById('showConfirmBtn');
+  const note=document.getElementById('paymentReturnNote');
+  if(form) form.style.display='none';
+  if(showBtn) showBtn.style.display='none';
+  if(note) note.style.display='none';
 }
 
 function revealPaymentConfirmation(){
-const form=document.getElementById('paymentConfirmForm');
-const showBtn=document.getElementById('showConfirmBtn');
-const note=document.getElementById('paymentReturnNote');
-if(showBtn) showBtn.style.display='none';
-if(note) note.style.display='block';
-if(form) form.style.display='grid';
+  const form=document.getElementById('paymentConfirmForm');
+  const showBtn=document.getElementById('showConfirmBtn');
+  const note=document.getElementById('paymentReturnNote');
+  if(showBtn) showBtn.style.display='none';
+  if(note) note.style.display='block';
+  if(form) form.style.display='grid';
 }
 
 function openPaymentPage(course){
-const moduleInput=document.getElementById('paymentModule');
-const moduleLabel=document.getElementById('selectedModuleLabel');
-const paymentName=document.getElementById('paymentName');
-const paymentUtr=document.getElementById('paymentUtr');
-const paymentSlip=document.getElementById('paymentSlip');
-const status=document.getElementById('confirmStatus');
+  const moduleInput=document.getElementById('paymentModule');
+  const moduleLabel=document.getElementById('selectedModuleLabel');
+  const paymentName=document.getElementById('paymentName');
+  const paymentUtr=document.getElementById('paymentUtr');
+  const paymentSlip=document.getElementById('paymentSlip');
+  const status=document.getElementById('confirmStatus');
 
-if(moduleInput) moduleInput.value=course;
-if(moduleLabel) moduleLabel.textContent=course;
-if(paymentName) paymentName.value=localStorage.getItem('alphaedge_name')||'';
-if(paymentUtr) paymentUtr.value='';
-if(paymentSlip) paymentSlip.value='';
-if(status){
-status.style.display='none';
-status.textContent='';
-status.className='confirm-status';
-}
-resetPaymentConfirmation();
-localStorage.removeItem('alphaedge_payment_started');
-localStorage.removeItem('alphaedge_payment_course');
-showPage('payment-confirmation');
+  if(moduleInput) moduleInput.value=course;
+  if(moduleLabel) moduleLabel.textContent=course;
+  if(paymentName) paymentName.value=localStorage.getItem('alphaedge_name')||'';
+  if(paymentUtr) paymentUtr.value='';
+  if(paymentSlip) paymentSlip.value='';
+  if(status){
+    status.style.display='none';
+    status.textContent='';
+    status.className='confirm-status';
+  }
+  resetPaymentConfirmation();
+  localStorage.removeItem('alphaedge_payment_started');
+  localStorage.removeItem('alphaedge_payment_course');
+  showPage('payment-confirmation');
 }
 
 function payModule(course){
-openPaymentPage(course);
-setTimeout(startUpiPayment,150);
+  openPaymentPage(course);
+  setTimeout(startUpiPayment,150);
 }
 
 function startUpiPayment(){
-const course=document.getElementById('paymentModule')?.value || 'AlphaEdge Course';
-const upiId='72378686331@ybl';
-const params=new URLSearchParams({
-pa:upiId,
-pn:'AlphaEdge',
-am:'999.00',
-cu:'INR',
-tn:'AlphaEdge - '+course
-});
-const upiUrl='upi://pay?'+params.toString();
+  const course=document.getElementById('paymentModule')?.value || 'AlphaEdge Course';
+  const upiId='72378686331@ybl';
+  const params=new URLSearchParams({
+    pa:upiId,
+    pn:'AlphaEdge',
+    am:'999.00',
+    cu:'INR',
+    tn:'AlphaEdge - '+course
+  });
+  const upiUrl='upi://pay?'+params.toString();
 
-localStorage.setItem('alphaedge_payment_started','1');
-localStorage.setItem('alphaedge_payment_course',course);
+  localStorage.setItem('alphaedge_payment_started','1');
+  localStorage.setItem('alphaedge_payment_course',course);
 
-const opened=document.getElementById('paymentOpened');
-if(opened) opened.textContent='Opening your UPI app...';
-window.location.href=upiUrl;
+  const opened=document.getElementById('paymentOpened');
+  if(opened) opened.textContent='Opening your UPI app...';
+  window.location.href=upiUrl;
 
-setTimeout(()=>{
-if(opened) opened.textContent='UPI app nahi khula? UPI app me ₹999 manually pay karke neeche confirmation button dabayein.';
-const showBtn=document.getElementById('showConfirmBtn');
-if(showBtn) showBtn.style.display='inline-block';
-},1500);
+  setTimeout(()=>{
+    if(opened) opened.textContent='UPI app nahi khula? UPI app me ₹999 manually pay karke neeche confirmation button dabayein.';
+    const showBtn=document.getElementById('showConfirmBtn');
+    if(showBtn) showBtn.style.display='inline-block';
+  },1500);
 }
 
 document.getElementById('showConfirmBtn').addEventListener('click',revealPaymentConfirmation);
 
 window.addEventListener('pageshow',()=>{
-if(localStorage.getItem('alphaedge_payment_started')==='1'){
-const course=localStorage.getItem('alphaedge_payment_course')||'';
-if(course && document.getElementById('paymentModule')){
-document.getElementById('paymentModule').value=course;
-document.getElementById('selectedModuleLabel').textContent=course;
-}
-if(document.getElementById('payment-confirmation').classList.contains('active')){
-revealPaymentConfirmation();
-}
-}
+  if(localStorage.getItem('alphaedge_payment_started')==='1'){
+    const course=localStorage.getItem('alphaedge_payment_course')||'';
+    if(course && document.getElementById('paymentModule')){
+      document.getElementById('paymentModule').value=course;
+      document.getElementById('selectedModuleLabel').textContent=course;
+    }
+    if(document.getElementById('payment-confirmation').classList.contains('active')){
+      revealPaymentConfirmation();
+    }
+  }
 });
 
 document.getElementById('paymentConfirmForm').addEventListener('submit',async e=>{
-e.preventDefault();
+  e.preventDefault();
 
-const name=document.getElementById('paymentName').value.trim();
-const course=document.getElementById('paymentModule').value.trim();
-const utr=document.getElementById('paymentUtr').value.trim();
-const slip=document.getElementById('paymentSlip').files[0];
-const status=document.getElementById('confirmStatus');
+  const name=document.getElementById('paymentName').value.trim();
+  const course=document.getElementById('paymentModule').value.trim();
+  const utr=document.getElementById('paymentUtr').value.trim();
+  const slip=document.getElementById('paymentSlip').files[0];
+  const status=document.getElementById('confirmStatus');
 
-status.style.display='none';
-status.className='confirm-status';
+  status.style.display='none';
+  status.className='confirm-status';
 
-if(!name || !course || !utr || !slip){
-status.textContent='Please fill all payment details and select your payment slip.';
-status.classList.add('err');
-status.style.display='block';
-return;
-}
+  if(!name || !course || !utr || !slip){
+    status.textContent='Please fill all payment details and select your payment slip.';
+    status.classList.add('err');
+    status.style.display='block';
+    return;
+  }
 
-const allowed=['image/jpeg','image/png','application/pdf'];
-if(!allowed.includes(slip.type)){
-status.textContent='Please upload a JPG, PNG or PDF payment slip.';
-status.classList.add('err');
-status.style.display='block';
-return;
-}
+  const allowed=['image/jpeg','image/png','application/pdf'];
+  if(!allowed.includes(slip.type)){
+    status.textContent='Please upload a JPG, PNG or PDF payment slip.';
+    status.classList.add('err');
+    status.style.display='block';
+    return;
+  }
 
-try{
-const reader=new FileReader();
-reader.onload=async()=>{
-try{
-const response=await fetch('/api/payments/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({course,utr,slipName:slip.name,slipData:String(reader.result||'')})});
-const data=await response.json();
-if(!response.ok){status.textContent=data.message||'Payment confirmation failed.';status.classList.add('err');status.style.display='block';return}
-status.textContent='Payment confirmation submitted successfully. UTR: '+utr; status.classList.add('ok'); status.style.display='block';
-localStorage.removeItem('alphaedge_payment_started'); localStorage.removeItem('alphaedge_payment_course');
-}catch(err){status.textContent='Backend unavailable. Please try again.';status.classList.add('err');status.style.display='block'}
-};
-reader.readAsDataURL(slip);
-}catch(err){status.textContent='Unable to read payment slip.';status.classList.add('err');status.style.display='block'}
-return;
+  try{
+    const reader=new FileReader();
+    reader.onload=async()=>{
+      try{
+        const response=await fetch('/api/payments/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({course,utr,slipName:slip.name,slipData:String(reader.result||'')})});
+        const data=await response.json();
+        if(!response.ok){status.textContent=data.message||'Payment confirmation failed.';status.classList.add('err');status.style.display='block';return}
+        status.textContent='Payment confirmation submitted successfully. UTR: '+utr; status.classList.add('ok'); status.style.display='block';
+        localStorage.removeItem('alphaedge_payment_started'); localStorage.removeItem('alphaedge_payment_course');
+      }catch(err){status.textContent='Backend unavailable. Please try again.';status.classList.add('err');status.style.display='block'}
+    };
+    reader.readAsDataURL(slip);
+  }catch(err){status.textContent='Unable to read payment slip.';status.classList.add('err');status.style.display='block'}
+  return;
 });
 
 document.getElementById('contactForm').addEventListener('submit',e=>{
-e.preventDefault();
-if(WHATSAPP_NUMBER==="YOUR_WHATSAPP_NUMBER"){alert('WhatsApp number abhi HTML ke andar set karna hai. WHATSAPP_NUMBER me aapka number add karein.');return}
-const msg=Hello AlphaEdge,%0A%0AName: ${encodeURIComponent(document.getElementById('contactName').value)}%0AMobile: ${encodeURIComponent(document.getElementById('contactMobile').value)}%0AEmail: ${encodeURIComponent(document.getElementById('contactEmail').value)}%0A%0AMessage: ${encodeURIComponent(document.getElementById('contactMessage').value)};
-window.open(https://wa.me/${WHATSAPP_NUMBER}?text=${msg},'_blank');
+ e.preventDefault();
+ if(WHATSAPP_NUMBER==="YOUR_WHATSAPP_NUMBER"){alert('WhatsApp number abhi HTML ke andar set karna hai. WHATSAPP_NUMBER me aapka number add karein.');return}
+ const msg=`Hello AlphaEdge,%0A%0AName: ${encodeURIComponent(document.getElementById('contactName').value)}%0AMobile: ${encodeURIComponent(document.getElementById('contactMobile').value)}%0AEmail: ${encodeURIComponent(document.getElementById('contactEmail').value)}%0A%0AMessage: ${encodeURIComponent(document.getElementById('contactMessage').value)}`;
+ window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,'_blank');
 });
 
 document.querySelectorAll('.termsLink').forEach(el=>el.addEventListener('click',openTerms));
 document.querySelectorAll('.privacyLink').forEach(el=>el.addEventListener('click',openPrivacy));
 document.querySelectorAll('.legal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
 
-const savedPhoto=localStorage.getItem('alphaedge_photo');if(savedPhoto){document.getElementById('profileAvatar').innerHTML=<img src="${savedPhoto}">;document.getElementById('topAvatar').innerHTML=<img src="${savedPhoto}">}
+const savedPhoto=localStorage.getItem('alphaedge_photo');if(savedPhoto){document.getElementById('profileAvatar').innerHTML=`<img src="${savedPhoto}">`;document.getElementById('topAvatar').innerHTML=`<img src="${savedPhoto}">`}
 const savedClientId=localStorage.getItem('alphaedge_client_id');if(savedClientId){document.getElementById('topMobile').textContent=savedClientId}
 const savedMobile=localStorage.getItem('alphaedge_mobile');if(savedMobile){document.getElementById('profileMobile').value=savedMobile}
 const savedName=localStorage.getItem('alphaedge_name');if(savedName){document.getElementById('profileName').value=savedName}
@@ -690,13 +742,13 @@ const savedEmail=localStorage.getItem('alphaedge_email');if(savedEmail){document
 const savedClient=localStorage.getItem('alphaedge_client_id');if(savedClient&&document.getElementById('profileClientId'))document.getElementById('profileClientId').value=savedClient
 // Restore a locally saved session on static hosting.
 if(localStorage.getItem('alphaedge_logged_in')==='1' && localStorage.getItem('alphaedge_client_id')){
-document.getElementById('loginScreen').classList.remove('show');
-updateGreeting();
+  document.getElementById('loginScreen').classList.remove('show');
+  updateGreeting();
 }
 updateGreeting();
 const footerYear=document.getElementById('footerYear');
 if(footerYear) footerYear.textContent=new Date().getFullYear();
-</script>  <div id="loginLoading"><div class="login-loading-box"><div class="login-spinner"></div><div class="login-loading-text">Logging in...</div></div></div><div id="logoutLoading"><div class="logout-loading-box">
-
-<div class="logout-spinner"></div><div>Logging out...</div></div></div></body>    
-                                                                                                                                                                                                    </html>
+</script>
+<div id="loginLoading"><div class="login-loading-box"><div class="login-spinner"></div><div class="login-loading-text">Logging in...</div></div></div><div id="logoutLoading"><div class="logout-loading-box">
+<div class="logout-spinner"></div><div>Logging out...</div></div></div></body>
+  </html>
