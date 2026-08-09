@@ -11,7 +11,7 @@ button,input,textarea{font:inherit}button{cursor:pointer}
 .nav{display:flex;flex-direction:column;gap:7px}.nav button{border:0;background:transparent;color:#8fa0b1;text-align:left;padding:11px 9px;border-radius:9px}.nav button:hover,.nav button.active{background:#10283a;color:#fff}.logout{margin-top:25px!important}
 .main{flex:1;min-width:0}.top{height:76px;border-bottom:1px solid #1d2d3d;display:flex;align-items:center;justify-content:space-between;padding:0 25px}.title{font-size:20px}.sub{font-size:11px;color:#708396;margin-top:3px}.user{display:flex;align-items:center;gap:10px;color:#8fa0b1;font-size:12px}.avatar{width:34px;height:34px;border-radius:50%;background:#16364a;display:grid;place-items:center;color:#8eead0;overflow:hidden;cursor:pointer;border:1px solid transparent}.avatar:hover{border-color:#28d5a0;box-shadow:0 0 0 2px #28d5a022}.avatar img{width:100%;height:100%;object-fit:cover}
 .content{padding:25px;max-width:1100px}.page{display:none}.page.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card,.panel{background:#0b1926;border:1px solid #1b2e40;border-radius:13px}.card{padding:16px}.label{font-size:10px;color:#71879b;text-transform:uppercase}.value{font-size:20px;font-weight:700;margin-top:7px}.up{color:#2ed6a0;font-size:11px}.down{color:#df7184;font-size:11px}
-.row{display:grid;grid-template-columns:1.35fr .85fr;gap:12px;margin-top:12px}.panel{padding:16px}.panel h3{font-size:13px;margin:0 0 16px}.chart{height:230px}.chart svg{width:100%;height:100%}.watch{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #182b3b;font-size:12px}
+.row{display:grid;grid-template-columns:1.35fr .85fr;gap:12px;margin-top:12px}.panel{padding:16px}.panel h3{font-size:13px;margin:0 0 16px}.chart{height:230px}.chart svg{width:100%;height:100%}.market-chart-meta{display:flex;justify-content:space-between;align-items:center;margin-top:7px;font-size:9px;color:#71879b}.market-chart-live{color:#55dcb8}.watch{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #182b3b;font-size:12px}.footer{margin-top:28px;padding:18px 4px 8px;border-top:1px solid #1b2e40;text-align:center;color:#71879b;font-size:9px;line-height:1.7}.footer .disclaimer{max-width:900px;margin:0 auto 5px}.footer .rights{color:#8fa0b1}.login-footer{width:min(430px,100%);margin:14px auto 0;padding:10px 4px 0;text-align:center;color:#71879b;font-size:9px;line-height:1.6}.login-footer .disclaimer{max-width:430px;margin:0 auto 5px}.login-footer .rights{color:#8fa0b1}
 .table{width:100%;border-collapse:collapse;font-size:11px}.table th{color:#73889b;text-align:left;font-weight:normal}.table th,.table td{padding:11px 7px;border-bottom:1px solid #182b3b}.pill{display:inline-block;background:#0c4b3d;color:#55dcb8;border-radius:12px;padding:4px 8px;font-size:9px}
 .action{border:1px solid #274054;background:#102132;color:#dce8f2;padding:9px 13px;border-radius:8px}.action:hover{background:#163249}.payment-confirm{margin-top:10px;padding:12px;background:#0b1b29;border:1px solid #1d3548;border-radius:9px}.payment-confirm h4{margin:0 0 8px;font-size:12px}.payment-confirm input{width:100%;margin-top:6px;padding:9px 10px;background:#071521;border:1px solid #24394c;border-radius:8px;color:#fff;outline:none}.payment-confirm input:focus{border-color:#2ed6a0}.payment-confirm .slip{font-size:10px;color:#8296a9;margin-top:7px}.confirm-status{font-size:10px;margin-top:8px;display:none}.confirm-status.ok{color:#2ed6a0}.confirm-status.err{color:#df7184}.confirm-btn{margin-top:9px;border:0;background:#28d5a0;color:#06131b;font-weight:700;padding:9px 12px;border-radius:8px;font-size:10px}.pay-btn{border:0;background:#28d5a0;color:#06131b;font-weight:700;padding:8px 12px;border-radius:8px;font-size:10px;margin-left:6px}.pay-btn:hover{opacity:.9}.confirm-link{border:0;background:transparent;color:#7fdcc3;font-size:9px;padding:4px 5px;margin-left:3px;text-decoration:underline;cursor:pointer}.confirm-link:hover{color:#fff}.payment-page-note{font-size:11px;color:#8093a6;line-height:1.6;margin:-7px 0 15px}.payment-page-total{font-size:18px;font-weight:700;color:#2ed6a0;margin:5px 0 18px}.payment-page-back{margin-bottom:12px}.wa-note{font-size:10px;color:#7f91a3;line-height:1.5}
 .profilebox{max-width:650px}.form{display:grid;gap:13px}.form label{font-size:11px;color:#8da0b3}.required-star{color:#ff4d5f;font-weight:800;margin-left:3px}.form input,.form textarea{width:100%;margin-top:6px;padding:11px 12px;background:#071521;border:1px solid #24394c;border-radius:8px;color:#fff;outline:none}.form input:focus,.form textarea:focus{border-color:#2ed6a0}.form textarea{min-height:110px;resize:vertical}
@@ -21,6 +21,22 @@ button,input,textarea{font:inherit}button{cursor:pointer}
 .contact-note{color:#71879a;font-size:11px;margin-top:10px}
 @media(max-width:750px){.side{width:155px}.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}.top{padding:0 14px}.content{padding:14px}.user span{display:none}}
 @media(max-width:520px){.side{width:120px}.logo{font-size:17px}.nav button{font-size:11px}.top{height:68px}.title{font-size:17px}}
+</style>
+<style id="login-loading-style">
+#loginLoading{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,12,22,.72);backdrop-filter:blur(5px);z-index:99999}
+#loginLoading.show{display:flex}.login-loading-box{min-width:230px;padding:24px 28px;border-radius:16px;text-align:center;background:#111827;color:#fff;box-shadow:0 15px 45px rgba(0,0,0,.35)}
+.login-spinner{width:30px;height:30px;margin:0 auto 12px;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:loginSpin .75s linear infinite}
+@keyframes loginSpin{to{transform:rotate(360deg)}}.login-loading-text{font-size:15px;font-weight:600}
+</style>
+<style id="logout-loading-style">
+#logoutLoading{position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+background:rgba(8,12,22,.72);backdrop-filter:blur(5px);z-index:100000}
+#logoutLoading.show{display:flex}
+.logout-loading-box{min-width:230px;padding:24px 28px;border-radius:16px;text-align:center;
+background:#111827;color:#fff;box-shadow:0 15px 45px rgba(0,0,0,.35)}
+.logout-spinner{width:30px;height:30px;margin:0 auto 12px;border:3px solid rgba(255,255,255,.25);
+border-top-color:#fff;border-radius:50%;animation:logoutSpin .75s linear infinite}
+@keyframes logoutSpin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -87,6 +103,10 @@ button,input,textarea{font:inherit}button{cursor:pointer}
         <button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700;padding:12px" type="submit">Login</button>
       </form>
       <p style="text-align:center;color:#8296a9;font-size:11px;margin:12px 0 0">New to AlphaEdge? <a href="#" onclick="switchAuth('register');return false" style="color:#55dcb8">Create an account</a></p>
+      <div class="login-footer">
+        <div class="disclaimer"><b>Disclaimer:</b> AlphaEdge provides market information and educational content for general informational purposes only. It is not investment, financial, legal, or tax advice. Trading and investing involve risk, and past performance does not guarantee future results.</div>
+        <div class="rights">© <span id="footerYear"></span> AlphaEdge. All rights reserved.</div>
+      </div>
     </div>
 
     <div id="registerPanel" style="display:none">
@@ -171,7 +191,7 @@ button,input,textarea{font:inherit}button{cursor:pointer}
     <div class="card"><div class="label">Watchlist</div><div class="value">5</div><div class="sub">Tracked symbols</div></div>
   </div>
   <div class="row">
-    <div class="panel"><h3>Market Trend</h3><div class="chart"><svg viewBox="0 0 600 250" preserveAspectRatio="none"><path id="marketChartLine" d="M0 210 L600 210" fill="none" stroke="#2ed6a0" stroke-width="5"/><path id="marketChartArea" d="M0 210 L600 210 L600 250 L0 250Z" fill="#2ed6a0" opacity=".08"/></svg></div></div>
+    <div class="panel"><h3>Market Trend</h3><div class="chart"><svg viewBox="0 0 600 250" preserveAspectRatio="none"><path id="marketChartLine" d="M0 210 L600 210" fill="none" stroke="#2ed6a0" stroke-width="5"/><path id="marketChartArea" d="M0 210 L600 210 L600 250 L0 250Z" fill="#2ed6a0" opacity=".08"/></svg></div><div class="market-chart-meta"><span>Live NIFTY 50 trend</span><span class="market-chart-live">● <span id="marketChartTime">Updating...</span></span></div></div>
     <div class="panel"><h3>Watchlist</h3><div id="miniWatch"></div></div>
   </div>
   <div class="panel" style="margin-top:12px"><h3>Research Centre</h3><table class="table"><tr><th>Topic</th><th>Category</th><th>Status</th><th></th></tr>
@@ -253,7 +273,7 @@ button,input,textarea{font:inherit}button{cursor:pointer}
 <button class="action" style="background:#28d5a0;color:#06131b;border:0;font-weight:700" type="submit">Submit &amp; Continue to WhatsApp</button>
 </form></div></section>
 
-</div></main></div>
+</main></div>
 
 <script>
 const WHATSAPP_NUMBER="917237868633"; // Replace with your WhatsApp number, e.g. 919876543210
@@ -279,14 +299,35 @@ function updateMarketUI(data){
   const status=document.getElementById('marketFeedStatus'); if(status) status.textContent=data.connected?'CONNECTED':'DISCONNECTED';
   if(data.nifty?.ltp) updateChart(data.nifty.ltp);
 }
+const marketHistory=[];
+function getMarketTime(){
+  return new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date());
+}
 function updateChart(current){
   const line=document.getElementById('marketChartLine'), area=document.getElementById('marketChartArea'); if(!line||!area)return;
-  const base=Number(current); const pts=[]; for(let i=0;i<14;i++) pts.push(base*(1-0.0015*(13-i)+0.0008*Math.sin(i*1.7)));
-  const min=Math.min(...pts),max=Math.max(...pts),range=max-min||1;
-  const xy=pts.map((v,i)=>`${(i/(pts.length-1))*600} ${210-((v-min)/range)*175}`).join(' L');
+  const value=Number(current); if(!Number.isFinite(value))return;
+  const now=getMarketTime();
+  marketHistory.push({value,time:now});
+  if(marketHistory.length>30) marketHistory.shift();
+  const pts=marketHistory.slice(-14);
+  const values=pts.map(p=>p.value);
+  const min=Math.min(...values),max=Math.max(...values),range=max-min||Math.max(1,Math.abs(min)*0.001);
+  const xy=pts.map((p,i)=>`${(i/(Math.max(1,pts.length-1)))*600} ${210-((p.value-min)/range)*175}`).join(' L');
   line.setAttribute('d','M'+xy); area.setAttribute('d','M'+xy+' L600 250 L0 250Z');
+  const timeEl=document.getElementById('marketChartTime');
+  if(timeEl) timeEl.textContent='Live • '+now+' IST';
 }
-async function loadMarket(){try{const r=await fetch('/api/market',{cache:'no-store'});const d=await r.json();updateMarketUI(d); }catch(e){const s=document.getElementById('marketFeedStatus');if(s)s.textContent='UNAVAILABLE'}}
+async function loadMarket(){
+  try{
+    const r=await fetch('/api/market',{cache:'no-store'});
+    if(!r.ok) throw new Error('market unavailable');
+    const d=await r.json();
+    updateMarketUI(d);
+  }catch(e){
+    const s=document.getElementById('marketFeedStatus');
+    if(s)s.textContent='UNAVAILABLE';
+  }
+}
 loadMarket(); setInterval(loadMarket,5000);
 try{const es=new EventSource('/api/market-stream'); es.onmessage=e=>{try{updateMarketUI(JSON.parse(e.data))}catch(_){}}; }catch(_){}
 
@@ -389,17 +430,20 @@ document.getElementById('forgotPasswordClose').addEventListener('click',closeRec
 document.getElementById('forgotClientModal').addEventListener('click',e=>{if(e.target.id==='forgotClientModal')closeRecoveryModals()});
 document.getElementById('forgotPasswordModal').addEventListener('click',e=>{if(e.target.id==='forgotPasswordModal')closeRecoveryModals()});
 
-document.getElementById('forgotClientForm').addEventListener('submit',e=>{
+document.getElementById('forgotClientForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const contact=document.getElementById('forgotClientContact').value;
   const err=document.getElementById('forgotClientError'),ok=document.getElementById('forgotClientSuccess');
   err.style.display='none'; ok.style.display='none';
-  const user=getUsers().find(u=>recoveryContactMatches(u,contact));
-  if(!user){err.textContent='No account found with that mobile number or email.';err.style.display='block';return}
-  ok.textContent='Your Client ID is '+user.clientId+'. Please save it for login.';ok.style.display='block';
+  try{
+    const response=await fetch('/api/auth/forgot-client',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact})});
+    const data=await response.json();
+    if(!response.ok){err.textContent=data.message||'No account found.';err.style.display='block';return}
+    ok.textContent='Your Client ID is '+data.clientId+'. Please save it for login.';ok.style.display='block';
+  }catch(_){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
 });
 
-document.getElementById('forgotPasswordForm').addEventListener('submit',e=>{
+document.getElementById('forgotPasswordForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const clientId=document.getElementById('forgotPasswordClientId').value.trim().toUpperCase();
   const contact=document.getElementById('forgotPasswordContact').value;
@@ -410,46 +454,39 @@ document.getElementById('forgotPasswordForm').addEventListener('submit',e=>{
   if(!/^AE\d{6}$/.test(clientId)){err.textContent='Enter a valid Client ID, for example AE100001.';err.style.display='block';return}
   if(pass.length<8 || !/[A-Z]/.test(pass) || !/[0-9]/.test(pass) || !/[@#₹]/.test(pass)){err.textContent='Password must be minimum 8 characters and contain 1 uppercase, 1 number and 1 special character (@/#/₹).';err.style.display='block';return}
   if(pass!==confirm){err.textContent='Passwords do not match.';err.style.display='block';return}
-  const users=getUsers();
-  const index=users.findIndex(u=>String(u.clientId||'').toUpperCase()===clientId && recoveryContactMatches(u,contact));
-  if(index===-1){err.textContent='Client ID and registered mobile/email do not match.';err.style.display='block';return}
-  users[index].password=pass;
-  saveUsers(users);
-  ok.textContent='Password reset successfully. You can now login with '+users[index].clientId+'.';ok.style.display='block';
-  document.getElementById('loginClientId').value=users[index].clientId;
-  document.getElementById('loginPassword').value='';
+  try{
+    const response=await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientId,contact,password:pass})});
+    const data=await response.json();
+    if(!response.ok){err.textContent=data.message||'Password reset failed.';err.style.display='block';return}
+    ok.textContent='Password reset successfully. You can now login with '+clientId+'.';ok.style.display='block';
+    document.getElementById('loginClientId').value=clientId; document.getElementById('loginPassword').value='';
+  }catch(_){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
 });
 
 document.getElementById('registerForm').addEventListener('submit',async e=>{
- e.preventDefault();
- const name=document.getElementById('regName').value.trim();
- const mobile=document.getElementById('regMobile').value.replace(/\D/g,'');
- const email=document.getElementById('regEmail').value.trim().toLowerCase();
- const password=document.getElementById('regPassword').value;
- const confirm=document.getElementById('regConfirm').value;
- const err=document.getElementById('registerError');
- const ok=document.getElementById('registerSuccess');
- err.style.display='none'; ok.style.display='none';
-
- if(!name){err.textContent='Please enter your full name.';err.style.display='block';return}
- if(!/^\d{10}$/.test(mobile)){err.textContent='Enter a valid 10-digit mobile number.';err.style.display='block';return}
- if(!/^\S+@\S+\.\S+$/.test(email)){err.textContent='Enter a valid email address.';err.style.display='block';return}
- if(password.length<8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[@#₹]/.test(password)){
-   err.textContent='Password must be minimum 8 characters and contain 1 uppercase, 1 number and 1 special character (@/#/₹).';err.style.display='block';return
- }
- if(password!==confirm){err.textContent='Passwords do not match.';err.style.display='block';return}
- if(!document.getElementById('regTerms').checked){err.textContent='Please accept the Terms & Conditions and Privacy Policy.';err.style.display='block';return}
-
- try{
-   const response=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone:mobile,email,password})});
-   const data=await response.json();
-   if(!response.ok){err.textContent=data.message||'Registration failed.';err.style.display='block';return}
-   ok.innerHTML='Account created successfully. Your Client ID is <strong>'+data.clientId+'</strong>. Please save it for login.';
-   ok.style.display='block';
-   document.getElementById('loginClientId').value=data.clientId;
-   document.getElementById('loginPassword').value='';
-   setTimeout(()=>switchAuth('login'),1400);
- }catch(e){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
+  e.preventDefault();
+  const name=document.getElementById('regName').value.trim();
+  const mobile=document.getElementById('regMobile').value.replace(/\D/g,'');
+  const email=document.getElementById('regEmail').value.trim().toLowerCase();
+  const password=document.getElementById('regPassword').value;
+  const confirm=document.getElementById('regConfirm').value;
+  const err=document.getElementById('registerError'),ok=document.getElementById('registerSuccess');
+  err.style.display='none'; ok.style.display='none';
+  if(!name){err.textContent='Please enter your full name.';err.style.display='block';return}
+  if(!/^\d{10}$/.test(mobile)){err.textContent='Enter a valid 10-digit mobile number.';err.style.display='block';return}
+  if(!/^\S+@\S+\.\S+$/.test(email)){err.textContent='Enter a valid email address.';err.style.display='block';return}
+  if(password.length<8 || !/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[@#₹]/.test(password)){err.textContent='Password must be minimum 8 characters and contain 1 uppercase, 1 number and 1 special character (@/#/₹).';err.style.display='block';return}
+  if(password!==confirm){err.textContent='Passwords do not match.';err.style.display='block';return}
+  if(!document.getElementById('regTerms').checked){err.textContent='Please accept the Terms & Conditions and Privacy Policy.';err.style.display='block';return}
+  try{
+    const response=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,mobile,email,password})});
+    const data=await response.json();
+    if(!response.ok){err.textContent=data.message||'Registration failed.';err.style.display='block';return}
+    const clientId=data.client.client_id;
+    ok.innerHTML='Account created successfully. Your Client ID is <strong>'+clientId+'</strong>. Please save it for login.';ok.style.display='block';
+    document.getElementById('loginClientId').value=clientId; document.getElementById('loginPassword').value='';
+    setTimeout(()=>switchAuth('login'),1400);
+  }catch(_){err.textContent='Backend unavailable. Please try again.';err.style.display='block'}
 });
 
 document.getElementById('loginForm').addEventListener('submit',async e=>{
@@ -457,28 +494,61 @@ document.getElementById('loginForm').addEventListener('submit',async e=>{
  const clientId=document.getElementById('loginClientId').value.trim().toUpperCase();
  const password=document.getElementById('loginPassword').value;
  const err=document.getElementById('loginError');
+ const loader=document.getElementById('loginLoading');
  err.style.display='none';
  if(!/^AE\d{6}$/.test(clientId)){err.textContent='Enter a valid Client ID, for example AE100001.';err.style.display='block';return}
  if(!document.getElementById('terms').checked){err.textContent='Please accept the Terms & Conditions and Privacy Policy.';err.style.display='block';return}
- try{
-   const response=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientId,password})});
-   const data=await response.json();
-   if(!response.ok){err.textContent=data.message||'Invalid Client ID or password.';err.style.display='block';return}
-   const user=data.client;
-   localStorage.setItem('alphaedge_logged_in','1'); localStorage.setItem('alphaedge_client_id',user.clientId);
-   localStorage.setItem('alphaedge_mobile',user.phone||''); localStorage.setItem('alphaedge_name',user.name); localStorage.setItem('alphaedge_email',user.email);
-   document.getElementById('topMobile').textContent=user.clientId; document.getElementById('profileName').value=user.name;
-   document.getElementById('profileMobile').value=user.phone||''; document.getElementById('profileEmail').value=user.email; updateGreeting();
-setInterval(updateGreeting, 60000);
- document.getElementById('loginScreen').classList.remove('show');
-});
+ loader.classList.add('show');
 
+ try{
+  let user=null;
+  try{
+   const response=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientId,password})});
+   if(response.ok){const data=await response.json();if(data?.client)user=data.client}
+   else if(response.status!==404&&response.status!==405){let d={};try{d=await response.json()}catch(_){};err.textContent=d.message||'Invalid Client ID or password.';err.style.display='block';loader.classList.remove('show');return}
+  }catch(_){}
+
+  if(!user){
+   const users=typeof getUsers==='function'?getUsers():[];
+   user=users.find(u=>String(u.clientId||'').toUpperCase()===clientId&&u.password===password);
+  }
+  if(!user){err.textContent='Invalid Client ID or password.';err.style.display='block';loader.classList.remove('show');return}
+
+  await new Promise(r=>setTimeout(r,1200));
+  localStorage.setItem('alphaedge_logged_in','1');
+  localStorage.setItem('alphaedge_client_id',user.clientId);
+  localStorage.setItem('alphaedge_mobile',user.phone||user.mobile||'');
+  localStorage.setItem('alphaedge_name',user.name||'');
+  localStorage.setItem('alphaedge_email',user.email||'');
+  document.getElementById('topMobile').textContent=user.clientId;
+  document.getElementById('profileName').value=user.name||'';
+  document.getElementById('profileMobile').value=user.phone||user.mobile||'';
+  document.getElementById('profileEmail').value=user.email||'';
+  if(document.getElementById('profileClientId'))document.getElementById('profileClientId').value=user.clientId;
+  updateGreeting();
+  document.getElementById('loginScreen').classList.remove('show');
+ }catch(e){err.textContent='Login failed. Please try again.';err.style.display='block'}
+ finally{loader.classList.remove('show')}
+});
 document.getElementById('logout').addEventListener('click',async()=>{
- try{await fetch('/api/auth/logout',{method:'POST'})}catch(_){}
- localStorage.removeItem('alphaedge_logged_in');
- localStorage.removeItem('alphaedge_client_id');
- document.getElementById('loginScreen').classList.add('show');
- switchAuth('login');
+  const loader=document.getElementById('logoutLoading');
+  if(loader) loader.classList.add('show');
+
+  try{await fetch('/api/auth/logout',{method:'POST'})}catch(_){}
+
+  // Keep the logout animation visible briefly before returning to login.
+  await new Promise(r=>setTimeout(r,900));
+
+  localStorage.removeItem('alphaedge_logged_in');
+  localStorage.removeItem('alphaedge_client_id');
+  localStorage.removeItem('alphaedge_mobile');
+  localStorage.removeItem('alphaedge_name');
+  localStorage.removeItem('alphaedge_email');
+
+  document.getElementById('loginScreen').classList.add('show');
+  switchAuth('login');
+
+  if(loader) loader.classList.remove('show');
 });
 
 
@@ -651,12 +721,6 @@ document.getElementById('paymentConfirmForm').addEventListener('submit',async e=
     reader.readAsDataURL(slip);
   }catch(err){status.textContent='Unable to read payment slip.';status.classList.add('err');status.style.display='block'}
   return;
-
-  status.textContent='Payment confirmation submitted successfully. UTR: '+utr;
-  status.classList.add('ok');
-  status.style.display='block';
-  localStorage.removeItem('alphaedge_payment_started');
-  localStorage.removeItem('alphaedge_payment_course');
 });
 
 document.getElementById('contactForm').addEventListener('submit',e=>{
@@ -676,8 +740,15 @@ const savedMobile=localStorage.getItem('alphaedge_mobile');if(savedMobile){docum
 const savedName=localStorage.getItem('alphaedge_name');if(savedName){document.getElementById('profileName').value=savedName}
 const savedEmail=localStorage.getItem('alphaedge_email');if(savedEmail){document.getElementById('profileEmail').value=savedEmail}
 const savedClient=localStorage.getItem('alphaedge_client_id');if(savedClient&&document.getElementById('profileClientId'))document.getElementById('profileClientId').value=savedClient
-fetch('/api/auth/me',{credentials:'same-origin'}).then(r=>{if(r.ok){document.getElementById('loginScreen').classList.remove('show');return r.json()}}).then(data=>{if(data?.client){localStorage.setItem('alphaedge_logged_in','1');localStorage.setItem('alphaedge_client_id',data.client.clientId);localStorage.setItem('alphaedge_name',data.client.name);localStorage.setItem('alphaedge_mobile',data.client.phone||'');localStorage.setItem('alphaedge_email',data.client.email);document.getElementById('profileName').value=data.client.name;document.getElementById('profileMobile').value=data.client.phone||'';document.getElementById('profileEmail').value=data.client.email;updateGreeting()}}).catch(()=>{})
+// Restore a locally saved session on static hosting.
+if(localStorage.getItem('alphaedge_logged_in')==='1' && localStorage.getItem('alphaedge_client_id')){
+  document.getElementById('loginScreen').classList.remove('show');
+  updateGreeting();
+}
 updateGreeting();
+const footerYear=document.getElementById('footerYear');
+if(footerYear) footerYear.textContent=new Date().getFullYear();
 </script>
-</body>
+<div id="loginLoading"><div class="login-loading-box"><div class="login-spinner"></div><div class="login-loading-text">Logging in...</div></div></div><div id="logoutLoading"><div class="logout-loading-box">
+<div class="logout-spinner"></div><div>Logging out...</div></div></div></body>
 </html>
