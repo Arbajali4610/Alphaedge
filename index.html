@@ -87,7 +87,7 @@ button{cursor:pointer}
 .success{color:#2ed6a0;font-size:11px;display:none}
 .legal-overlay,.login-overlay,.utility-overlay{position:fixed;inset:0;background:#06101a;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.legal-overlay{z-index:1000}.utility-overlay{z-index:900}
 .legal-overlay.show,.login-overlay.show,.utility-overlay.show{display:flex}
-.legal-box,.login,.utility-box{width:min(650px,100%);max-height:90vh;overflow:auto;background:#0b1926;border:1px solid #1d3548;border-radius:16px;padding:24px} .privacy-box{width:min(700px,100%);max-height:90vh} .privacy-box .modal-actions{position:sticky;bottom:0;background:#0b1926;padding-top:14px;margin-top:18px} .privacy-box h3{margin:20px 0 7px;font-size:16px} .privacy-box p{font-size:13px;line-height:1.75}
+.legal-box,.login,.utility-box{width:min(650px,100%);max-height:90vh;overflow:auto;background:#0b1926;border:1px solid #1d3548;border-radius:16px;padding:24px} .privacy-box{width:min(700px,100%);max-height:92vh;padding:28px} .privacy-box .modal-actions{position:sticky;bottom:0;background:#0b1926;padding-top:16px;margin-top:22px} .privacy-box h3{margin:24px 0 9px;font-size:18px} .privacy-box p{font-size:14px;line-height:1.8}
 .login{width:min(430px,100%)}
 .utility-box{width:min(430px,100%)}
 .legal-box p,.legal-box li{color:#9dafc0;font-size:12px;line-height:1.7}
@@ -857,7 +857,7 @@ async function acceptLegal(type){
   try{
     if(loadingText) loadingText.textContent="Saving your acceptance...";
     if(loading) loading.classList.add("show");
-    await new Promise(resolve=>setTimeout(resolve,900));
+    await new Promise(resolve=>setTimeout(resolve,1200));
     if(type==="terms") legalAcceptedTerms=true;
     if(type==="privacy") legalAcceptedPrivacy=true;
     syncLegalCheckboxes();
@@ -1687,11 +1687,35 @@ async function loadEquityHistory(x){
 }
 /* RESTORE SAVED STATE */
 const cid=localStorage.getItem("alphaedge_client_id");
-if(localStorage.getItem("alphaedge_logged_in")==="1"&&cid){
-  $("loginScreen").classList.remove("show");
+async function restoreSession(){
+  if(localStorage.getItem("alphaedge_logged_in")!=="1" || !cid) return;
+  try{
+    const r=await apiFetch("/api/auth/me",{method:"GET"});
+    if(!r.ok){
+      localStorage.removeItem("alphaedge_logged_in");
+      localStorage.removeItem("alphaedge_client_id");
+      localStorage.removeItem("alphaedge_name");
+      localStorage.removeItem("alphaedge_mobile");
+      localStorage.removeItem("alphaedge_email");
+      return;
+    }
+    const d=await r.json();
+    const u=d.client||{};
+    localStorage.setItem("alphaedge_client_id",u.clientId||cid);
+    localStorage.setItem("alphaedge_name",u.name||"");
+    localStorage.setItem("alphaedge_mobile",u.phone||"");
+    localStorage.setItem("alphaedge_email",u.email||"");
+    $("loginScreen").classList.remove("show");
+    greeting();
+    loadProfile();
+  }catch(_){
+    $("loginScreen").classList.remove("show");
+    greeting();
+  }
 }
 $("footerYear").textContent=new Date().getFullYear();
 greeting();
+restoreSession();
 showPage("dashboard");
 </script>
 </body>
