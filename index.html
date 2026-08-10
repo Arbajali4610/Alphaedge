@@ -103,6 +103,8 @@ button{cursor:pointer}
 .loading-box{padding:25px 35px;border-radius:15px;background:#111827;text-align:center}
 .spinner{width:30px;height:30px;margin:auto;border:3px solid #ffffff40;border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+.remember-row{display:flex;align-items:center;gap:8px;color:#8296a9;font-size:11px}.remember-row input{width:16px;height:16px;accent-color:#28d5a0}.top-menu-btn{width:32px;height:32px;border:1px solid #29465a;border-radius:8px;background:#102132;color:#dce8f2;font-size:22px;line-height:1}.top-menu{position:absolute;right:65px;top:58px;display:none;flex-direction:column;min-width:150px;background:#0b1926;border:1px solid #29465a;border-radius:10px;padding:6px;z-index:950;box-shadow:0 15px 35px #0008}.top-menu.show{display:flex}.top-menu button{border:0;background:transparent;color:#dce8f2;text-align:left;padding:10px;border-radius:7px}.top-menu button:hover{background:#10283a}.top{position:relative}.contact-card{background:#071521;border:1px solid #24394c;border-radius:10px;padding:10px 14px}.contact-card p{font-size:12px;line-height:1.7}.contact-card a{color:#55dcb8}.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.chart-select{background:#071521;border:1px solid #29465a;color:#dce8f2;border-radius:8px;padding:9px;max-width:230px}.range-buttons{display:flex;gap:7px;margin:12px 0}.range-btn{border:1px solid #29465a;background:#102132;color:#dce8f2;padding:7px 12px;border-radius:7px}.range-btn.active{background:#28d5a0;color:#06131b;border-color:#28d5a0}.history-chart-wrap{height:340px;position:relative;background:#071521;border:1px solid #172b3b;border-radius:10px;overflow:hidden}.history-chart-wrap svg{width:100%;height:100%;touch-action:none}.history-chart-wrap #historyLine{fill:none;stroke:#28d5a0;stroke-width:3}.history-chart-wrap #historyArea{fill:#28d5a0;opacity:.08}.chart-tooltip{position:absolute;display:none;pointer-events:none;background:#0b1926;border:1px solid #29465a;border-radius:8px;padding:7px 9px;font-size:10px;color:#eaf2f8;white-space:nowrap}.chart-axis{display:flex;justify-content:space-between;color:#71879b;font-size:10px;margin-top:7px}.chart-panel{margin-top:12px}
 @media(max-width:750px){.side{width:155px}.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}.content{padding:14px}.top{padding:0 14px}}
 @media(max-width:520px){.side{width:120px}.nav button{font-size:11px}.cards{grid-template-columns:1fr 1fr}.top .sub{display:none}}
 </style>
@@ -248,6 +250,7 @@ button{cursor:pointer}
       <form class="form" id="loginForm">
         <label>Client ID *<input id="loginClientId" placeholder="e.g. AE100001" required autocomplete="username"></label>
         <label>Password *<input id="loginPassword" type="password" minlength="8" required autocomplete="current-password"></label>
+        <label class="remember-row"><input id="rememberMe" type="checkbox"> <span>Remember me</span></label>
         <div style="display:flex;justify-content:space-between;gap:12px">
           <button type="button" class="legal-link" onclick="openForgotClient()">Forgot Client ID?</button>
           <button type="button" class="legal-link" onclick="openForgotPassword()">Forgot Password?</button>
@@ -299,6 +302,23 @@ button{cursor:pointer}
   </div>
 </div>
 
+<!-- ABOUT / CONTACT MENU MODAL -->
+<div class="utility-overlay" id="aboutModal" role="dialog" aria-modal="true">
+  <div class="utility-box">
+    <button class="legal-close" type="button" onclick="closeUtility()">Close</button>
+    <h2 class="modal-title">About AlphaEdge</h2>
+    <p class="contact-note">AlphaEdge provides market information, educational material, research-style content and charting tools for general informational purposes.</p>
+    <p class="contact-note">Market data and historical charts depend on third-party market-data services and may be delayed or unavailable.</p>
+  </div>
+</div>
+<div class="utility-overlay" id="contactInfoModal" role="dialog" aria-modal="true">
+  <div class="utility-box">
+    <button class="legal-close" type="button" onclick="closeUtility()">Close</button>
+    <h2 class="modal-title">Contact Us</h2>
+    <div class="contact-card"><p><b>Mobile</b><br><a href="tel:7237868633">7237868633</a></p><p><b>Email</b><br><a href="mailto:Arbajali4610@gmail.com">Arbajali4610@gmail.com</a></p></div>
+  </div>
+</div>
+
 <!-- APP -->
 <div class="app">
   <aside class="side">
@@ -322,6 +342,11 @@ button{cursor:pointer}
         <div class="sub">Your AlphaEdge workspace</div>
       </div>
       <div class="user">
+        <button class="top-menu-btn" id="topMenuBtn" type="button" aria-label="More options">⋮</button>
+        <div class="top-menu" id="topMenu">
+          <button type="button" onclick="openAbout()">About</button>
+          <button type="button" onclick="openContactInfo()">Contact Us</button>
+        </div>
         <span id="topClient"></span>
         <div class="avatar" id="topAvatar">AE</div>
       </div>
@@ -374,9 +399,23 @@ button{cursor:pointer}
           </div>
           <p class="contact-note">Backend feed: <b id="marketFeedStatus">CHECKING...</b></p>
         </div>
+        <div class="panel chart-panel">
+          <div class="chart-head"><div><h3 style="margin-bottom:4px">5 Year Historical Chart</h3><div class="contact-note">Real historical daily data. Tap a point to inspect its date and price.</div></div>
+            <select id="chartSymbol" class="chart-select">
+              <option value="nifty">Nifty 50</option><option value="sensex">Sensex</option><option value="banknifty">Bank Nifty</option>
+              <option value="reliance">Reliance Industries</option><option value="tcs">TCS</option><option value="hdfcbank">HDFC Bank</option><option value="icicibank">ICICI Bank</option><option value="sbin">SBI</option><option value="airtel">Bharti Airtel</option><option value="lt">Larsen &amp; Toubro</option><option value="axisbank">Axis Bank</option><option value="kotakbank">Kotak Mahindra Bank</option>
+            </select>
+          </div>
+          <div class="range-buttons"><button type="button" class="range-btn" data-range="1y">1Y</button><button type="button" class="range-btn" data-range="3y">3Y</button><button type="button" class="range-btn active" data-range="5y">5Y</button></div>
+          <div class="history-chart-wrap"><svg id="historyChart" viewBox="0 0 900 340" preserveAspectRatio="none"><path id="historyArea" d="M0 300 L900 300 L900 330 L0 330Z"></path><path id="historyLine" d="M0 300 L900 300"></path></svg><div id="chartTooltip" class="chart-tooltip">Select a point</div></div>
+          <div class="chart-axis"><span id="chartStart">--</span><span id="chartEnd">--</span></div>
+          <div id="chartStatus" class="contact-note">Loading historical data...</div>
+        </div>
       </section>
 
-      <section class="page" id="watchlist"><div class="panel"><h3>My Watchlist</h3><div id="fullWatch"></div></div></section>
+      <section class="page" id="watchlist">
+        <div class="panel"><h3>Popular Companies — Live</h3><p class="contact-note">Live prices from the connected market feed.</p><div id="fullWatch"></div></div>
+      </section>
 
       <section class="page" id="research">
         <div class="panel">
@@ -468,7 +507,7 @@ button{cursor:pointer}
 <script>
 "use strict";
 
-const API_BASE="https://alphaedge-c3yf.onrender.com";
+const API_BASE="https://alphaedge-backend-loxi.onrender.com";
 const WHATSAPP_NUMBER="917237868633";
 
 const $ = id => document.getElementById(id);
@@ -479,14 +518,18 @@ async function apiFetch(path, options={}){
     o.headers["Content-Type"]="application/json";
     o.body=JSON.stringify(o.body);
   }
+  o.credentials="include";
   return fetch(API_BASE+path,o);
 }
 
-/* WATCHLIST */
-const symbols=[["NIFTY 50","--"],["SENSEX","--"],["BANK NIFTY","--"]];
+/* POPULAR WATCHLIST */
+const popularSymbols=[
+  ["RELIANCE","Reliance Industries","reliance"],["TCS","TCS","tcs"],["HDFCBANK","HDFC Bank","hdfcbank"],["ICICIBANK","ICICI Bank","icicibank"],["SBIN","State Bank of India","sbin"],["BHARTIARTL","Bharti Airtel","airtel"],["LT","Larsen & Toubro","lt"],["AXISBANK","Axis Bank","axisbank"],["KOTAKBANK","Kotak Mahindra Bank","kotakbank"]
+];
+const watchData=Object.fromEntries(popularSymbols.map(x=>[x[2],null]));
 function renderWatch(){
-  $("miniWatch").innerHTML=symbols.map(x=>`<div class="watch"><span>${x[0]}</span><span class="up">${x[1]}</span></div>`).join("");
-  $("fullWatch").innerHTML=symbols.map(x=>`<div class="watch"><b>${x[0]}</b><span class="up">${x[1]}</span></div>`).join("");
+  const html=popularSymbols.map(([sym,name,key])=>{const d=watchData[key];const price=fmtPrice(d?.ltp);const pct=fmtPct(d?.changePct);const cls=Number(d?.changePct)>=0?"up":"down";return `<div class="watch"><span><b>${name}</b><small style="display:block;color:#71879b">${sym}</small></span><span style="text-align:right"><b>${price}</b><small class="${cls}" style="display:block">${pct}</small></span></div>`}).join("");
+  $("miniWatch").innerHTML=html; $("fullWatch").innerHTML=html;
 }
 renderWatch();
 
@@ -518,7 +561,8 @@ function updateMarketUI(d){
   card("marketBank",d.banknifty);
 
   $("marketFeedStatus").textContent=d.connected?"CONNECTED":"DISCONNECTED";
-
+  popularSymbols.forEach(([sym,name,key])=>{ if(d[key]) watchData[key]=d[key]; });
+  renderWatch();
   if(d.nifty?.ltp) updateChart(d.nifty.ltp);
 }
 const history=[];
@@ -553,6 +597,27 @@ try{
   };
   es.onerror=()=>{};
 }catch(_){}
+
+/* HISTORICAL CHART */
+let selectedChartRange="5y"; let chartRows=[];
+function drawHistoricalChart(rows){
+  chartRows=Array.isArray(rows)?rows:[];
+  const line=$("historyLine"),area=$("historyArea"),tooltip=$("chartTooltip");
+  if(!chartRows.length){line.setAttribute("d","M0 300 L900 300");area.setAttribute("d","M0 300 L900 300 L900 330 L0 330Z");$("chartStatus").textContent="Historical data unavailable.";return;}
+  const vals=chartRows.map(r=>Number(r.close)).filter(Number.isFinite); const min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
+  const points=chartRows.map((r,i)=>{const v=Number(r.close);const x=(i/Math.max(1,chartRows.length-1))*900;const y=300-((v-min)/range)*255;return [x,y,r];});
+  const d=points.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" "); line.setAttribute("d",d); area.setAttribute("d",d+" L900 330 L0 330Z");
+  $("chartStart").textContent=new Date(chartRows[0].date).toLocaleDateString("en-IN"); $("chartEnd").textContent=new Date(chartRows[chartRows.length-1].date).toLocaleDateString("en-IN");
+  $("chartStatus").textContent=`${chartRows.length.toLocaleString("en-IN")} daily points • Historical market data`;
+  const svg=$("historyChart");
+  svg.onpointermove=(e)=>{if(!chartRows.length)return;const rect=svg.getBoundingClientRect();const ratio=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));const idx=Math.round(ratio*(chartRows.length-1));const r=chartRows[idx];tooltip.style.display="block";tooltip.style.left=Math.min(rect.width-170,Math.max(5,e.clientX-rect.left+8))+"px";tooltip.style.top=Math.max(5,e.clientY-rect.top-45)+"px";tooltip.textContent=`${new Date(r.date).toLocaleDateString("en-IN")} • ₹${fmtPrice(r.close)}`;};
+  svg.onpointerleave=()=>tooltip.style.display="none";
+}
+async function loadHistoricalChart(){
+  const symbol=$("chartSymbol").value; $("chartStatus").textContent=`Loading ${selectedChartRange} historical data...`;
+  try{const r=await apiFetch(`/api/market/history-v3?symbol=${encodeURIComponent(symbol)}&range=${selectedChartRange}`,{cache:"no-store"}); const d=await r.json(); if(!r.ok)throw new Error(d.message||"Historical data unavailable"); drawHistoricalChart(d.history||[]);}catch(e){drawHistoricalChart([]);$("chartStatus").textContent=e.message||"Historical data unavailable.";}
+}
+$("chartSymbol").onchange=loadHistoricalChart; document.querySelectorAll(".range-btn").forEach(b=>b.onclick=()=>{selectedChartRange=b.dataset.range;document.querySelectorAll(".range-btn").forEach(x=>x.classList.toggle("active",x===b));loadHistoricalChart();}); loadHistoricalChart();
 
 /* NAVIGATION */
 function showPage(id){
@@ -703,6 +768,11 @@ function closeLegal(){
   document.querySelectorAll(".legal-overlay").forEach(x=>x.classList.remove("show"));
 }
 
+/* TOP 3-DOT MENU */
+function openAbout(){$("topMenu")?.classList.remove("show");$("aboutModal")?.classList.add("show");}
+function openContactInfo(){$("topMenu")?.classList.remove("show");$("contactInfoModal")?.classList.add("show");}
+$("topMenuBtn")?.addEventListener("click",e=>{e.stopPropagation();$("topMenu")?.classList.toggle("show")});document.addEventListener("click",()=>$("topMenu")?.classList.remove("show"));
+
 /* UTILITY MODALS */
 function openForgotClient(){
   $("forgotClientError").style.display="none";
@@ -791,6 +861,7 @@ $("loginForm").onsubmit=async e=>{
 
   const id=$("loginClientId").value.trim().toUpperCase();
   const password=$("loginPassword").value;
+  const remember=$("rememberMe")?.checked===true;
 
   if(!/^AE\d{6}$/.test(id)){
     $("loginError").textContent="Enter a valid Client ID, e.g. AE100001.";
@@ -804,15 +875,22 @@ $("loginForm").onsubmit=async e=>{
   }
 
   $("loading").classList.add("show");
+  const loadingText=$("loading").querySelector("p"); if(loadingText) loadingText.textContent="Logging in...";
   try{
-    const r=await apiFetch("/api/auth/login",{method:"POST",body:{clientId:id,password}});
+    const r=await apiFetch("/api/auth/login",{method:"POST",body:{clientId:id,password,remember}});
     const d=await r.json();
     if(!r.ok)throw new Error(d.message||"Invalid Client ID or password.");
     const u=d.client;
     if(!u)throw new Error("Invalid Client ID or password.");
 
     const cid=u.client_id||u.clientId;
-    localStorage.setItem("alphaedge_logged_in","1");
+    if(remember){
+      localStorage.setItem("alphaedge_logged_in","1");
+      localStorage.setItem("alphaedge_remembered_id",cid);
+    }else{
+      localStorage.removeItem("alphaedge_logged_in");
+      localStorage.removeItem("alphaedge_remembered_id");
+    }
     localStorage.setItem("alphaedge_client_id",cid);
     localStorage.setItem("alphaedge_name",u.name||"");
     localStorage.setItem("alphaedge_mobile",u.phone||u.mobile||"");
@@ -894,6 +972,7 @@ $("forgotPasswordForm").onsubmit=async e=>{
 
 /* LOGOUT */
 $("logout").onclick=async()=>{
+  $("loading").classList.add("show"); const loadingText=$("loading").querySelector("p"); if(loadingText) loadingText.textContent="Logging out...";
   try{await apiFetch("/api/auth/logout",{method:"POST"});}catch(_){}
   localStorage.removeItem("alphaedge_logged_in");
   localStorage.removeItem("alphaedge_client_id");
@@ -902,8 +981,10 @@ $("logout").onclick=async()=>{
   localStorage.removeItem("alphaedge_email");
   $("loginPassword").value="";
   $("terms").checked=false;
+  if($("rememberMe")) $("rememberMe").checked=!!localStorage.getItem("alphaedge_remembered_id");
   $("loginScreen").classList.add("show");
   switchAuth("login");
+  $("loading").classList.remove("show");
 };
 
 /* PROFILE */
@@ -1093,6 +1174,8 @@ if(savedPhoto){
   $("profileAvatar").innerHTML=`<img src="${savedPhoto}" alt="Profile">`;
   $("topAvatar").innerHTML=`<img src="${savedPhoto}" alt="Profile">`;
 }
+const rememberedId=localStorage.getItem("alphaedge_remembered_id");
+if(rememberedId && $("loginClientId")) { $("loginClientId").value=rememberedId; if($("rememberMe")) $("rememberMe").checked=true; }
 const cid=localStorage.getItem("alphaedge_client_id");
 if(cid){
   $("topClient").textContent=cid;
@@ -1102,9 +1185,28 @@ $("profileName").value=localStorage.getItem("alphaedge_name")||"";
 $("profileMobile").value=localStorage.getItem("alphaedge_mobile")||"";
 $("profileEmail").value=localStorage.getItem("alphaedge_email")||"";
 
-if(localStorage.getItem("alphaedge_logged_in")==="1"&&cid){
-  $("loginScreen").classList.remove("show");
+async function restoreSession(){
+  try{
+    const r=await apiFetch("/api/auth/me",{cache:"no-store"});
+    if(!r.ok){
+      localStorage.removeItem("alphaedge_logged_in");
+      if(localStorage.getItem("alphaedge_remembered_id")){ localStorage.removeItem("alphaedge_remembered_id"); if($("rememberMe")) $("rememberMe").checked=false; }
+      $("loginScreen").classList.add("show");
+      return;
+    }
+    const d=await r.json(); const u=d.client||d.user; if(!u) return;
+    const id=u.clientId||u.client_id;
+    if(id){
+      localStorage.setItem("alphaedge_client_id",id);
+      localStorage.setItem("alphaedge_name",u.name||"");
+      localStorage.setItem("alphaedge_mobile",u.phone||"");
+      localStorage.setItem("alphaedge_email",u.email||"");
+      $("topClient").textContent=id; $("profileClientId").value=id; $("profileName").value=u.name||""; $("profileMobile").value=u.phone||""; $("profileEmail").value=u.email||"";
+      $("loginScreen").classList.remove("show"); greeting();
+    }
+  }catch(_){}
 }
+if(localStorage.getItem("alphaedge_logged_in")==="1" || !rememberedId) restoreSession();
 $("footerYear").textContent=new Date().getFullYear();
 greeting();
 </script>
