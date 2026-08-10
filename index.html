@@ -601,7 +601,7 @@ button{cursor:pointer}
 <script>
 "use strict";
 
-const API_BASE="https://alphaedge-backend-loxi1.onrender.com";
+const API_BASE="https://alphaedge-backend-loxi.onrender.com";
 const WHATSAPP_NUMBER="917237868633";
 
 const $ = id => document.getElementById(id);
@@ -1731,5 +1731,23 @@ greeting();
 restoreSession();
 showPage("dashboard");
 </script>
+<script>
+/* AlphaEdge Admin entry point */
+(function(){
+  const adminUrl="https://alphaedge-backend-loxi.onrender.com/admin";
+  const existing=document.getElementById("alphaedgeAdminLink");
+  if(!existing){
+    const a=document.createElement("a");
+    a.id="alphaedgeAdminLink";
+    a.href=adminUrl;
+    a.target="_blank";
+    a.rel="noopener";
+    a.textContent="Admin";
+    a.style.cssText="position:fixed;right:12px;bottom:10px;z-index:9999;font:12px Arial;color:#55dcb8;text-decoration:none;opacity:.75";
+    document.body.appendChild(a);
+  }
+})();
+</script>
+
 </body>
 </html>
