@@ -11,7 +11,8 @@ body{margin:0;background:#07111b;color:#eaf2f8;font-family:Arial,sans-serif}
 button,input,textarea{font:inherit}
 button{cursor:pointer}
 .app{display:flex;min-height:100vh}
-.side{width:190px;background:#08131e;border-right:1px solid #203142;padding:22px 12px}
+.side{position:fixed;left:0;top:0;width:190px;height:100vh;overflow:hidden;background:#08131e;border-right:1px solid #203142;padding:22px 12px;z-index:50}
+.main{margin-left:190px;min-width:0;height:100vh;overflow-y:auto;overflow-x:hidden}
 .logo{font-size:20px;font-weight:800;padding:0 7px 25px}
 .brand-logo{display:flex;align-items:center;gap:10px;margin-bottom:22px}
 .brand-mark{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#28d5a0,#159b78);color:#06131b;font-weight:900;letter-spacing:-1px;box-shadow:0 8px 22px #0005}
@@ -21,7 +22,6 @@ button{cursor:pointer}
 .nav button{border:0;background:transparent;color:#8fa0b1;text-align:left;padding:11px 9px;border-radius:9px}
 .nav button:hover,.nav button.active{background:#10283a;color:#fff}
 .logout{margin-top:25px!important}
-.main{flex:1;min-width:0}
 .top{height:76px;border-bottom:1px solid #1d2d3d;display:flex;align-items:center;justify-content:space-between;padding:0 25px}
 .title{font-size:20px}
 .sub,.contact-note{font-size:11px;color:#71879b;margin-top:3px}
@@ -29,7 +29,7 @@ button{cursor:pointer}
 .avatar,.big-avatar{border-radius:50%;background:#16364a;display:grid;place-items:center;color:#8eead0;overflow:hidden}
 .avatar{width:34px;height:34px;cursor:pointer}
 .avatar img,.big-avatar img{width:100%;height:100%;object-fit:cover}
-.content{padding:25px;max-width:1100px}
+.content{padding:25px;max-width:1200px;margin:0 auto}
 .page{display:none}.page.active{display:block}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .card,.panel{background:#0b1926;border:1px solid #1b2e40;border-radius:13px}
@@ -65,7 +65,7 @@ button{cursor:pointer}
 .legal-overlay.show,.login-overlay.show,.utility-overlay.show{display:flex}
 .legal-box,.login,.utility-box{width:min(650px,100%);max-height:85vh;overflow:auto;background:#0b1926;border:1px solid #1d3548;border-radius:16px;padding:24px}
 .login{width:min(430px,100%)}
-.utility-box{width:min(430px,100%)}
+.utility-box{width:min(620px,100%)}
 .legal-box p,.legal-box li{color:#9dafc0;font-size:12px;line-height:1.7}
 .legal-close{float:right;background:#102132;border:1px solid #274054;color:#fff;border-radius:7px;padding:7px 11px}
 .terms{display:flex;gap:8px;align-items:flex-start;color:#8296a9;font-size:11px}
@@ -105,8 +105,43 @@ button{cursor:pointer}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .remember-row{display:flex;align-items:center;gap:8px;color:#8296a9;font-size:11px}.remember-row input{width:16px;height:16px;accent-color:#28d5a0}.top-menu-btn{width:32px;height:32px;border:1px solid #29465a;border-radius:8px;background:#102132;color:#dce8f2;font-size:22px;line-height:1}.top-menu{position:absolute;right:65px;top:58px;display:none;flex-direction:column;min-width:150px;background:#0b1926;border:1px solid #29465a;border-radius:10px;padding:6px;z-index:950;box-shadow:0 15px 35px #0008}.top-menu.show{display:flex}.top-menu button{border:0;background:transparent;color:#dce8f2;text-align:left;padding:10px;border-radius:7px}.top-menu button:hover{background:#10283a}.top{position:relative}.contact-card{background:#071521;border:1px solid #24394c;border-radius:10px;padding:10px 14px}.contact-card p{font-size:12px;line-height:1.7}.contact-card a{color:#55dcb8}.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.chart-select{background:#071521;border:1px solid #29465a;color:#dce8f2;border-radius:8px;padding:9px;max-width:230px}.range-buttons{display:flex;gap:7px;margin:12px 0}.range-btn{border:1px solid #29465a;background:#102132;color:#dce8f2;padding:7px 12px;border-radius:7px}.range-btn.active{background:#28d5a0;color:#06131b;border-color:#28d5a0}.history-chart-wrap{height:340px;position:relative;background:#071521;border:1px solid #172b3b;border-radius:10px;overflow:hidden}.history-chart-wrap svg{width:100%;height:100%;touch-action:none}.history-chart-wrap #historyLine{fill:none;stroke:#28d5a0;stroke-width:3}.history-chart-wrap #historyArea{fill:#28d5a0;opacity:.08}.chart-tooltip{position:absolute;display:none;pointer-events:none;background:#0b1926;border:1px solid #29465a;border-radius:8px;padding:7px 9px;font-size:10px;color:#eaf2f8;white-space:nowrap}.chart-axis{display:flex;justify-content:space-between;color:#71879b;font-size:10px;margin-top:7px}.chart-panel{margin-top:12px}
-@media(max-width:750px){.side{width:155px}.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}.content{padding:14px}.top{padding:0 14px}}
-@media(max-width:520px){.side{width:120px}.nav button{font-size:11px}.cards{grid-template-columns:1fr 1fr}.top .sub{display:none}}
+.research-list{margin-top:12px;display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;padding:0 0 4px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.research-item{flex:0 0 360px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;padding:16px;border:1px solid #1b3447;border-radius:12px;background:#071521;font-size:12px;scroll-snap-align:start}
+.research-item:last-child{border-bottom:1px solid #1b3447}
+.research-info{min-width:0}
+.research-title{font-weight:700;color:#eaf2f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.research-meta{font-size:10px;color:#71879b;margin-top:5px}
+.research-index{color:#28d5a0;font-size:10px;min-width:30px}
+.research-left{display:flex;align-items:flex-start;gap:10px;min-width:0}
+.research-item .action{align-self:flex-start;white-space:nowrap;padding:7px 11px;font-size:10px}
+@media(max-width:750px){
+  .side{width:112px;padding:22px 8px}
+  .main{margin-left:112px}
+  .cards{grid-template-columns:1fr 1fr}
+  .row{grid-template-columns:1fr}
+  .content{padding:14px}
+  .top{padding:0 14px;gap:8px}
+  .top>div:first-child{min-width:0}
+  .title{font-size:15px;line-height:1.15}
+  .user{gap:6px;font-size:10px;flex:0 0 auto}
+  .top-menu-btn{width:30px;height:30px;font-size:20px}
+  .avatar{width:32px;height:32px}
+}
+@media(max-width:520px){
+  .side{width:112px}
+  .main{margin-left:112px}
+  .logo{font-size:16px;padding:0 2px 25px}
+  .brand-logo{margin-bottom:22px}
+  .brand-name{font-size:18px}
+  .nav button{font-size:10px;padding:10px 7px}
+  .cards{grid-template-columns:1fr 1fr}
+  .top .sub{display:none}
+  .content{padding:14px}
+  .research-list{gap:10px}
+  .research-item{flex-basis:220px;min-height:170px;padding:14px}
+  .research-title{font-size:12px}
+  .research-meta{font-size:9px}
+}
 </style>
 </head>
 <body>
@@ -307,8 +342,9 @@ button{cursor:pointer}
   <div class="utility-box">
     <button class="legal-close" type="button" onclick="closeUtility()">Close</button>
     <h2 class="modal-title">About AlphaEdge</h2>
-    <p class="contact-note">AlphaEdge provides market information, educational material, research-style content and charting tools for general informational purposes.</p>
-    <p class="contact-note">Market data and historical charts depend on third-party market-data services and may be delayed or unavailable.</p>
+    <p class="contact-note" style="font-size:13px;line-height:1.75">AlphaEdge is a market-information and educational workspace designed to bring market data, historical charts, watchlists, research-style material and learning resources together in one place. The platform is intended for general informational and educational purposes and is not a substitute for professional financial, investment, legal or tax advice.</p>
+    <p class="contact-note" style="font-size:13px;line-height:1.75">Users can explore market movements, compare historical performance across available instruments, inspect chart points manually and maintain a personal watchlist. Live quotes and historical information are supplied through connected third-party market-data services, so availability, timing and accuracy can depend on those services and their access credentials.</p>
+    <p class="contact-note" style="font-size:13px;line-height:1.75">Trading and investing involve risk. Historical performance is not a guarantee of future results. Always verify important market information before making any financial decision.</p>
   </div>
 </div>
 <div class="utility-overlay" id="contactInfoModal" role="dialog" aria-modal="true">
@@ -400,13 +436,23 @@ button{cursor:pointer}
           <p class="contact-note">Backend feed: <b id="marketFeedStatus">CHECKING...</b></p>
         </div>
         <div class="panel chart-panel">
-          <div class="chart-head"><div><h3 style="margin-bottom:4px">5 Year Historical Chart</h3><div class="contact-note">Real historical daily data. Tap a point to inspect its date and price.</div></div>
+          <div class="chart-head"><div><h3 id="chartTitle" style="margin-bottom:4px">Current Market Chart</h3><div class="contact-note">Real historical daily data. Tap a point to inspect its date and price.</div></div>
             <select id="chartSymbol" class="chart-select">
               <option value="nifty">Nifty 50</option><option value="sensex">Sensex</option><option value="banknifty">Bank Nifty</option>
               <option value="reliance">Reliance Industries</option><option value="tcs">TCS</option><option value="hdfcbank">HDFC Bank</option><option value="icicibank">ICICI Bank</option><option value="sbin">SBI</option><option value="airtel">Bharti Airtel</option><option value="lt">Larsen &amp; Toubro</option><option value="axisbank">Axis Bank</option><option value="kotakbank">Kotak Mahindra Bank</option>
             </select>
           </div>
-          <div class="range-buttons"><button type="button" class="range-btn" data-range="1y">1Y</button><button type="button" class="range-btn" data-range="3y">3Y</button><button type="button" class="range-btn active" data-range="5y">5Y</button></div>
+          <div class="range-buttons" style="flex-wrap:wrap">
+            <button type="button" class="range-btn active" data-range="current">Current</button>
+            <button type="button" class="range-btn" data-range="1min">1 min</button>
+            <button type="button" class="range-btn" data-range="30min">30 min</button>
+            <button type="button" class="range-btn" data-range="1h">1 hour</button>
+            <button type="button" class="range-btn" data-range="1mo">1 month</button>
+            <button type="button" class="range-btn" data-range="6mo">6 months</button>
+            <button type="button" class="range-btn" data-range="1y">1Y</button>
+            <button type="button" class="range-btn" data-range="3y">3Y</button>
+            <button type="button" class="range-btn" data-range="5y">5Y</button>
+          </div>
           <div class="history-chart-wrap"><svg id="historyChart" viewBox="0 0 900 340" preserveAspectRatio="none"><path id="historyArea" d="M0 300 L900 300 L900 330 L0 330Z"></path><path id="historyLine" d="M0 300 L900 300"></path></svg><div id="chartTooltip" class="chart-tooltip">Select a point</div></div>
           <div class="chart-axis"><span id="chartStart">--</span><span id="chartEnd">--</span></div>
           <div id="chartStatus" class="contact-note">Loading historical data...</div>
@@ -420,10 +466,8 @@ button{cursor:pointer}
       <section class="page" id="research">
         <div class="panel">
           <h3>Research Centre</h3>
-          <p class="contact-note">Educational research and market concepts.</p>
-          <button class="action" type="button" onclick="openResearch('trends')">Market Trends</button>
-          <button class="action" type="button" onclick="openResearch('risk')">Risk Management</button>
-          <button class="action" type="button" onclick="openResearch('technical')">Technical Analysis</button>
+          <p class="contact-note">200 educational research topics across markets, analysis, risk, companies and trading concepts.</p>
+          <div class="research-list" id="researchList"></div>
         </div>
       </section>
 
@@ -511,6 +555,9 @@ const API_BASE="https://alphaedge-backend-loxi.onrender.com";
 const WHATSAPP_NUMBER="917237868633";
 
 const $ = id => document.getElementById(id);
+function friendlyNetworkError(e, fallback="Backend unavailable. Please try again."){
+  return e?.name === "AbortError" ? "Backend request timed out. Please try again." : (e?.message === "Failed to fetch" ? fallback : (e?.message || fallback));
+}
 
 async function apiFetch(path, options={}){
   const o={...options,headers:{...(options.headers||{})}};
@@ -519,12 +566,136 @@ async function apiFetch(path, options={}){
     o.body=JSON.stringify(o.body);
   }
   o.credentials="include";
+  if(!o.signal){
+    const controller=new AbortController();
+    o.signal=controller.signal;
+    setTimeout(()=>controller.abort(),15000);
+  }
   return fetch(API_BASE+path,o);
 }
 
 /* POPULAR WATCHLIST */
 const popularSymbols=[
-  ["RELIANCE","Reliance Industries","reliance"],["TCS","TCS","tcs"],["HDFCBANK","HDFC Bank","hdfcbank"],["ICICIBANK","ICICI Bank","icicibank"],["SBIN","State Bank of India","sbin"],["BHARTIARTL","Bharti Airtel","airtel"],["LT","Larsen & Toubro","lt"],["AXISBANK","Axis Bank","axisbank"],["KOTAKBANK","Kotak Mahindra Bank","kotakbank"]
+  ["RELIANCE", "Reliance Industries", "reliance"],
+  ["TCS", "TCS", "tcs"],
+  ["HDFCBANK", "HDFC Bank", "hdfcbank"],
+  ["ICICIBANK", "ICICI Bank", "icicibank"],
+  ["SBIN", "State Bank of India", "sbin"],
+  ["BHARTIARTL", "Bharti Airtel", "airtel"],
+  ["LT", "Larsen & Toubro", "lt"],
+  ["AXISBANK", "Axis Bank", "axisbank"],
+  ["KOTAKBANK", "Kotak Mahindra Bank", "kotakbank"],
+  ["INFY", "Infosys", "infy"],
+  ["HINDUNILVR", "Hindustan Unilever", "hindunilvr"],
+  ["ITC", "ITC", "itc"],
+  ["MARUTI", "Maruti Suzuki India", "maruti"],
+  ["M&M", "Mahindra & Mahindra", "mandm"],
+  ["SUNPHARMA", "Sun Pharma", "sunpharma"],
+  ["TITAN", "Titan Company", "titan"],
+  ["BAJFINANCE", "Bajaj Finance", "bajfinance"],
+  ["HCLTECH", "HCLTech", "hcltech"],
+  ["KOTAKBANK", "Kotak Mahindra Bank", "kotakbank2"],
+  ["WIPRO", "Wipro", "wipro"],
+  ["ADANIENT", "Adani Enterprises", "adanient"],
+  ["ADANIPORTS", "Adani Ports", "adaniports"],
+  ["NTPC", "NTPC", "ntpc"],
+  ["POWERGRID", "Power Grid Corp", "powergrid"],
+  ["ONGC", "ONGC", "ongc"],
+  ["COALINDIA", "Coal India", "coalindia"],
+  ["TATASTEEL", "Tata Steel", "tatasteel"],
+  ["JSWSTEEL", "JSW Steel", "jswsteel"],
+  ["HINDALCO", "Hindalco Industries", "hindalco"],
+  ["TECHM", "Tech Mahindra", "techm"],
+  ["ULTRACEMCO", "UltraTech Cement", "ultracemco"],
+  ["NESTLEIND", "Nestle India", "nestleind"],
+  ["ASIANPAINT", "Asian Paints", "asianpaint"],
+  ["BAJAJFINSV", "Bajaj Finserv", "bajajfinsv"],
+  ["BAJAJ-AUTO", "Bajaj Auto", "bajajauto"],
+  ["HEROMOTOCO", "Hero MotoCorp", "heromotoco"],
+  ["EICHERMOT", "Eicher Motors", "eichermot"],
+  ["DRREDDY", "Dr Reddy’s Laboratories", "drreddy"],
+  ["CIPLA", "Cipla", "cipla"],
+  ["DIVISLAB", "Divi’s Laboratories", "divislab"],
+  ["APOLLOHOSP", "Apollo Hospitals", "apollohosp"],
+  ["TATAMOTORS", "Tata Motors", "tatamotors"],
+  ["TATACONSUM", "Tata Consumer Products", "tataconsum"],
+  ["TATAPOWER", "Tata Power", "tatapower"],
+  ["TATAELXSI", "Tata Elxsi", "tataelxsi"],
+  ["TRENT", "Trent", "trent"],
+  ["BEL", "Bharat Electronics", "bel"],
+  ["HAL", "Hindustan Aeronautics", "hal"],
+  ["BHEL", "BHEL", "bhel"],
+  ["IRFC", "Indian Railway Finance", "irfc"],
+  ["IRCTC", "IRCTC", "irctc"],
+  ["RVNL", "Rail Vikas Nigam", "rvnl"],
+  ["IOC", "Indian Oil", "ioc"],
+  ["BPCL", "Bharat Petroleum", "bpcl"],
+  ["GAIL", "GAIL India", "gail"],
+  ["HINDPETRO", "Hindustan Petroleum", "hindpetro"],
+  ["DLF", "DLF", "dlf"],
+  ["GODREJPROP", "Godrej Properties", "godrejprop"],
+  ["PIDILITIND", "Pidilite Industries", "pidilitind"],
+  ["DABUR", "Dabur India", "dabur"],
+  ["MARICO", "Marico", "marico"],
+  ["COLPAL", "Colgate-Palmolive India", "colpal"],
+  ["BRITANNIA", "Britannia Industries", "britannia"],
+  ["MCDOWELL-N", "United Spirits", "mcdowell"],
+  ["VBL", "Varun Beverages", "vbl"],
+  ["DMART", "Avenue Supermarts", "dmart"],
+  ["ZOMATO", "Zomato", "zomato"],
+  ["PAYTM", "One 97 Communications", "paytm"],
+  ["DELHIVERY", "Delhivery", "delhivery"],
+  ["INDIGO", "InterGlobe Aviation", "indigo"],
+  ["ADANIGREEN", "Adani Green Energy", "adanigreen"],
+  ["ADANIPOWER", "Adani Power", "adanipower"],
+  ["AMBUJACEM", "Ambuja Cements", "ambujacem"],
+  ["ACC", "ACC", "acc"],
+  ["SHREECEM", "Shree Cement", "shreecem"],
+  ["GRASIM", "Grasim Industries", "grasim"],
+  ["VEDL", "Vedanta", "vedl"],
+  ["SAIL", "Steel Authority of India", "sail"],
+  ["NMDC", "NMDC", "nmdc"],
+  ["JINDALSTEL", "Jindal Steel & Power", "jindalstel"],
+  ["HAVELLS", "Havells India", "havells"],
+  ["VOLTAS", "Voltas", "voltas"],
+  ["CROMPTON", "Crompton Greaves Consumer", "crompton"],
+  ["DIXON", "Dixon Technologies", "dixon"],
+  ["POLYCAB", "Polycab India", "polycab"],
+  ["BOSCHLTD", "Bosch", "boschltd"],
+  ["MOTHERSON", "Samvardhana Motherson", "motherson"],
+  ["MUTHOOTFIN", "Muthoot Finance", "muthootfin"],
+  ["CHOLAFIN", "Cholamandalam Investment", "cholafin"],
+  ["SHRIRAMFIN", "Shriram Finance", "shriramfin"],
+  ["BAJAJHLDNG", "Bajaj Holdings & Investment", "bajajhldng"],
+  ["BANKBARODA", "Bank of Baroda", "bankbaroda"],
+  ["PNB", "Punjab National Bank", "pnb"],
+  ["CANBK", "Canara Bank", "canbk"],
+  ["UNIONBANK", "Union Bank of India", "unionbank"],
+  ["INDUSINDBK", "IndusInd Bank", "indusindbk"],
+  ["IDFCFIRSTB", "IDFC First Bank", "idfcfirstb"],
+  ["FEDERALBNK", "Federal Bank", "federalbnk"],
+  ["BANDHANBNK", "Bandhan Bank", "bandhanbnk"],
+  ["RBLBANK", "RBL Bank", "rblbank"],
+  ["LICI", "Life Insurance Corporation of India", "lici"],
+  ["SBILIFE", "SBI Life Insurance", "sbilife"],
+  ["HDFCLIFE", "HDFC Life Insurance", "hdfclife"],
+  ["ICICIGI", "ICICI Lombard General Insurance", "icicigi"],
+  ["ICICIPRULI", "ICICI Prudential Life Insurance", "icicipruli"],
+  ["MAXHEALTH", "Max Healthcare", "maxhealth"],
+  ["FORTIS", "Fortis Healthcare", "fortis"],
+  ["LUPIN", "Lupin", "lupin"],
+  ["AUROPHARMA", "Aurobindo Pharma", "auropharma"],
+  ["TORNTPHARM", "Torrent Pharmaceuticals", "torrentpharm"],
+  ["ALKEM", "Alkem Laboratories", "alkem"],
+  ["BIOCON", "Biocon", "biocon"],
+  ["ZYDUSLIFE", "Zydus Lifesciences", "zyduslife"],
+  ["MANKIND", "Mankind Pharma", "mankind"],
+  ["SRF", "SRF", "srf"],
+  ["UPL", "UPL", "upl"],
+  ["PIIND", "PI Industries", "piind"],
+  ["COROMANDEL", "Coromandel International", "coromandel"],
+  ["CUMMINSIND", "Cummins India", "cumminsind"],
+  ["ABB", "ABB India", "abb"]
 ];
 const watchData=Object.fromEntries(popularSymbols.map(x=>[x[2],null]));
 function renderWatch(){
@@ -599,7 +770,7 @@ try{
 }catch(_){}
 
 /* HISTORICAL CHART */
-let selectedChartRange="5y"; let chartRows=[];
+let selectedChartRange="current"; let chartRows=[];
 function drawHistoricalChart(rows){
   chartRows=Array.isArray(rows)?rows:[];
   const line=$("historyLine"),area=$("historyArea"),tooltip=$("chartTooltip");
@@ -610,11 +781,22 @@ function drawHistoricalChart(rows){
   $("chartStart").textContent=new Date(chartRows[0].date).toLocaleDateString("en-IN"); $("chartEnd").textContent=new Date(chartRows[chartRows.length-1].date).toLocaleDateString("en-IN");
   $("chartStatus").textContent=`${chartRows.length.toLocaleString("en-IN")} daily points • Historical market data`;
   const svg=$("historyChart");
-  svg.onpointermove=(e)=>{if(!chartRows.length)return;const rect=svg.getBoundingClientRect();const ratio=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));const idx=Math.round(ratio*(chartRows.length-1));const r=chartRows[idx];tooltip.style.display="block";tooltip.style.left=Math.min(rect.width-170,Math.max(5,e.clientX-rect.left+8))+"px";tooltip.style.top=Math.max(5,e.clientY-rect.top-45)+"px";tooltip.textContent=`${new Date(r.date).toLocaleDateString("en-IN")} • ₹${fmtPrice(r.close)}`;};
+  const inspectPoint=(e)=>{if(!chartRows.length)return;const rect=svg.getBoundingClientRect();const ratio=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));const idx=Math.round(ratio*(chartRows.length-1));const r=chartRows[idx];tooltip.style.display="block";tooltip.style.left=Math.min(rect.width-170,Math.max(5,e.clientX-rect.left+8))+"px";tooltip.style.top=Math.max(5,e.clientY-rect.top-45)+"px";tooltip.textContent=`${new Date(r.date).toLocaleDateString("en-IN")} • ₹${fmtPrice(r.close)}`;};
+  svg.onpointermove=inspectPoint;
+  svg.onpointerdown=inspectPoint;
   svg.onpointerleave=()=>tooltip.style.display="none";
 }
 async function loadHistoricalChart(){
-  const symbol=$("chartSymbol").value; $("chartStatus").textContent=`Loading ${selectedChartRange} historical data...`;
+  const symbol=$("chartSymbol").value;
+  if(selectedChartRange==="current") {
+    $("chartTitle").textContent="Current Market Chart";
+    $("chartStatus").textContent="Live market points update automatically when the connected feed is available.";
+    if(symbol==="nifty" && history.length){ drawHistoricalChart(history.map((v,i)=>({date:new Date(Date.now()-(history.length-1-i)*5000).toISOString(),close:v}))); }
+    return;
+  }
+  const titles={"1min":"1 Minute Chart","30min":"30 Minute Chart","1h":"1 Hour Chart","1mo":"1 Month Chart","6mo":"6 Month Chart","1y":"1 Year Historical Chart","3y":"3 Year Historical Chart","5y":"5 Year Historical Chart"};
+  $("chartTitle").textContent=titles[selectedChartRange]||"Historical Chart";
+  $("chartStatus").textContent=`Loading ${titles[selectedChartRange]||selectedChartRange}...`;
   try{const r=await apiFetch(`/api/market/history-v3?symbol=${encodeURIComponent(symbol)}&range=${selectedChartRange}`,{cache:"no-store"}); const d=await r.json(); if(!r.ok)throw new Error(d.message||"Historical data unavailable"); drawHistoricalChart(d.history||[]);}catch(e){drawHistoricalChart([]);$("chartStatus").textContent=e.message||"Historical data unavailable.";}
 }
 $("chartSymbol").onchange=loadHistoricalChart; document.querySelectorAll(".range-btn").forEach(b=>b.onclick=()=>{selectedChartRange=b.dataset.range;document.querySelectorAll(".range-btn").forEach(x=>x.classList.toggle("active",x===b));loadHistoricalChart();}); loadHistoricalChart();
@@ -849,7 +1031,7 @@ $("registerForm").onsubmit=async e=>{
     if(id)$("loginClientId").value=id;
     setTimeout(()=>switchAuth("login"),1400);
   }catch(e){
-    $("registerError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Please try again.":e.message;
+    $("registerError").textContent=friendlyNetworkError(e);
     $("registerError").style.display="block";
   }
 };
@@ -904,7 +1086,7 @@ $("loginForm").onsubmit=async e=>{
     greeting();
     $("loginScreen").classList.remove("show");
   }catch(e){
-    $("loginError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Please try again.":e.message;
+    $("loginError").textContent=friendlyNetworkError(e);
     $("loginError").style.display="block";
   }finally{
     $("loading").classList.remove("show");
@@ -930,7 +1112,7 @@ $("forgotClientForm").onsubmit=async e=>{
     $("forgotClientSuccess").style.display="block";
     if(d.clientId)$("loginClientId").value=d.clientId;
   }catch(e){
-    $("forgotClientError").textContent=e.message==="Failed to fetch"?"Backend unavailable.":e.message;
+    $("forgotClientError").textContent=friendlyNetworkError(e,"Backend unavailable.");
     $("forgotClientError").style.display="block";
   }
 };
@@ -965,7 +1147,7 @@ $("forgotPasswordForm").onsubmit=async e=>{
     $("loginClientId").value=clientId;
     setTimeout(closeUtility,1400);
   }catch(e){
-    $("forgotPasswordError").textContent=e.message==="Failed to fetch"?"Backend unavailable.":e.message;
+    $("forgotPasswordError").textContent=friendlyNetworkError(e,"Backend unavailable.");
     $("forgotPasswordError").style.display="block";
   }
 };
@@ -1019,7 +1201,7 @@ $("profileForm").onsubmit=async e=>{
     greeting();
     setTimeout(()=>$("profileSuccess").style.display="none",3000);
   }catch(e){
-    alert(e.message==="Failed to fetch"?"Backend unavailable.":e.message);
+    alert(friendlyNetworkError(e,"Backend unavailable."));
   }
 };
 
@@ -1047,6 +1229,24 @@ const articles={
   risk:"<h2>Risk Management Framework</h2><p>Risk management focuses on controlling potential losses.</p><ul><li>Define risk before entering.</li><li>Use appropriate exit limits.</li><li>Avoid excessive concentration.</li><li>Review trades objectively.</li></ul>",
   technical:"<h2>Technical Analysis Basics</h2><p>Technical analysis studies price and volume information.</p><ul><li>Support and resistance</li><li>Trendlines</li><li>Moving averages</li><li>Volume</li><li>Momentum</li></ul>"
 };
+const researchTitles=[
+  "Understanding Market Trends","Risk Management Framework","Technical Analysis Basics","Support and Resistance","Moving Average Concepts","Volume Analysis","Price Action Foundations","Candlestick Patterns","Trendline Analysis","Market Cycles","Breakout Analysis","Range-Bound Markets","Momentum Indicators","Relative Strength Index","MACD Basics","Bollinger Bands","Average True Range","Volatility Concepts","Position Sizing","Risk-Reward Ratios","Stop Loss Planning","Portfolio Diversification","Correlation and Concentration","Drawdown Awareness","Trading Journal Framework","Entry and Exit Planning","Market Structure","Higher Highs and Lower Lows","Gap Analysis","Liquidity Concepts","Bid and Ask Explained","Order Types","Limit and Market Orders","Slippage Awareness","Trading Volume and Liquidity","Large Cap Companies","Mid Cap Companies","Small Cap Companies","Sector Rotation","Banking Sector Overview","IT Sector Overview","Pharma Sector Overview","Auto Sector Overview","Energy Sector Overview","FMCG Sector Overview","Infrastructure Sector Overview","Metal Sector Overview","Telecom Sector Overview","Consumer Sector Overview","Real Estate Sector Overview","Nifty 50 Structure","Sensex Structure","Bank Nifty Structure","Index Weighting Basics","Benchmark Comparison","Market Breadth","Advance Decline Ratio","New Highs and New Lows","52-Week Range","Earnings Fundamentals","Revenue Growth","Profit Margins","Earnings Per Share","Price to Earnings","Price to Book","Dividend Yield","Return on Equity","Return on Capital","Debt to Equity","Cash Flow Basics","Free Cash Flow","Balance Sheet Basics","Income Statement Basics","Corporate Actions","Dividends Explained","Bonus Shares","Stock Splits","Rights Issues","Buybacks","IPO Basics","IPO Valuation Concepts","Market Capitalization","Enterprise Value","Economic Moats","Competitive Advantage","Management Quality","Business Model Analysis","Cyclical Businesses","Defensive Businesses","Growth Companies","Value Companies","Quality Investing Concepts","Factor Investing","Momentum Factor","Value Factor","Quality Factor","Low Volatility Factor","Index Investing","ETF Basics","Passive Investing","Active Investing","Asset Allocation","Strategic Allocation","Tactical Allocation","Rebalancing Concepts","Long-Term Compounding","Inflation and Returns","Interest Rates and Markets","Bond Yield Impact","Currency Impact","Commodity Impact","Crude Oil and Markets","Gold and Market Cycles","Global Market Correlation","US Market Influence","Asian Market Influence","European Market Influence","Emerging Markets","Market Sentiment","Investor Psychology","Behavioral Biases","Loss Aversion","Confirmation Bias","Overconfidence Bias","Herd Behaviour","FOMO Awareness","Discipline in Trading","Trading Plan Basics","Backtesting Concepts","Paper Trading","Strategy Evaluation","Win Rate and Expectancy","Profit Factor","Risk of Ruin","Trade Management","Trailing Stop Concepts","Scaling In and Out","Position Monitoring","Overtrading Awareness","Emotional Decision Making","News and Market Volatility","Earnings Season Planning","Economic Calendar Basics","GDP and Markets","Inflation Data and Markets","Employment Data and Markets","Central Bank Decisions","Policy Rate Impact","Liquidity and Money Supply","Market Regimes","Bull Market Characteristics","Bear Market Characteristics","Sideways Market Characteristics","Volatility Regimes","Trend Following Concepts","Mean Reversion Concepts","Breakout Trading Concepts","Swing Trading Basics","Intraday Trading Basics","Long-Term Investing Basics","Technical Screening","Fundamental Screening","Sector Screening","Relative Strength Screening","Watchlist Construction","Research Checklist","Company Comparison Framework","Investment Thesis Basics","Bull Case and Bear Case","Catalysts and Risks","Scenario Analysis","Sensitivity Analysis","Margin of Safety","Valuation Multiples","Peer Comparison","Historical Valuation","Price Targets and Assumptions","Research Documentation","Source Verification","Data Quality Awareness","Avoiding False Precision","Educational Research Disclaimer","Market Data Limitations","Delayed Data Awareness","Historical Data Interpretation","Chart Reading Checklist","Risk Disclosure Basics","Responsible Market Research","Final Research Review","Market Research Workflow","Pre-Trade Research Checklist","Post-Trade Review","Chart Timeframe Selection","Multi-Timeframe Analysis","Intraday Volatility Study","Liquidity Risk Awareness","Event Risk Planning","Earnings Surprise Concepts","Guidance and Outlook","Competitive Landscape Review","Industry Growth Drivers","Regulatory Risk Awareness","Operational Risk Concepts","Financial Leverage Risk","Research Bias Controls","Evidence-Based Market Analysis","Research Notes Organisation","Comparing Business Models","Building a Research Dashboard"
+];
+function renderResearchList(){
+  const box=$("researchList"); if(!box) return;
+  box.innerHTML=researchTitles.slice(0,200).map((title,i)=>{
+    const key=i===0?'trends':i===1?'risk':i===2?'technical':null;
+    const action=key?`<button class="action" type="button" onclick="openResearch('${key}')">Open</button>`:`<button class="action" type="button" onclick="openResearchTopic(${i})">Open</button>`;
+    return `<div class="research-item"><div class="research-left"><span class="research-index">${String(i+1).padStart(3,'0')}</span><div class="research-info"><div class="research-title">${title}</div><div class="research-meta">Educational research topic</div></div></div>${action}</div>`;
+  }).join('');
+}
+function openResearchTopic(i){
+  const title=researchTitles[i]||'Research Topic';
+  $("articleContent").innerHTML=`<h2>${title}</h2><p>This is educational research material covering market concepts, analysis, risk awareness and responsible decision-making.</p><p>Use this topic for learning and research only. Market outcomes are uncertain and this material is not personal financial advice.</p><br><button class="action" type="button" onclick="showPage('research')">← Back</button>`;
+  showPage('article');
+}
+renderResearchList();
+
 function openResearch(k){
   $("articleContent").innerHTML=articles[k]+`<br><button class="action" type="button" onclick="showPage('research')">← Back</button>`;
   showPage("article");
@@ -1129,7 +1329,7 @@ $("paymentForm").onsubmit=async e=>{
       $("paymentSuccess").textContent="Payment confirmation submitted successfully.";
       $("paymentSuccess").style.display="block";
     }catch(e){
-      $("paymentError").textContent=e.message==="Failed to fetch"?"Backend unavailable.":e.message;
+      $("paymentError").textContent=friendlyNetworkError(e,"Backend unavailable.");
       $("paymentError").style.display="block";
     }
   };
