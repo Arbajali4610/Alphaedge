@@ -1578,47 +1578,30 @@ async function loadUpstoxEquityUniverse(){
 }
 loadUpstoxEquityUniverse();
 
-async function yahooChart(symbol, range, interval){
-  const urls=[
-    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&events=div%2Csplits`,
-    `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&events=div%2Csplits`
-  ];
-  let lastErr;
-  for(const u of urls){
-    try{
-      const r=await fetch(u,{cache:"no-store"});
-      if(!r.ok)throw new Error("Market data unavailable");
-      const d=await r.json();
-      if(d?.chart?.result?.[0]) return d.chart.result[0];
-    }catch(e){lastErr=e;}
-  }
-  throw lastErr||new Error("Market data unavailable");
+async function getEquityQuotesFromBackend(items){
+  const keys=[...new Set(items.map(x=>x.instrumentKey).filter(Boolean))];
+  if(!keys.length)return {};
+  try{
+    const r=await apiFetch(`/api/equity/quotes?instrument_key=${encodeURIComponent(keys.join(','))}`,{method:"GET"});
+    if(!r.ok)throw new Error("Equity quotes unavailable");
+    const d=await r.json();
+    return d?.quotes||{};
+  }catch(_){return {};}
 }
-function symbolCandidates(x){
-  const s=String(x.symbol||"");
-  return x.exchanges?.includes("BSE") && !x.exchanges?.includes("NSE")?[`${s}.BO`]:[`${s}.NS`,`${s}.BO`];
-}
-async function getEquityQuote(x){
-  for(const s of symbolCandidates(x)){
-    try{
-      const r=await yahooChart(s,"5d","1d");
-      const meta=r.meta||{};
-      const closes=(r.indicators?.quote?.[0]?.close||[]).filter(v=>Number.isFinite(v));
-      const price=Number(meta.regularMarketPrice??closes.at(-1));
-      const prev=Number(meta.previousClose??closes.at(-2));
-      if(Number.isFinite(price)) return {price,changePct:Number.isFinite(prev)&&prev?((price-prev)/prev)*100:NaN,provider:s};
-    }catch(_){ }
-  }
-  return null;
-}
+
 async function loadEquityQuotes(){
   const all=equityAll();
-  for(let i=0;i<Math.min(all.length,40);i++){
-    const x=all[i];
-    if(equityCache.has(x.symbol))continue;
-    const q=await getEquityQuote(x);
-    if(q) equityCache.set(x.symbol,q);
-    if(i%4===3) await new Promise(r=>setTimeout(r,180));
+  // Upstox accepts multiple instrument keys in one request, so load the
+  // complete Equity Hub instead of only the first 40 symbols.
+  const quotes=await getEquityQuotesFromBackend(all);
+  for(const x of all){
+    const q=quotes[x.instrumentKey];
+    if(!q)continue;
+    equityCache.set(x.symbol,{
+      price:Number(q.price),
+      changePct:Number.isFinite(Number(q.changePct))?Number(q.changePct):NaN,
+      provider:"Upstox"
+    });
   }
   renderEquityList();
 }
@@ -1637,16 +1620,26 @@ async function openEquity(symbol){
       <div class="detail-stat"><span>Period</span><b>5 Years</b></div>
     </div>
     <div class="history-wrap" id="historyChart"><div class="history-loading">Loading 5-year market data...</div></div>
-    <div class="history-note">5-year monthly historical price series. Instrument universe is loaded from Upstox's BOD master. Quote/history display uses the connected market-data feed available to this page.</div>`;
-  const quote=await getEquityQuote(x);
-  if(quote){
-    $("detailPrice").textContent=fmtPrice(quote.price);
-    $("detailChange").textContent=fmtPct(quote.changePct);
-    $("detailChange").className=Number(quote.changePct)>=0?"up":"down";
-    equityCache.set(x.symbol,quote);
+    <div class="history-note">5-year monthly historical price series from the connected Upstox market-data API.</div>`;
+
+  const cached=equityCache.get(x.symbol);
+  if(cached){
+    $("detailPrice").textContent=fmtPrice(cached.price);
+    $("detailChange").textContent=fmtPct(cached.changePct);
+    $("detailChange").className=Number(cached.changePct)>=0?"up":"down";
   }else{
-    $("detailPrice").textContent="--";
-    $("detailChange").textContent="Unavailable";
+    const quotes=await getEquityQuotesFromBackend([x]);
+    const q=quotes[x.instrumentKey];
+    if(q){
+      const quote={price:Number(q.price),changePct:Number.isFinite(Number(q.changePct))?Number(q.changePct):NaN,provider:"Upstox"};
+      equityCache.set(x.symbol,quote);
+      $("detailPrice").textContent=fmtPrice(quote.price);
+      $("detailChange").textContent=fmtPct(quote.changePct);
+      $("detailChange").className=Number(quote.changePct)>=0?"up":"down";
+    }else{
+      $("detailPrice").textContent="--";
+      $("detailChange").textContent="Unavailable";
+    }
   }
   renderEquityList();
   await loadEquityHistory(x);
@@ -1670,20 +1663,21 @@ function drawHistory(points){
     <text x="4" y="14" fill="#71879b" font-size="10">5Y monthly</text>
   </svg>`;
 }
+
 async function loadEquityHistory(x){
-  let result=null;
-  for(const s of symbolCandidates(x)){
-    try{result=await yahooChart(s,"5y","1mo");break;}catch(_){ }
+  try{
+    const r=await apiFetch(`/api/equity/history?instrument_key=${encodeURIComponent(x.instrumentKey)}&range=5y`,{method:"GET"});
+    if(!r.ok)throw new Error("Historical data unavailable");
+    const d=await r.json();
+    const history=Array.isArray(d?.history)?d.history:[];
+    const points=history.map(c=>({
+      v:Number(c.close),
+      d:new Date(c.date).toLocaleDateString("en-IN",{month:"short",year:"numeric"})
+    })).filter(p=>Number.isFinite(p.v));
+    drawHistory(points);
+  }catch(_){
+    $("historyChart").innerHTML='<div class="history-loading">Unable to load historical data right now. Please try again.</div>';
   }
-  if(!result){$("historyChart").innerHTML='<div class="history-loading">Unable to load historical data right now. Please try again.</div>';return;}
-  const ts=result.timestamp||[];
-  const q=result.indicators?.quote?.[0]?.close||[];
-  const points=[];
-  for(let i=0;i<Math.min(ts.length,q.length);i++){
-    const v=Number(q[i]);if(!Number.isFinite(v))continue;
-    points.push({v,d:new Date(ts[i]*1000).toLocaleDateString("en-IN",{month:"short",year:"numeric"})});
-  }
-  drawHistory(points);
 }
 /* RESTORE SAVED STATE */
 const cid=localStorage.getItem("alphaedge_client_id");
