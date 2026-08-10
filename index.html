@@ -1029,7 +1029,7 @@ $("registerForm").onsubmit=async e=>{
     if(id)$("loginClientId").value=id;
     setTimeout(()=>switchAuth("login"),1400);
   }catch(e){
-    $("registerError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Please try again.":e.message;
+    $("registerError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Check the backend service/CORS and try again.":e.message;
     $("registerError").style.display="block";
   }
 };
@@ -1080,7 +1080,7 @@ $("loginForm").onsubmit=async e=>{
     greeting();
     $("loginScreen").classList.remove("show");
   }catch(e){
-    $("loginError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Please try again.":e.message;
+    $("loginError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Check the backend service/CORS and try again.":e.message;
     $("loginError").style.display="block";
   }finally{
     $("loading").classList.remove("show");
@@ -1106,7 +1106,7 @@ $("forgotClientForm").onsubmit=async e=>{
     $("forgotClientSuccess").style.display="block";
     if(d.clientId)$("loginClientId").value=d.clientId;
   }catch(e){
-    $("forgotClientError").textContent=e.message==="Failed to fetch"?"Backend unavailable.":e.message;
+    $("forgotClientError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Check the backend service/CORS and try again.":e.message;
     $("forgotClientError").style.display="block";
   }
 };
@@ -1141,7 +1141,7 @@ $("forgotPasswordForm").onsubmit=async e=>{
     $("loginClientId").value=clientId;
     setTimeout(closeUtility,1400);
   }catch(e){
-    $("forgotPasswordError").textContent=e.message==="Failed to fetch"?"Backend unavailable.":e.message;
+    $("forgotPasswordError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Check the backend service/CORS and try again.":e.message;
     $("forgotPasswordError").style.display="block";
   }
 };
@@ -1387,7 +1387,7 @@ $("paymentForm").onsubmit=async e=>{
       $("paymentSuccess").textContent="Payment confirmation submitted successfully.";
       $("paymentSuccess").style.display="block";
     }catch(e){
-      $("paymentError").textContent=e.message==="Failed to fetch"?"Backend unavailable.":e.message;
+      $("paymentError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Check the backend service/CORS and try again.":e.message;
       $("paymentError").style.display="block";
     }
   };
