@@ -39,7 +39,7 @@ button{cursor:pointer}
 .up{color:#2ed6a0;font-size:11px}.down{color:#df7184;font-size:11px}
 .row{display:grid;grid-template-columns:1.35fr .85fr;gap:12px;margin-top:12px}
 .panel{padding:16px}.panel h3{font-size:13px;margin:0 0 16px}
-.chart{height:230px;position:relative}.chart svg{width:100%;height:100%;overflow:visible}.chart-labels{display:flex;justify-content:space-between;margin-top:2px;color:#71879b;font-size:9px}.chart-value-label{fill:#dce8f2;font-size:10px;font-weight:700}
+.chart{height:230px}.chart svg{width:100%;height:100%}
 .watch{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #182b3b;font-size:12px}
 .table{width:100%;border-collapse:collapse;font-size:11px}
 .table th{color:#73889b;text-align:left;font-weight:normal}
@@ -105,14 +105,6 @@ button{cursor:pointer}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:750px){.side{width:155px}.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}.content{padding:14px}.top{padding:0 14px}}
 @media(max-width:520px){.side{width:120px}.nav button{font-size:11px}.cards{grid-template-columns:1fr 1fr}.top .sub{display:none}}
-</style>
-
-<style id="alphaedge-login-background-fix">
-body:has(.auth-modal:not(.hidden)) .dashboard,
-body:has(.auth-modal:not(.hidden)) #dashboard,
-body:has(.auth-modal:not(.hidden)) main,
-body:has(.auth-modal:not(.hidden)) .app-content { visibility:hidden!important; }
-body:has(.auth-modal:not(.hidden)) { overflow:hidden!important; }
 </style>
 </head>
 <body>
@@ -346,15 +338,14 @@ body:has(.auth-modal:not(.hidden)) { overflow:hidden!important; }
 
         <div class="row">
           <div class="panel">
-            <h3>Market Trend <span style="float:right;color:#55dcb8;font-size:10px;font-weight:normal">5Y • 2021–2025</span></h3>
+            <h3>Market Trend</h3>
             <div class="chart">
               <svg viewBox="0 0 600 250" preserveAspectRatio="none">
-                <path id="marketChartLine" d="M20 210 L580 210" fill="none" stroke="#2ed6a0" stroke-width="5"/>
-                <path id="marketChartArea" d="M20 210 L580 210 L580 250 L20 250Z" fill="#2ed6a0" opacity=".08"/>
+                <path id="marketChartLine" d="M0 210 L600 210" fill="none" stroke="#2ed6a0" stroke-width="5"/>
+                <path id="marketChartArea" d="M0 210 L600 210 L600 250 L0 250Z" fill="#2ed6a0" opacity=".08"/>
               </svg>
             </div>
-            <div class="chart-labels" id="marketChartLabels"></div>
-            <div class="contact-note">● <span id="marketChartTime">NIFTY 50 annual closing levels • 2021–2025</span> · Source: NSE historical annual closes</div>
+            <div class="contact-note">● <span id="marketChartTime">Waiting for market data...</span></div>
           </div>
           <div class="panel">
             <h3>Watchlist</h3>
@@ -477,7 +468,7 @@ body:has(.auth-modal:not(.hidden)) { overflow:hidden!important; }
 <script>
 "use strict";
 
-const API_BASE="https://alphaedge-backend-loxi.onrender.com";
+const API_BASE="https://alphaedge-c3yf.onrender.com";
 const WHATSAPP_NUMBER="917237868633";
 
 const $ = id => document.getElementById(id);
@@ -528,42 +519,21 @@ function updateMarketUI(d){
 
   $("marketFeedStatus").textContent=d.connected?"CONNECTED":"DISCONNECTED";
 
+  if(d.nifty?.ltp) updateChart(d.nifty.ltp);
 }
-const fiveYearNifty=[
-  {year:"2021",value:17354.05},
-  {year:"2022",value:18105.30},
-  {year:"2023",value:21731.40},
-  {year:"2024",value:23644.80},
-  {year:"2025",value:26129.60}
-];
-function renderFiveYearChart(){
-  const vals=fiveYearNifty.map(x=>x.value);
-  const min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
-  const left=20,right=580,top=28,bottom=210;
-  const xy=fiveYearNifty.map((x,i)=>{
-    const px=left+(i/(fiveYearNifty.length-1))*(right-left);
-    const py=bottom-((x.value-min)/range)*(bottom-top);
-    return `${px.toFixed(1)} ${py.toFixed(1)}`;
-  }).join(" L");
+const history=[];
+function updateChart(v){
+  const n=Number(v);
+  if(!Number.isFinite(n))return;
+  history.push(n);
+  if(history.length>30)history.shift();
+  const pts=history.slice(-14);
+  const min=Math.min(...pts),max=Math.max(...pts),range=max-min||1;
+  const xy=pts.map((x,i)=>`${i/(Math.max(1,pts.length-1))*600} ${210-(x-min)/range*175}`).join(" L");
   $("marketChartLine").setAttribute("d","M"+xy);
-  $("marketChartArea").setAttribute("d",`M${left} ${bottom} L${xy} L${right} ${bottom} L${left} ${bottom}Z`);
-  $("marketChartLabels").innerHTML=fiveYearNifty.map(x=>`<span>${x.year}</span>`).join("");
-  const svg=$("marketChartLine").parentElement;
-  svg.querySelectorAll(".chart-value-label").forEach(n=>n.remove());
-  fiveYearNifty.forEach((x,i)=>{
-    const px=left+(i/(fiveYearNifty.length-1))*(right-left);
-    const py=bottom-((x.value-min)/range)*(bottom-top);
-    const t=document.createElementNS("http://www.w3.org/2000/svg","text");
-    t.setAttribute("x",px);
-    t.setAttribute("y",Math.max(15,py-9));
-    t.setAttribute("text-anchor","middle");
-    t.setAttribute("class","chart-value-label");
-    t.textContent=x.value.toLocaleString("en-IN",{maximumFractionDigits:0});
-    svg.appendChild(t);
-  });
-  $("marketChartTime").textContent="NIFTY 50 annual closing levels • 2021–2025";
+  $("marketChartArea").setAttribute("d","M"+xy+" L600 250 L0 250Z");
+  $("marketChartTime").textContent="Live • "+new Date().toLocaleTimeString("en-IN",{timeZone:"Asia/Kolkata"});
 }
-renderFiveYearChart();
 async function loadMarket(){
   try{
     const r=await apiFetch("/api/market",{cache:"no-store"});
