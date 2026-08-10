@@ -95,10 +95,10 @@ button{cursor:pointer}
 .terms{display:flex;gap:8px;align-items:flex-start;color:#8296a9;font-size:11px}
 .terms input{margin-top:2px}
 .terms input[type="checkbox"]{
-  width:16px;height:16px;margin:1px 0 0;
+  width:14px;height:14px;margin:1px 0 0;
   appearance:none;-webkit-appearance:none;
   border:1px solid #8b9aaa;border-radius:3px;
-  background:#fff;position:relative;flex:0 0 16px;
+  background:#fff;position:relative;flex:0 0 14px;
   opacity:1;cursor:default;
 }
 .terms input[type="checkbox"]:checked{
@@ -349,11 +349,11 @@ button{cursor:pointer}
           <button type="button" class="legal-link" onclick="openForgotPassword()">Forgot Password?</button>
         </div>
         <label style="display:flex;align-items:center;gap:9px;font-size:13px;color:#9aafc0;cursor:pointer;margin-top:2px">
-          <input id="rememberMe" type="checkbox" style="width:18px;height:18px;accent-color:#28d5a0;cursor:pointer">
+          <input id="rememberMe" type="checkbox" style="width:20px;height:20px;accent-color:#28d5a0;cursor:pointer">
           <span>Remember me</span>
         </label>
         <label class="terms">
-          <input id="terms" type="checkbox" disabled aria-label="Terms and Privacy accepted">
+          <input id="terms" type="checkbox" aria-label="Terms and Privacy accepted">
           <span>I agree to the
             <button type="button" class="legal-link" onclick="openLegal('termsModal')">Terms &amp; Conditions</button>
             and
@@ -380,7 +380,7 @@ button{cursor:pointer}
         <div class="contact-note">Minimum 8 characters, 1 uppercase, 1 number and 1 special character (@/#/₹).</div>
         <label>Confirm Password *<input id="regConfirm" type="password" minlength="8" required autocomplete="new-password"></label>
         <label class="terms">
-          <input id="regTerms" type="checkbox" disabled aria-label="Terms and Privacy accepted">
+          <input id="regTerms" type="checkbox" aria-label="Terms and Privacy accepted">
           <span>I agree to the <button type="button" class="legal-link" onclick="openLegal('termsModal')">Terms &amp; Conditions</button> and <button type="button" class="legal-link" onclick="openLegal('privacyModal')">Privacy Policy</button>.</span>
         </label>
         <div class="error" id="registerError"></div>
@@ -876,6 +876,18 @@ function legalReady(){
   return legalAcceptedTerms && legalAcceptedPrivacy;
 }
 
+function bindLegalCheckboxes(){
+  [$("terms"), $("regTerms")].forEach(cb=>{
+    if(!cb) return;
+    cb.addEventListener("change",()=>{
+      const accepted=!!cb.checked;
+      legalAcceptedTerms=accepted;
+      legalAcceptedPrivacy=accepted;
+      syncLegalCheckboxes();
+    });
+  });
+}
+
 function loadRememberedLogin(){
   const remembered=localStorage.getItem("alphaedge_remember_id")==="1";
   const savedId=localStorage.getItem("alphaedge_remembered_client_id")||"";
@@ -927,6 +939,7 @@ function setupPasswordToggles(){
 }
 
 syncLegalCheckboxes();
+bindLegalCheckboxes();
 setupPasswordToggles();
 switchAuth("login");
 loadRememberedLogin();
@@ -999,7 +1012,7 @@ $("registerForm").onsubmit=async e=>{
     return;
   }
   if(!legalReady()){
-    $("registerError").textContent="Please accept the Terms & Conditions and Privacy Policy.";
+    $("registerError").textContent="Please tick the Terms & Conditions and Privacy Policy checkbox.";
     $("registerError").style.display="block";
     return;
   }
@@ -1044,7 +1057,7 @@ $("loginForm").onsubmit=async e=>{
     return;
   }
   if(!legalReady()){
-    $("loginError").textContent="Please accept the Terms & Conditions and Privacy Policy.";
+    $("loginError").textContent="Please tick the Terms & Conditions and Privacy Policy checkbox.";
     $("loginError").style.display="block";
     return;
   }
@@ -1578,51 +1591,36 @@ async function loadUpstoxEquityUniverse(){
 }
 loadUpstoxEquityUniverse();
 
-async function yahooChart(symbol, range, interval){
-  const urls=[
-    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&events=div%2Csplits`,
-    `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${range}&interval=${interval}&events=div%2Csplits`
-  ];
-  let lastErr;
-  for(const u of urls){
-    try{
-      const r=await fetch(u,{cache:"no-store"});
-      if(!r.ok)throw new Error("Market data unavailable");
-      const d=await r.json();
-      if(d?.chart?.result?.[0]) return d.chart.result[0];
-    }catch(e){lastErr=e;}
+async function fetchEquityQuotes(symbols){
+  const list=[...new Set((symbols||[]).map(s=>String(s||'').trim()).filter(Boolean))];
+  if(!list.length)return {};
+  try{
+    const r=await apiFetch('/api/market/equity-quotes?symbols='+encodeURIComponent(list.join(',')),{cache:'no-store'});
+    if(!r.ok)throw new Error('Equity market data unavailable');
+    const d=await r.json();
+    return d?.quotes&&typeof d.quotes==='object'?d.quotes:{};
+  }catch(err){
+    console.warn('Equity quote feed unavailable:',err);
+    return {};
   }
-  throw lastErr||new Error("Market data unavailable");
 }
-function symbolCandidates(x){
-  const s=String(x.symbol||"");
-  return x.exchanges?.includes("BSE") && !x.exchanges?.includes("NSE")?[`${s}.BO`]:[`${s}.NS`,`${s}.BO`];
-}
-async function getEquityQuote(x){
-  for(const s of symbolCandidates(x)){
-    try{
-      const r=await yahooChart(s,"5d","1d");
-      const meta=r.meta||{};
-      const closes=(r.indicators?.quote?.[0]?.close||[]).filter(v=>Number.isFinite(v));
-      const price=Number(meta.regularMarketPrice??closes.at(-1));
-      const prev=Number(meta.previousClose??closes.at(-2));
-      if(Number.isFinite(price)) return {price,changePct:Number.isFinite(prev)&&prev?((price-prev)/prev)*100:NaN,provider:s};
-    }catch(_){ }
-  }
-  return null;
-}
+
 async function loadEquityQuotes(){
   const all=equityAll();
-  for(let i=0;i<Math.min(all.length,40);i++){
-    const x=all[i];
-    if(equityCache.has(x.symbol))continue;
-    const q=await getEquityQuote(x);
-    if(q) equityCache.set(x.symbol,q);
-    if(i%4===3) await new Promise(r=>setTimeout(r,180));
+  const quotes=await fetchEquityQuotes(all.map(x=>x.symbol));
+  for(const x of all){
+    const q=quotes[String(x.symbol).toUpperCase()];
+    if(!q)continue;
+    equityCache.set(x.symbol,{
+      price:q.price,
+      changePct:q.changePct,
+      provider:q.provider||'Upstox'
+    });
   }
   renderEquityList();
 }
-setTimeout(loadEquityQuotes,1200);
+setTimeout(loadEquityQuotes,700);
+setInterval(loadEquityQuotes,10000);
 
 async function openEquity(symbol){
   const x=equityAll().find(v=>v.symbol===symbol);
@@ -1637,13 +1635,21 @@ async function openEquity(symbol){
       <div class="detail-stat"><span>Period</span><b>5 Years</b></div>
     </div>
     <div class="history-wrap" id="historyChart"><div class="history-loading">Loading 5-year market data...</div></div>
-    <div class="history-note">5-year monthly historical price series. Instrument universe is loaded from Upstox's BOD master. Quote/history display uses the connected market-data feed available to this page.</div>`;
-  const quote=await getEquityQuote(x);
-  if(quote){
+    <div class="history-note">5-year historical price series. Market data is supplied through the connected backend market-data feed.</div>`;
+
+  let quote=equityCache.get(x.symbol);
+  if(!quote){
+    const quotes=await fetchEquityQuotes([x.symbol]);
+    const q=quotes[String(x.symbol).toUpperCase()];
+    if(q){
+      quote={price:q.price,changePct:q.changePct,provider:q.provider||'Upstox'};
+      equityCache.set(x.symbol,quote);
+    }
+  }
+  if(quote&&Number.isFinite(Number(quote.price))){
     $("detailPrice").textContent=fmtPrice(quote.price);
     $("detailChange").textContent=fmtPct(quote.changePct);
     $("detailChange").className=Number(quote.changePct)>=0?"up":"down";
-    equityCache.set(x.symbol,quote);
   }else{
     $("detailPrice").textContent="--";
     $("detailChange").textContent="Unavailable";
@@ -1667,23 +1673,30 @@ function drawHistory(points){
     <path d="${path}" stroke="#28d5a0" stroke-width="3" fill="none"/>
     <text x="4" y="${h-8}" fill="#71879b" font-size="11">${first}</text>
     <text x="${w-90}" y="${h-8}" fill="#71879b" font-size="11">${last}</text>
-    <text x="4" y="14" fill="#71879b" font-size="10">5Y monthly</text>
+    <text x="4" y="14" fill="#71879b" font-size="10">5Y historical</text>
   </svg>`;
 }
 async function loadEquityHistory(x){
-  let result=null;
-  for(const s of symbolCandidates(x)){
-    try{result=await yahooChart(s,"5y","1mo");break;}catch(_){ }
+  try{
+    const r=await apiFetch('/api/market/history-v3?symbol='+encodeURIComponent(x.symbol)+'&range=5y',{cache:'no-store'});
+    if(!r.ok)throw new Error('Historical market data unavailable');
+    const d=await r.json();
+    const history=Array.isArray(d?.history)?d.history:[];
+    // Keep the existing compact chart presentation by sampling roughly one
+    // observation per month from the daily backend series.
+    const monthly=new Map();
+    for(const row of history){
+      const date=new Date(row.date);
+      const v=Number(row.close);
+      if(!Number.isFinite(v)||Number.isNaN(date.getTime()))continue;
+      const key=`${date.getUTCFullYear()}-${String(date.getUTCMonth()+1).padStart(2,'0')}`;
+      monthly.set(key,{v,d:date.toLocaleDateString('en-IN',{month:'short',year:'numeric',timeZone:'UTC'})});
+    }
+    drawHistory([...monthly.values()]);
+  }catch(err){
+    console.warn('Equity history unavailable:',err);
+    $("historyChart").innerHTML='<div class="history-loading">Unable to load historical data right now. Please try again.</div>';
   }
-  if(!result){$("historyChart").innerHTML='<div class="history-loading">Unable to load historical data right now. Please try again.</div>';return;}
-  const ts=result.timestamp||[];
-  const q=result.indicators?.quote?.[0]?.close||[];
-  const points=[];
-  for(let i=0;i<Math.min(ts.length,q.length);i++){
-    const v=Number(q[i]);if(!Number.isFinite(v))continue;
-    points.push({v,d:new Date(ts[i]*1000).toLocaleDateString("en-IN",{month:"short",year:"numeric"})});
-  }
-  drawHistory(points);
 }
 /* RESTORE SAVED STATE */
 const cid=localStorage.getItem("alphaedge_client_id");
