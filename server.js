@@ -22,6 +22,7 @@ app.use((req, res, next) => {
   const configured = process.env.FRONTEND_ORIGIN;
   const allowed = !origin || origin === 'null' ||
     (configured && origin === configured) ||
+    origin === 'https://alphaedge-c3yf.onrender.com' ||
     /^https:\/\/[^/]+\.github\.io$/.test(origin) ||
     /^http:\/\/localhost(?::\d+)?$/.test(origin) ||
     /^http:\/\/127\.0\.0\.1(?::\d+)?$/.test(origin);
