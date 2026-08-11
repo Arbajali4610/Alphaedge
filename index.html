@@ -191,6 +191,49 @@ button{cursor:pointer}
 }
 
 .watch-search{width:100%;box-sizing:border-box;margin:12px 0 14px;padding:12px 14px;border:1px solid #29465a;border-radius:10px;background:#071521;color:#eaf2f8;font-size:14px;outline:none}.watch-search::placeholder{color:#71879b}.watch-search:focus{border-color:#28d5a0;box-shadow:0 0 0 2px #28d5a022}
+
+/* MARKET / FINANCE STYLE REFRESH */
+.market-page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 0 14px}
+.market-kicker{font-size:9px;letter-spacing:1.3px;color:#55dcb8;font-weight:800;margin-bottom:5px}
+.market-page-head h2{font-size:22px;margin:0 0 4px;letter-spacing:-.3px}
+.market-head-btn{border:1px solid #274054;background:#102132;color:#dce8f2;padding:10px 13px;border-radius:9px;font-size:11px;cursor:pointer}
+.market-head-btn:hover{background:#163249;border-color:#2a5664}
+.market-summary-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.market-summary-card{border:1px solid #1b2e40;background:#0b1926;border-radius:12px;padding:13px;text-align:left;color:#fff;cursor:pointer}
+.market-summary-card:hover{border-color:#2a5664;background:#0e2030}
+.market-summary-card span{display:block;color:#71879b;font-size:9px;letter-spacing:.6px}
+.market-summary-card b{display:block;font-size:18px;margin-top:6px}
+.market-summary-card small{font-size:10px;margin-top:3px;display:block}
+.watch-panel{padding:16px}
+.watch-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.watch-toolbar h3{margin-bottom:3px}
+.watch-toolbar .watch-search{max-width:290px;margin:0}
+.watch-table-head{display:grid;grid-template-columns:minmax(0,1fr) 105px 75px;gap:10px;color:#71879b;font-size:9px;text-transform:uppercase;letter-spacing:.5px;padding:12px 8px 7px;border-bottom:1px solid #182b3b}
+.watch{display:grid;grid-template-columns:minmax(0,1fr) 105px 75px;gap:10px;align-items:center;padding:12px 8px;border-bottom:1px solid #182b3b;font-size:12px;cursor:pointer;border-radius:8px}
+.watch:hover{background:#0f2332}
+.watch small{display:block;color:#71879b;font-size:9px;margin-top:3px}
+.watch-price{text-align:right;font-weight:700}
+.watch-change{text-align:right;font-size:10px}
+.watch-empty{padding:28px;text-align:center;color:#71879b}
+.big-count{font-size:12px}
+.equity-status{font-size:10px;color:#71879b;padding:0 2px 9px}
+.equity-status.ready{color:#55dcb8}
+.equity-status.error{color:#df7184}
+.equity-item{min-height:55px}
+.equity-item .eq-main{flex:1}
+.equity-item .eq-tags{min-width:90px}
+.equity-item .eq-price{min-width:85px}
+.eq-arrow{color:#71879b;font-size:15px;margin-left:2px}
+@media(max-width:760px){
+  .market-page-head{align-items:flex-start;flex-direction:column}
+  .market-head-btn{width:100%}
+  .market-summary-cards{grid-template-columns:1fr}
+  .watch-toolbar{flex-direction:column}
+  .watch-toolbar .watch-search{max-width:none;width:100%;margin:10px 0 0}
+  .watch-table-head,.watch{grid-template-columns:minmax(0,1fr) 82px 65px}
+  .watch{padding:11px 5px}
+  .watch-table-head{padding-left:5px;padding-right:5px}
+}
 </style>
 </head>
 <body>
@@ -469,31 +512,64 @@ button{cursor:pointer}
         </div>
       </section>
 
-      <section class="page" id="watchlist"><div class="panel"><h3>Popular Companies — Live</h3><p class="contact-note">Live prices from the connected market feed.</p><input id="watchSearch" class="watch-search" type="search" placeholder="Search company or symbol..." autocomplete="off" aria-label="Search companies"><div id="fullWatch"></div></div></section>
+      <section class="page" id="watchlist">
+  <div class="market-page-head">
+    <div>
+      <div class="market-kicker">MARKETS • LIVE</div>
+      <h2>Watchlist</h2>
+      <p class="contact-note">Track popular Indian companies. Tap any stock to open its detailed market view.</p>
+    </div>
+    <button class="market-head-btn" type="button" onclick="showPage('equityHub')">Open Equity Hub →</button>
+  </div>
+  <div class="market-summary-cards">
+    <button class="market-summary-card" type="button" onclick="showPage('market')">
+      <span>NIFTY 50</span><b id="watchNiftyValue">--</b><small id="watchNiftyChange">--</small>
+    </button>
+    <button class="market-summary-card" type="button" onclick="showPage('market')">
+      <span>SENSEX</span><b id="watchSensexValue">--</b><small id="watchSensexChange">--</small>
+    </button>
+    <button class="market-summary-card" type="button" onclick="showPage('market')">
+      <span>BANK NIFTY</span><b id="watchBankValue">--</b><small id="watchBankChange">--</small>
+    </button>
+  </div>
+  <div class="panel watch-panel">
+    <div class="watch-toolbar">
+      <div>
+        <h3>Popular Companies</h3>
+        <p class="contact-note">Live prices from the connected market feed.</p>
+      </div>
+      <input id="watchSearch" class="watch-search" type="search" placeholder="Search company or symbol..." autocomplete="off" aria-label="Search companies">
+    </div>
+    <div class="watch-table-head"><span>Company</span><span>Price</span><span>Change</span></div>
+    <div id="fullWatch"></div>
+  </div>
+</section>
       <section class="page" id="equityHub">
-        <div class="panel equity-panel">
-          <div class="equity-head">
-            <div>
-              <h3>Equity Hub</h3>
-              <p class="contact-note">NSE • BSE • NIFTY 50 • SENSEX • NIFTY BANK</p>
-            </div>
-            <div class="equity-count" id="equityCount"></div>
-          </div>
-          <div class="equity-search">
-            <span>⌕</span>
-            <input id="equitySearch" type="search" placeholder="Search company or symbol..." autocomplete="off">
-          </div>
-          <div class="equity-tabs" id="equityTabs">
-            <button class="eq-tab active" data-filter="all">All</button>
-            <button class="eq-tab" data-filter="NSE">NSE</button>
-            <button class="eq-tab" data-filter="BSE">BSE</button>
-            <button class="eq-tab" data-filter="NIFTY50">Nifty 50</button>
-            <button class="eq-tab" data-filter="SENSEX">Sensex</button>
-            <button class="eq-tab" data-filter="BANKNIFTY">Bank Nifty</button>
-          </div>
-          <div class="equity-list" id="equityList"></div>
-        </div>
-      </section>
+  <div class="market-page-head">
+    <div>
+      <div class="market-kicker">EQUITIES • NSE / BSE</div>
+      <h2>Equity Hub</h2>
+      <p class="contact-note">Search companies, filter by index and tap a stock for its detailed market view.</p>
+    </div>
+    <div class="equity-count big-count" id="equityCount">Loading...</div>
+  </div>
+  <div class="panel equity-panel">
+    <div class="equity-search">
+      <span>⌕</span>
+      <input id="equitySearch" type="search" placeholder="Search company, symbol or ISIN..." autocomplete="off" aria-label="Search equities">
+    </div>
+    <div class="equity-tabs" id="equityTabs">
+      <button type="button" class="eq-tab active" data-filter="all">All</button>
+      <button type="button" class="eq-tab" data-filter="NSE">NSE</button>
+      <button type="button" class="eq-tab" data-filter="BSE">BSE</button>
+      <button type="button" class="eq-tab" data-filter="NIFTY50">Nifty 50</button>
+      <button type="button" class="eq-tab" data-filter="SENSEX">Sensex</button>
+      <button type="button" class="eq-tab" data-filter="BANKNIFTY">Bank Nifty</button>
+    </div>
+    <div class="equity-status" id="equityStatus">Loading equity universe...</div>
+    <div class="equity-list" id="equityList"></div>
+  </div>
+</section>
       <section class="page" id="equityDetail">
         <div class="panel equity-detail-panel">
           <button class="action" type="button" onclick="showPage('equityHub')">← Back to Equity Hub</button>
@@ -747,9 +823,20 @@ function renderWatch(){
     const price=fmtPrice(d?.ltp);
     const pct=fmtPct(d?.changePct);
     const cls=Number(d?.changePct)>=0?"up":"down";
-    return `<div class="watch"><span><b>${name}</b><small style="display:block;color:#71879b">${sym}</small></span><span style="text-align:right"><b>${price}</b><small class="${cls}" style="display:block">${pct}</small></span></div>`;
+    const safe=encodeURIComponent(sym);
+    return `<div class="watch" role="button" tabindex="0" onclick="openEquity(decodeURIComponent('${safe}'))" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openEquity(decodeURIComponent('${safe}'))}">
+      <span><b>${name}</b><small>${sym}</small></span>
+      <span class="watch-price">${price}</span>
+      <span class="watch-change ${cls}">${pct}</span>
+    </div>`;
   }).join("");
-  $("miniWatch").innerHTML=html;
+  $("miniWatch").innerHTML=filtered.slice(0,5).map(([sym,name,key])=>{
+    const d=watchData[key], cls=Number(d?.changePct)>=0?"up":"down";
+    const safe=encodeURIComponent(sym);
+    return `<div class="watch" role="button" tabindex="0" onclick="showPage('watchlist');setTimeout(()=>{const e=$('watchSearch');if(e){e.value='';e.focus();}} ,50)" onkeydown="if(event.key==='Enter'){showPage('watchlist')}">
+      <span><b>${name}</b><small>${sym}</small></span><span class="watch-price">${fmtPrice(d?.ltp)}</span><span class="watch-change ${cls}">${fmtPct(d?.changePct)}</span>
+    </div>`;
+  }).join("") || `<div class="watch-empty">Market data loading...</div>`;
   $("fullWatch").innerHTML=html || `<div class="watch-empty">No company found.</div>`;
 }
 renderWatch();
@@ -781,6 +868,9 @@ function updateMarketUI(d){
   card("marketNifty",d.nifty);
   card("marketSensex",d.sensex);
   card("marketBank",d.banknifty);
+  card("watchNifty",d.nifty);
+  card("watchSensex",d.sensex);
+  card("watchBank",d.banknifty);
 
   $("marketFeedStatus").textContent=d.connected?"CONNECTED":"DISCONNECTED";
 
@@ -824,14 +914,35 @@ try{
 
 /* NAVIGATION */
 function showPage(id){
+  const target=$(id);
+  if(!target){
+    console.warn("AlphaEdge page not found:",id);
+    return false;
+  }
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  $(id)?.classList.add("active");
-  document.querySelectorAll(".nav button[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+  target.classList.add("active");
+  document.querySelectorAll(".nav button[data-page]").forEach(b=>{
+    b.classList.toggle("active",b.dataset.page===id);
+    b.setAttribute("aria-current",b.dataset.page===id?"page":"false");
+  });
   const isDashboard=id==="dashboard";
   document.querySelector(".main")?.classList.toggle("dashboard-view",isDashboard);
+  if(location.hash!=="#"+id){
+    try{history.replaceState(null,"","#"+id);}catch(_){}
+  }
   window.scrollTo({top:0,behavior:"smooth"});
+  if(id==="watchlist") renderWatch();
+  if(id==="equityHub") renderEquityList();
+  return true;
 }
-document.querySelectorAll(".nav button[data-page]").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+document.querySelectorAll(".nav button[data-page]").forEach(b=>{
+  b.type="button";
+  b.addEventListener("click",e=>{e.preventDefault();showPage(b.dataset.page);});
+});
+window.addEventListener("hashchange",()=>{
+  const id=location.hash.slice(1);
+  if(id && $(id)?.classList.contains("page")) showPage(id);
+});
 
 /* GREETING */
 function greeting(){
@@ -1501,6 +1612,12 @@ function renderEquityList(){
     return filterOk&&searchOk;
   }).sort((a,b)=>a.name.localeCompare(b.name));
   $("equityCount").textContent=`${arr.length} companies`;
+  if($("equityStatus")){
+    $("equityStatus").textContent=arr.length
+      ? "Tap a company to open live quote and 5-year history."
+      : "No company matched your search.";
+    $("equityStatus").className="equity-status"+(arr.length?". ready":" error");
+  }
   $("equityList").innerHTML=arr.map(x=>{
     const c=equityCache.get(x.symbol);
     const price=c?.price!=null?fmtPrice(c.price):"--";
@@ -1511,10 +1628,11 @@ function renderEquityList(){
       <div class="eq-main"><div class="eq-name">${x.name}</div><div class="eq-symbol">${x.symbol}${x.isin?` • ${x.isin}`:""}</div></div>
       <div class="eq-tags">${equityTags(x)}</div>
       <div class="eq-price"><div class="eq-ltp">${price}</div><div class="eq-change ${cls}">${ch}</div></div>
+      <span class="eq-arrow">›</span>
     </div>`;
   }).join("") || `<div class="contact-note" style="padding:20px;text-align:center">No company found.</div>`;
 }
-$("equitySearch").addEventListener("input",e=>{equitySearch=e.target.value;renderEquityList();});
+$("equitySearch")?.addEventListener("input",e=>{equitySearch=e.target.value;renderEquityList();});
 document.querySelectorAll(".eq-tab").forEach(b=>b.onclick=()=>{
   equityFilter=b.dataset.filter;
   document.querySelectorAll(".eq-tab").forEach(x=>x.classList.toggle("active",x===b));
@@ -1729,7 +1847,8 @@ async function restoreSession(){
 $("footerYear").textContent=new Date().getFullYear();
 greeting();
 restoreSession();
-showPage("dashboard");
+const initialPage=location.hash.slice(1);
+showPage($(initialPage)?.classList.contains("page")?initialPage:"dashboard");
 </script>
 
 
