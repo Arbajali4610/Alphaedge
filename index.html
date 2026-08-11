@@ -127,6 +127,22 @@ button{cursor:pointer}
 .loading-box{padding:25px 35px;border-radius:15px;background:#111827;text-align:center}
 .spinner{width:30px;height:30px;margin:auto;border:3px solid #ffffff40;border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+.wallet-hero{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:20px;background:linear-gradient(135deg,#0b241f,#0b1926);border:1px solid #1d4b42;border-radius:15px;margin-bottom:12px}
+.wallet-label{font-size:10px;color:#8198a8;text-transform:uppercase;letter-spacing:.08em}
+.wallet-balance{font-size:30px;font-weight:800;color:#2ed6a0;margin-top:6px}
+.wallet-note{font-size:11px;color:#8da2b2;line-height:1.6;margin-top:5px}
+.wallet-refresh{border:1px solid #2a4d5d;background:#102132;color:#dce8f2;padding:9px 13px;border-radius:8px}
+.wallet-table{width:100%;border-collapse:collapse;font-size:11px}
+.wallet-table th,.wallet-table td{padding:11px 7px;border-bottom:1px solid #182b3b;text-align:left}
+.wallet-table th{color:#73889b;font-weight:normal}
+.wallet-credit{color:#2ed6a0;font-weight:700}
+.wallet-debit{color:#df7184;font-weight:700}
+.wallet-empty{color:#8296a9;font-size:12px;padding:18px 0}
+.wallet-course-box{margin-top:12px;padding:15px;background:#0b1b29;border:1px solid #1d3548;border-radius:10px}
+.wallet-course-box h4{margin:0 0 8px;font-size:12px}
+.wallet-pay-btn{border:0;background:#28d5a0;color:#06131b;font-weight:700;padding:9px 12px;border-radius:8px;font-size:10px;margin-top:8px}
+.wallet-pay-btn:disabled{opacity:.5;cursor:not-allowed} .wallet-add-box{margin-top:12px;padding:15px;background:#0b1b29;border:1px solid #1d3548;border-radius:10px}.wallet-add-box h4{margin:0 0 8px;font-size:12px}.wallet-add-grid{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}.wallet-add-input{width:100%;padding:10px;background:#071521;border:1px solid #24394c;border-radius:8px;color:#fff;outline:none}.wallet-add-input:focus{border-color:#2ed6a0}.wallet-topup-status{font-size:10px;margin-top:8px;line-height:1.5}
 @media(max-width:750px){.side{width:155px;flex-basis:155px}.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}.content{padding:14px}.top{padding:0 14px}.title{font-size:13px;max-width:155px}}
 @media(max-width:520px){.side{width:120px;flex-basis:120px}.nav button{font-size:11px}.cards{grid-template-columns:1fr 1fr}.top .sub{display:none}}
 
@@ -211,6 +227,79 @@ button{cursor:pointer}
 .detail-info-card h4{margin:0 0 6px;color:#dce8f2;font-size:12px}.detail-info-card p{margin:0}
 @media(max-width:520px){.detail-info-grid{grid-template-columns:1fr 1fr}}
 .watch-search{width:100%;box-sizing:border-box;margin:12px 0 14px;padding:12px 14px;border:1px solid #29465a;border-radius:10px;background:#071521;color:#eaf2f8;font-size:14px;outline:none}.watch-search::placeholder{color:#71879b}.watch-search:focus{border-color:#28d5a0;box-shadow:0 0 0 2px #28d5a022}
+
+
+.wallet-history-box{border:1px solid #1b2e40;border-radius:10px;overflow:hidden}
+.wallet-history-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;border:0;background:#0b1926;color:#eaf2f8;padding:13px 14px;font-size:13px;font-weight:700;text-align:left;cursor:pointer}
+.wallet-history-toggle:hover{background:#102132}
+.wallet-history-panel{padding:0 14px 14px;background:#0b1926}
+.wallet-history-panel[hidden]{display:none}
+@media(max-width:520px){.wallet-history-toggle{padding:11px 12px;font-size:11px}.wallet-history-panel{padding:0 10px 10px}}
+
+/* ALPHAEDGE COMPACT MOBILE WALLET */
+@media(max-width:520px){
+  .app{min-width:0}
+  .side{
+    width:76px;
+    flex-basis:76px;
+    padding:14px 6px;
+  }
+  .side .logo{
+    font-size:12px;
+    padding:0 3px 16px;
+    white-space:nowrap;
+    overflow:hidden;
+  }
+  .nav{gap:4px}
+  .nav button{
+    font-size:9px;
+    padding:8px 4px;
+    text-align:center;
+    border-radius:7px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .logout{margin-top:14px!important}
+  .top{
+    height:58px;
+    padding:0 8px;
+  }
+  .title{font-size:14px;max-width:190px}
+  .user{font-size:9px;gap:5px}
+  .user span{display:none}
+  .avatar{width:28px;height:28px}
+  .content{padding:8px;max-width:none}
+  .panel{padding:10px;border-radius:10px}
+  .wallet-hero{
+    padding:12px;
+    gap:8px;
+    margin-bottom:8px;
+    border-radius:10px;
+  }
+  .wallet-balance{font-size:24px}
+  .wallet-note{font-size:9px;line-height:1.4}
+  .wallet-refresh{padding:7px 9px;font-size:9px}
+  .wallet-add-box{padding:10px;margin-top:8px;border-radius:9px}
+  .wallet-add-box h4{font-size:11px}
+  .wallet-add-grid{grid-template-columns:1fr;gap:4px}
+  .wallet-pay-btn{width:100%;margin-top:6px;padding:9px 10px;font-size:10px}
+  .wallet-add-input{padding:9px;font-size:11px}
+  .wallet-table-wrap{overflow-x:auto;width:100%}
+  .wallet-table{min-width:520px;font-size:9px}
+  .wallet-table th,.wallet-table td{padding:8px 5px}
+  .wallet-empty{font-size:10px;padding:12px 0}
+}
+@media(max-width:360px){
+  .side{width:64px;flex-basis:64px;padding-left:4px;padding-right:4px}
+  .side .logo{font-size:10px}
+  .nav button{font-size:8px;padding:7px 2px}
+  .content{padding:6px}
+  .wallet-balance{font-size:21px}
+  .wallet-note{font-size:8px}
+  .panel{padding:8px}
+}
+
 </style>
 </head>
 <body>
@@ -430,6 +519,7 @@ button{cursor:pointer}
       <button data-page="equityHub">Equity Hub</button>
       <button data-page="research">Research</button>
       <button data-page="education">Education</button>
+      <button data-page="wallet">Wallet</button>
       <button data-page="profile">Profile</button>
       <button data-page="contact">Contact Us</button>
       <button id="logout" class="logout">Logout</button>
@@ -575,6 +665,55 @@ button{cursor:pointer}
         </div>
       </section>
 
+
+      <section class="page" id="wallet">
+        <div class="panel">
+          <div class="wallet-hero">
+            <div>
+              <div class="wallet-label">AlphaEdge Wallet Credits</div>
+              <div class="wallet-balance" id="walletBalance">₹0.00</div>
+              <div class="wallet-note">Platform credits for eligible AlphaEdge services. Not cash, transferable funds, or withdrawable balance.</div>
+            </div>
+            <button class="wallet-refresh" type="button" id="walletRefresh">Refresh</button>
+          </div>
+
+          <div class="wallet-add-box">
+            <h4>Add Money to Wallet</h4>
+            <div class="contact-note">Enter any amount you want to add. Pay through UPI, then submit the UTR for manual verification.</div>
+            <div class="wallet-add-grid" style="margin-top:9px">
+              <div>
+                <label class="label" for="walletTopupAmount">Amount</label>
+                <input class="wallet-add-input" id="walletTopupAmount" type="number" min="1" max="1000000" step="0.01" inputmode="decimal" placeholder="Enter amount (₹)">
+              </div>
+              <button class="wallet-pay-btn" type="button" id="walletTopupPay">Pay via UPI</button>
+            </div>
+            <div class="wallet-topup-status" id="walletTopupOpened"></div>
+
+            <div style="margin-top:12px">
+              <label class="label" for="walletTopupUtr">UTR / Transaction ID</label>
+              <input class="wallet-add-input" id="walletTopupUtr" type="text" maxlength="100" autocomplete="off" placeholder="Enter UTR after payment">
+            </div>
+            <button class="wallet-pay-btn" type="button" id="walletTopupSubmit" style="margin-top:9px">Submit Top-up for Verification</button>
+            <div class="success" id="walletTopupSuccess"></div>
+            <div class="error" id="walletTopupError"></div>
+          </div>
+
+          <div class="wallet-add-box">
+            <h4>Top-up Requests</h4>
+            <div id="walletTopupRequests"><div class="wallet-empty">No top-up requests yet.</div></div>
+          </div>
+
+          <div class="wallet-history-box" style="margin-top:18px">
+            <button class="wallet-history-toggle" type="button" id="walletHistoryToggle" aria-expanded="false" aria-controls="walletTransactionsPanel">
+              <span>Transaction History</span><span id="walletHistoryArrow">＋</span>
+            </button>
+            <div id="walletTransactionsPanel" class="wallet-history-panel" hidden>
+              <div id="walletTransactions"><div class="wallet-empty">Tap to load transaction history.</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="page" id="payment">
         <div class="panel profilebox">
           <button class="action" type="button" onclick="showPage('education')">← Back</button>
@@ -632,7 +771,37 @@ async function apiFetch(path, options={}){
     o.headers["Content-Type"]="application/json";
     o.body=JSON.stringify(o.body);
   }
-  return fetch(API_BASE+path,{...o,credentials:"include"});
+
+  const response=await fetch(API_BASE+path,{...o,credentials:"include"});
+  const contentType=(response.headers.get("content-type")||"").toLowerCase();
+  const raw=await response.text();
+
+  let data=null;
+  if(raw){
+    if(contentType.includes("application/json")){
+      try{ data=JSON.parse(raw); }
+      catch(_){ data={success:false,message:"Server returned invalid JSON."}; }
+    }else{
+      const looksHtml=/^\s*<!doctype html|^\s*<html[\s>]/i.test(raw);
+      data={
+        success:false,
+        message:looksHtml
+          ? `API endpoint returned HTML instead of JSON (${response.status}). Check the backend URL.`
+          : `Server returned an unexpected response (${response.status}).`
+      };
+    }
+  }
+
+  if(!response.ok){
+    const err=new Error(data?.message||`Request failed (${response.status})`);
+    err.status=response.status;
+    err.data=data;
+    throw err;
+  }
+
+  response.data=data||{};
+  response.json=async()=>data||{};
+  return response;
 }
 
 /* WATCHLIST — restored company data + search */
@@ -853,6 +1022,7 @@ try{
 
 /* NAVIGATION */
 function showPage(id){
+  if(id==="wallet") setTimeout(loadWallet,0);
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   $(id)?.classList.add("active");
   document.querySelectorAll(".nav button[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
@@ -1351,7 +1521,180 @@ loadProfile();
 const savedPhoto=localStorage.getItem("alphaedge_profile_photo");
 if(savedPhoto&&$("profileAvatar")) $("profileAvatar").innerHTML=`<img src="${savedPhoto}" alt="Profile photo">`;
 
+
+/* WALLET — INTERNAL PLATFORM CREDITS + MANUAL TOP-UP */
+function formatWalletAmount(v){
+  const n=Number(v);
+  return `₹${Number.isFinite(n)?n.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2}):"0.00"}`;
+}
+
+async function loadTopupRequests(){
+  const el=$("walletTopupRequests");
+  if(!el)return;
+  try{
+    const r=await apiFetch("/api/wallet/topup-requests",{cache:"no-store"});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.message||"Unable to load top-up requests.");
+    const requests=Array.isArray(d.requests)?d.requests:[];
+    if(!requests.length){
+      el.innerHTML='<div class="wallet-empty">No top-up requests yet.</div>';
+      return;
+    }
+    el.innerHTML=`
+      <div class="wallet-table-wrap"><table class="wallet-table">
+        <tr><th>Date</th><th>Amount</th><th>UTR</th><th>Status</th></tr>
+        ${requests.map(x=>{
+          const status=String(x.status||"pending").toLowerCase();
+          const cls=status==="approved"?"wallet-credit":status==="rejected"?"wallet-debit":"";
+          return `<tr>
+            <td>${new Date(x.createdAt).toLocaleString("en-IN")}</td>
+            <td>${formatWalletAmount(x.amount)}</td>
+            <td>${escapeHtml(x.utr||"—")}</td>
+            <td class="${cls}">${escapeHtml(status.charAt(0).toUpperCase()+status.slice(1))}${x.adminNote?`<br><span class="wallet-note">${escapeHtml(x.adminNote)}</span>`:""}</td>
+          </tr>`;
+        }).join("")}
+      </table></div>`;
+  }catch(e){
+    el.innerHTML=`<div class="wallet-empty">${escapeHtml(e.message==="Failed to fetch"?"Wallet backend unavailable.":e.message)}</div>`;
+  }
+}
+
+async function loadWallet(){
+  const balanceEl=$("walletBalance");
+  const txEl=$("walletTransactions");
+  if(!balanceEl||!txEl)return;
+
+  try{
+    const r=await apiFetch("/api/wallet",{cache:"no-store"});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.message||"Unable to load wallet.");
+
+    balanceEl.textContent=formatWalletAmount(d.wallet?.balance||0);
+
+    const tx=Array.isArray(d.transactions)?d.transactions:[];
+    if(!tx.length){
+      txEl.innerHTML='<div class="wallet-empty">No wallet transactions yet.</div>';
+    }else{
+      txEl.innerHTML=`
+        <div class="wallet-table-wrap"><table class="wallet-table">
+          <tr><th>Date</th><th>Description</th><th>Type</th><th>Amount</th><th>Reference</th></tr>
+          ${tx.map(t=>{
+            const credit=t.type==="credit";
+            return `<tr>
+              <td>${new Date(t.createdAt).toLocaleString("en-IN")}</td>
+              <td>${escapeHtml(t.description||"")}</td>
+              <td class="${credit?"wallet-credit":"wallet-debit"}">${credit?"Credit":"Debit"}</td>
+              <td class="${credit?"wallet-credit":"wallet-debit"}">${credit?"+":"-"}${formatWalletAmount(t.amount)}</td>
+              <td>${escapeHtml(t.reference||"—")}</td>
+            </tr>`;
+          }).join("")}
+        </table></div>`;
+    }
+    loadTopupRequests();
+  }catch(e){
+    txEl.innerHTML=`<div class="wallet-empty">${escapeHtml(e.message==="Failed to fetch"?"Wallet backend unavailable.":e.message)}</div>`;
+  }
+}
+
+$("walletRefresh")?.addEventListener("click",()=>{
+  loadWallet();
+  loadTopupRequests();
+});
+const walletHistoryToggle=$("walletHistoryToggle");
+const walletHistoryPanel=$("walletTransactionsPanel");
+const walletHistoryArrow=$("walletHistoryArrow");
+walletHistoryToggle?.addEventListener("click",async()=>{
+  const opening=walletHistoryPanel?.hasAttribute("hidden");
+  if(!walletHistoryPanel||!walletHistoryToggle)return;
+  if(opening){
+    walletHistoryPanel.removeAttribute("hidden");
+    walletHistoryToggle.setAttribute("aria-expanded","true");
+    if(walletHistoryArrow)walletHistoryArrow.textContent="−";
+    await loadWallet();
+    walletHistoryPanel.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }else{
+    walletHistoryPanel.setAttribute("hidden","");
+    walletHistoryToggle.setAttribute("aria-expanded","false");
+    if(walletHistoryArrow)walletHistoryArrow.textContent="＋";
+  }
+});
+
+
+$("walletTopupPay")?.addEventListener("click",()=>{
+  const opened=$("walletTopupOpened");
+  const amount=Number($("walletTopupAmount")?.value);
+  if(!Number.isFinite(amount)||amount<1||amount>1000000){
+    if(opened)opened.textContent="Enter a valid amount between ₹1 and ₹10,00,000.";
+    return;
+  }
+  const p=new URLSearchParams({
+    pa:"72378686331@ybl",
+    pn:"AlphaEdge",
+    am:amount.toFixed(2),
+    cu:"INR",
+    tn:"AlphaEdge Wallet Top-up"
+  });
+  localStorage.setItem("alphaedge_wallet_topup_amount",amount.toFixed(2));
+  if(opened){
+    opened.textContent=`Opening UPI for ${formatWalletAmount(amount)}...`;
+    opened.style.color="#7fdcc3";
+  }
+  window.location.href="upi://pay?"+p.toString();
+});
+
+$("walletTopupSubmit")?.addEventListener("click",async()=>{
+  const success=$("walletTopupSuccess"), error=$("walletTopupError");
+  if(success)success.style.display="none";
+  if(error)error.style.display="none";
+
+  const amount=Number($("walletTopupAmount")?.value);
+  const utr=String($("walletTopupUtr")?.value||"").trim();
+
+  if(!Number.isFinite(amount)||amount<1||amount>1000000){
+    if(error){error.textContent="Enter a valid amount between ₹1 and ₹10,00,000.";error.style.display="block";}
+    return;
+  }
+  if(!/^[A-Za-z0-9][A-Za-z0-9._\/ -]{3,99}$/.test(utr)){
+    if(error){error.textContent="Enter a valid UTR / transaction ID.";error.style.display="block";}
+    return;
+  }
+
+  try{
+    const r=await apiFetch("/api/wallet/topup-request",{
+      method:"POST",
+      body:{amount,utr}
+    });
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.message||"Unable to submit top-up.");
+
+    if(success){
+      success.textContent="Top-up submitted. Your wallet will be credited after manual verification.";
+      success.style.display="block";
+    }
+    $("walletTopupUtr").value="";
+    loadTopupRequests();
+    loadWallet();
+  }catch(e){
+    if(error){
+      error.textContent=e.message==="Failed to fetch"?"Backend unavailable.":e.message;
+      error.style.display="block";
+    }
+  }
+});
+
+const originalShowPage=window.showPage;
+if(typeof originalShowPage==="function"){
+  window.showPage=function(page){
+    originalShowPage(page);
+    if(page==="wallet"){
+      loadWallet();
+      loadTopupRequests();
+    }
+  };
+}
+
 /* PAYMENT */
+
 let selectedCourse="";
 function payModule(course){
   selectedCourse=course;
