@@ -174,66 +174,43 @@ button{cursor:pointer}
 .eq-ltp{font-size:11px;font-weight:700}
 .eq-change{font-size:9px;margin-top:3px}
 .equity-detail-panel{min-height:500px}
-.detail-title{font-size:19px;margin:14px 0 3px}
+.detail-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.detail-title{font-size:21px;margin:14px 0 3px}
 .detail-meta{font-size:10px;color:#71879b}
-.detail-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
-.detail-stat{background:#071521;border:1px solid #1b3244;border-radius:10px;padding:10px}
-.detail-stat span{display:block;font-size:9px;color:#71879b;margin-bottom:5px}
-.detail-stat b{font-size:13px}
-.history-wrap{height:300px;margin-top:10px;border:1px solid #1b3244;border-radius:12px;background:#071521;padding:8px;overflow:hidden}
+.detail-price-row{display:flex;align-items:flex-end;gap:10px;margin:14px 0 6px;flex-wrap:wrap}
+.detail-price{font-size:28px;font-weight:800;letter-spacing:-.5px}
+.detail-change{font-size:12px;font-weight:700;padding-bottom:4px}
+.detail-change.up{color:#28d5a0}.detail-change.down{color:#ff6b6b}
+.chart-toolbar{display:flex;align-items:center;gap:7px;overflow-x:auto;padding:8px 0 7px;scrollbar-width:none}
+.chart-toolbar::-webkit-scrollbar{display:none}
+.chart-range{border:1px solid #274054;background:#102132;color:#a8bac9;border-radius:16px;padding:7px 10px;font-size:10px;white-space:nowrap;cursor:pointer}
+.chart-range.active{background:#28d5a0;color:#06131b;border-color:#28d5a0;font-weight:700}
+.chart-interval{margin-left:auto;min-width:76px;background:#071521;border:1px solid #274054;color:#dce8f2;border-radius:9px;padding:7px 8px;font-size:10px;outline:none}
+.history-wrap{height:310px;margin-top:5px;border:1px solid #1b3244;border-radius:12px;background:#071521;padding:8px;overflow:hidden}
 .history-wrap svg{width:100%;height:100%}
 .history-note{font-size:9px;color:#71879b;margin-top:8px;line-height:1.5}
 .history-loading{height:100%;display:grid;place-items:center;color:#8fa0b1;font-size:11px}
+.detail-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.detail-stat{background:#071521;border:1px solid #1b3244;border-radius:10px;padding:10px}
+.detail-stat span{display:block;font-size:9px;color:#71879b;margin-bottom:5px}
+.detail-stat b{font-size:12px}
+.detail-tabs{display:flex;gap:18px;border-bottom:1px solid #20384a;margin-top:15px;overflow-x:auto}
+.detail-tab{padding:10px 2px;color:#8fa0b1;font-size:11px;white-space:nowrap}
+.detail-tab.active{color:#28d5a0;border-bottom:2px solid #28d5a0}
 @media(max-width:520px){
   .equity-list{max-height:none}
   .detail-stats{grid-template-columns:1fr 1fr}
-  .history-wrap{height:250px}
+  .history-wrap{height:255px}
+  .detail-price{font-size:25px}
 }
 
+.watch-clickable{cursor:pointer;transition:.15s}.watch-clickable:hover{background:#102536;border-color:#2a485e}.watch-clickable:focus{outline:2px solid #28d5a0;outline-offset:1px}
+.detail-tabs button{font:inherit;background:transparent;border:0;cursor:pointer}
+.detail-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.detail-info-card,.detail-info{margin-top:12px;background:#071521;border:1px solid #1b3244;border-radius:10px;padding:14px;color:#9dafc0;font-size:10px;line-height:1.55}
+.detail-info-card h4{margin:0 0 6px;color:#dce8f2;font-size:12px}.detail-info-card p{margin:0}
+@media(max-width:520px){.detail-info-grid{grid-template-columns:1fr 1fr}}
 .watch-search{width:100%;box-sizing:border-box;margin:12px 0 14px;padding:12px 14px;border:1px solid #29465a;border-radius:10px;background:#071521;color:#eaf2f8;font-size:14px;outline:none}.watch-search::placeholder{color:#71879b}.watch-search:focus{border-color:#28d5a0;box-shadow:0 0 0 2px #28d5a022}
-
-/* MARKET / FINANCE STYLE REFRESH */
-.market-page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 0 14px}
-.market-kicker{font-size:9px;letter-spacing:1.3px;color:#55dcb8;font-weight:800;margin-bottom:5px}
-.market-page-head h2{font-size:22px;margin:0 0 4px;letter-spacing:-.3px}
-.market-head-btn{border:1px solid #274054;background:#102132;color:#dce8f2;padding:10px 13px;border-radius:9px;font-size:11px;cursor:pointer}
-.market-head-btn:hover{background:#163249;border-color:#2a5664}
-.market-summary-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
-.market-summary-card{border:1px solid #1b2e40;background:#0b1926;border-radius:12px;padding:13px;text-align:left;color:#fff;cursor:pointer}
-.market-summary-card:hover{border-color:#2a5664;background:#0e2030}
-.market-summary-card span{display:block;color:#71879b;font-size:9px;letter-spacing:.6px}
-.market-summary-card b{display:block;font-size:18px;margin-top:6px}
-.market-summary-card small{font-size:10px;margin-top:3px;display:block}
-.watch-panel{padding:16px}
-.watch-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
-.watch-toolbar h3{margin-bottom:3px}
-.watch-toolbar .watch-search{max-width:290px;margin:0}
-.watch-table-head{display:grid;grid-template-columns:minmax(0,1fr) 105px 75px;gap:10px;color:#71879b;font-size:9px;text-transform:uppercase;letter-spacing:.5px;padding:12px 8px 7px;border-bottom:1px solid #182b3b}
-.watch{display:grid;grid-template-columns:minmax(0,1fr) 105px 75px;gap:10px;align-items:center;padding:12px 8px;border-bottom:1px solid #182b3b;font-size:12px;cursor:pointer;border-radius:8px}
-.watch:hover{background:#0f2332}
-.watch small{display:block;color:#71879b;font-size:9px;margin-top:3px}
-.watch-price{text-align:right;font-weight:700}
-.watch-change{text-align:right;font-size:10px}
-.watch-empty{padding:28px;text-align:center;color:#71879b}
-.big-count{font-size:12px}
-.equity-status{font-size:10px;color:#71879b;padding:0 2px 9px}
-.equity-status.ready{color:#55dcb8}
-.equity-status.error{color:#df7184}
-.equity-item{min-height:55px}
-.equity-item .eq-main{flex:1}
-.equity-item .eq-tags{min-width:90px}
-.equity-item .eq-price{min-width:85px}
-.eq-arrow{color:#71879b;font-size:15px;margin-left:2px}
-@media(max-width:760px){
-  .market-page-head{align-items:flex-start;flex-direction:column}
-  .market-head-btn{width:100%}
-  .market-summary-cards{grid-template-columns:1fr}
-  .watch-toolbar{flex-direction:column}
-  .watch-toolbar .watch-search{max-width:none;width:100%;margin:10px 0 0}
-  .watch-table-head,.watch{grid-template-columns:minmax(0,1fr) 82px 65px}
-  .watch{padding:11px 5px}
-  .watch-table-head{padding-left:5px;padding-right:5px}
-}
 </style>
 </head>
 <body>
@@ -512,64 +489,31 @@ button{cursor:pointer}
         </div>
       </section>
 
-      <section class="page" id="watchlist">
-  <div class="market-page-head">
-    <div>
-      <div class="market-kicker">MARKETS • LIVE</div>
-      <h2>Watchlist</h2>
-      <p class="contact-note">Track popular Indian companies. Tap any stock to open its detailed market view.</p>
-    </div>
-    <button class="market-head-btn" type="button" onclick="showPage('equityHub')">Open Equity Hub →</button>
-  </div>
-  <div class="market-summary-cards">
-    <button class="market-summary-card" type="button" onclick="showPage('market')">
-      <span>NIFTY 50</span><b id="watchNiftyValue">--</b><small id="watchNiftyChange">--</small>
-    </button>
-    <button class="market-summary-card" type="button" onclick="showPage('market')">
-      <span>SENSEX</span><b id="watchSensexValue">--</b><small id="watchSensexChange">--</small>
-    </button>
-    <button class="market-summary-card" type="button" onclick="showPage('market')">
-      <span>BANK NIFTY</span><b id="watchBankValue">--</b><small id="watchBankChange">--</small>
-    </button>
-  </div>
-  <div class="panel watch-panel">
-    <div class="watch-toolbar">
-      <div>
-        <h3>Popular Companies</h3>
-        <p class="contact-note">Live prices from the connected market feed.</p>
-      </div>
-      <input id="watchSearch" class="watch-search" type="search" placeholder="Search company or symbol..." autocomplete="off" aria-label="Search companies">
-    </div>
-    <div class="watch-table-head"><span>Company</span><span>Price</span><span>Change</span></div>
-    <div id="fullWatch"></div>
-  </div>
-</section>
+      <section class="page" id="watchlist"><div class="panel"><h3>Popular Companies — Live</h3><p class="contact-note">Live prices from the connected market feed.</p><input id="watchSearch" class="watch-search" type="search" placeholder="Search company or symbol..." autocomplete="off" aria-label="Search companies"><div id="fullWatch"></div></div></section>
       <section class="page" id="equityHub">
-  <div class="market-page-head">
-    <div>
-      <div class="market-kicker">EQUITIES • NSE / BSE</div>
-      <h2>Equity Hub</h2>
-      <p class="contact-note">Search companies, filter by index and tap a stock for its detailed market view.</p>
-    </div>
-    <div class="equity-count big-count" id="equityCount">Loading...</div>
-  </div>
-  <div class="panel equity-panel">
-    <div class="equity-search">
-      <span>⌕</span>
-      <input id="equitySearch" type="search" placeholder="Search company, symbol or ISIN..." autocomplete="off" aria-label="Search equities">
-    </div>
-    <div class="equity-tabs" id="equityTabs">
-      <button type="button" class="eq-tab active" data-filter="all">All</button>
-      <button type="button" class="eq-tab" data-filter="NSE">NSE</button>
-      <button type="button" class="eq-tab" data-filter="BSE">BSE</button>
-      <button type="button" class="eq-tab" data-filter="NIFTY50">Nifty 50</button>
-      <button type="button" class="eq-tab" data-filter="SENSEX">Sensex</button>
-      <button type="button" class="eq-tab" data-filter="BANKNIFTY">Bank Nifty</button>
-    </div>
-    <div class="equity-status" id="equityStatus">Loading equity universe...</div>
-    <div class="equity-list" id="equityList"></div>
-  </div>
-</section>
+        <div class="panel equity-panel">
+          <div class="equity-head">
+            <div>
+              <h3>Equity Hub</h3>
+              <p class="contact-note">NSE • BSE • NIFTY 50 • SENSEX • NIFTY BANK</p>
+            </div>
+            <div class="equity-count" id="equityCount"></div>
+          </div>
+          <div class="equity-search">
+            <span>⌕</span>
+            <input id="equitySearch" type="search" placeholder="Search company or symbol..." autocomplete="off">
+          </div>
+          <div class="equity-tabs" id="equityTabs">
+            <button class="eq-tab active" data-filter="all">All</button>
+            <button class="eq-tab" data-filter="NSE">NSE</button>
+            <button class="eq-tab" data-filter="BSE">BSE</button>
+            <button class="eq-tab" data-filter="NIFTY50">Nifty 50</button>
+            <button class="eq-tab" data-filter="SENSEX">Sensex</button>
+            <button class="eq-tab" data-filter="BANKNIFTY">Bank Nifty</button>
+          </div>
+          <div class="equity-list" id="equityList"></div>
+        </div>
+      </section>
       <section class="page" id="equityDetail">
         <div class="panel equity-detail-panel">
           <button class="action" type="button" onclick="showPage('equityHub')">← Back to Equity Hub</button>
@@ -823,24 +767,22 @@ function renderWatch(){
     const price=fmtPrice(d?.ltp);
     const pct=fmtPct(d?.changePct);
     const cls=Number(d?.changePct)>=0?"up":"down";
-    const safe=encodeURIComponent(sym);
-    return `<div class="watch" role="button" tabindex="0" onclick="openEquity(decodeURIComponent('${safe}'))" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openEquity(decodeURIComponent('${safe}'))}">
-      <span><b>${name}</b><small>${sym}</small></span>
-      <span class="watch-price">${price}</span>
-      <span class="watch-change ${cls}">${pct}</span>
+    const safeSym=encodeURIComponent(sym);
+    return `<div class="watch watch-clickable" role="button" tabindex="0" onclick="openWatchEquity('${safeSym}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openWatchEquity('${safeSym}')}">
+      <span><b>${name}</b><small style="display:block;color:#71879b">${sym}</small></span>
+      <span style="text-align:right"><b>${price}</b><small class="${cls}" style="display:block">${pct}</small></span>
     </div>`;
   }).join("");
-  $("miniWatch").innerHTML=filtered.slice(0,5).map(([sym,name,key])=>{
-    const d=watchData[key], cls=Number(d?.changePct)>=0?"up":"down";
-    const safe=encodeURIComponent(sym);
-    return `<div class="watch" role="button" tabindex="0" onclick="showPage('watchlist');setTimeout(()=>{const e=$('watchSearch');if(e){e.value='';e.focus();}} ,50)" onkeydown="if(event.key==='Enter'){showPage('watchlist')}">
-      <span><b>${name}</b><small>${sym}</small></span><span class="watch-price">${fmtPrice(d?.ltp)}</span><span class="watch-change ${cls}">${fmtPct(d?.changePct)}</span>
-    </div>`;
-  }).join("") || `<div class="watch-empty">Market data loading...</div>`;
+  $("miniWatch").innerHTML=html;
   $("fullWatch").innerHTML=html || `<div class="watch-empty">No company found.</div>`;
 }
 renderWatch();
 $("watchSearch")?.addEventListener("input",renderWatch);
+
+function openWatchEquity(encodedSymbol){
+  const symbol=decodeURIComponent(encodedSymbol||"");
+  if(typeof openEquity==="function") openEquity(symbol);
+}
 
 function fmtPrice(v){
   return Number.isFinite(Number(v))
@@ -868,9 +810,6 @@ function updateMarketUI(d){
   card("marketNifty",d.nifty);
   card("marketSensex",d.sensex);
   card("marketBank",d.banknifty);
-  card("watchNifty",d.nifty);
-  card("watchSensex",d.sensex);
-  card("watchBank",d.banknifty);
 
   $("marketFeedStatus").textContent=d.connected?"CONNECTED":"DISCONNECTED";
 
@@ -914,35 +853,14 @@ try{
 
 /* NAVIGATION */
 function showPage(id){
-  const target=$(id);
-  if(!target){
-    console.warn("AlphaEdge page not found:",id);
-    return false;
-  }
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  target.classList.add("active");
-  document.querySelectorAll(".nav button[data-page]").forEach(b=>{
-    b.classList.toggle("active",b.dataset.page===id);
-    b.setAttribute("aria-current",b.dataset.page===id?"page":"false");
-  });
+  $(id)?.classList.add("active");
+  document.querySelectorAll(".nav button[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
   const isDashboard=id==="dashboard";
   document.querySelector(".main")?.classList.toggle("dashboard-view",isDashboard);
-  if(location.hash!=="#"+id){
-    try{history.replaceState(null,"","#"+id);}catch(_){}
-  }
   window.scrollTo({top:0,behavior:"smooth"});
-  if(id==="watchlist") renderWatch();
-  if(id==="equityHub") renderEquityList();
-  return true;
 }
-document.querySelectorAll(".nav button[data-page]").forEach(b=>{
-  b.type="button";
-  b.addEventListener("click",e=>{e.preventDefault();showPage(b.dataset.page);});
-});
-window.addEventListener("hashchange",()=>{
-  const id=location.hash.slice(1);
-  if(id && $(id)?.classList.contains("page")) showPage(id);
-});
+document.querySelectorAll(".nav button[data-page]").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 
 /* GREETING */
 function greeting(){
@@ -1612,12 +1530,6 @@ function renderEquityList(){
     return filterOk&&searchOk;
   }).sort((a,b)=>a.name.localeCompare(b.name));
   $("equityCount").textContent=`${arr.length} companies`;
-  if($("equityStatus")){
-    $("equityStatus").textContent=arr.length
-      ? "Tap a company to open live quote and 5-year history."
-      : "No company matched your search.";
-    $("equityStatus").className="equity-status"+(arr.length?". ready":" error");
-  }
   $("equityList").innerHTML=arr.map(x=>{
     const c=equityCache.get(x.symbol);
     const price=c?.price!=null?fmtPrice(c.price):"--";
@@ -1628,11 +1540,10 @@ function renderEquityList(){
       <div class="eq-main"><div class="eq-name">${x.name}</div><div class="eq-symbol">${x.symbol}${x.isin?` • ${x.isin}`:""}</div></div>
       <div class="eq-tags">${equityTags(x)}</div>
       <div class="eq-price"><div class="eq-ltp">${price}</div><div class="eq-change ${cls}">${ch}</div></div>
-      <span class="eq-arrow">›</span>
     </div>`;
   }).join("") || `<div class="contact-note" style="padding:20px;text-align:center">No company found.</div>`;
 }
-$("equitySearch")?.addEventListener("input",e=>{equitySearch=e.target.value;renderEquityList();});
+$("equitySearch").addEventListener("input",e=>{equitySearch=e.target.value;renderEquityList();});
 document.querySelectorAll(".eq-tab").forEach(b=>b.onclick=()=>{
   equityFilter=b.dataset.filter;
   document.querySelectorAll(".eq-tab").forEach(x=>x.classList.toggle("active",x===b));
@@ -1740,80 +1651,145 @@ async function loadEquityQuotes(){
 setTimeout(loadEquityQuotes,700);
 setInterval(loadEquityQuotes,10000);
 
+let equityChartRange='1d';
+let equityChartInterval='1';
+
+function chartRangeLabel(r){return ({'1d':'1D','1w':'1W','1m':'1M','3m':'3M','6m':'6M','1y':'1Y','5y':'5Y'})[r]||r;}
+function chartIntervalOptions(range){
+  if(range==='1d'||range==='1w') return [['1','1m'],['5','5m'],['15','15m'],['30','30m'],['60','1h']];
+  if(range==='1m') return [['1','1m'],['5','5m'],['15','15m'],['30','30m'],['60','1h']];
+  if(range==='3m') return [['30','30m'],['60','1h'],['day','1D']];
+  return [['day','1D']];
+}
+function setChartRange(range){
+  equityChartRange=range;
+  const opts=chartIntervalOptions(range);
+  if(!opts.some(([v])=>v===equityChartInterval)) equityChartInterval=opts[0][0];
+  document.querySelectorAll('.chart-range').forEach(b=>b.classList.toggle('active',b.dataset.range===range));
+  const sel=$('chartInterval');
+  if(sel){sel.innerHTML=opts.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');sel.value=equityChartInterval;}
+  const sym=$('equityDetailContent')?.dataset?.symbol;
+  if(sym){loadEquityHistory({symbol:sym});}
+}
+function setChartInterval(v){equityChartInterval=v;const sym=$('equityDetailContent')?.dataset?.symbol;if(sym)loadEquityHistory({symbol:sym});}
+
 async function openEquity(symbol){
   const x=equityAll().find(v=>v.symbol===symbol);
   if(!x)return;
-  showPage("equityDetail");
-  $("equityDetailContent").innerHTML=`
+  equityChartRange='1d'; equityChartInterval='1';
+  showPage('equityDetail');
+  $('equityDetailContent').dataset.symbol=x.symbol;
+  $('equityDetailContent').innerHTML=`
+    <div class="detail-topbar"><button class="action" type="button" onclick="showPage('equityHub')">← Back</button><span class="equity-count">${x.exchanges.join(' / ')}</span></div>
     <div class="detail-title">${x.name}</div>
-    <div class="detail-meta">${x.symbol} • ${x.exchanges.join(" / ")}${x.isin?` • ${x.isin}`:""}</div>
-    <div class="detail-stats">
-      <div class="detail-stat"><span>Latest price</span><b id="detailPrice">Loading...</b></div>
-      <div class="detail-stat"><span>Day change</span><b id="detailChange">--</b></div>
-      <div class="detail-stat"><span>Period</span><b>5 Years</b></div>
+    <div class="detail-meta">${x.symbol}${x.isin?` • ${x.isin}`:''}</div>
+    <div class="detail-price-row"><div class="detail-price" id="detailPrice">Loading...</div><div id="detailChange" class="detail-change">--</div></div>
+    <div class="chart-toolbar" id="chartRanges">${['1d','1w','1m','3m','6m','1y','5y'].map(r=>`<button type="button" class="chart-range ${r==='1d'?'active':''}" data-range="${r}" onclick="setChartRange('${r}')">${chartRangeLabel(r)}</button>`).join('')}
+      <select id="chartInterval" class="chart-interval" onchange="setChartInterval(this.value)"></select>
     </div>
-    <div class="history-wrap" id="historyChart"><div class="history-loading">Loading 5-year market data...</div></div>
-    <div class="history-note">5-year historical price series. Market data is supplied through the connected backend market-data feed.</div>`;
+    <div class="history-wrap" id="historyChart"><div class="history-loading">Loading live chart...</div></div>
+    <div class="detail-tabs" id="detailTabs">
+      <button type="button" class="detail-tab active" data-tab="overview" onclick="setDetailTab('overview')">Overview</button>
+      <button type="button" class="detail-tab" data-tab="technicals" onclick="setDetailTab('technicals')">Technicals</button>
+      <button type="button" class="detail-tab" data-tab="news" onclick="setDetailTab('news')">News</button>
+      <button type="button" class="detail-tab" data-tab="events" onclick="setDetailTab('events')">Events</button>
+      <button type="button" class="detail-tab" data-tab="fno" onclick="setDetailTab('fno')">F&amp;O</button>
+    </div>
+    <div id="detailTabContent"></div>
+    <div class="history-note">Live quotes and historical OHLC candles are supplied through the connected Upstox market-data feed. Short ranges use intraday candles; longer periods use daily/weekly/monthly history according to the selected range.</div>`;
+  setChartRange('1d');
+  setDetailTab('overview');
 
   let quote=equityCache.get(x.symbol);
   if(!quote){
     const quotes=await fetchEquityQuotes([x.symbol]);
     const q=quotes[String(x.symbol).toUpperCase()];
-    if(q){
-      quote={price:q.price,changePct:q.changePct,provider:q.provider||'Upstox'};
-      equityCache.set(x.symbol,quote);
-    }
+    if(q){quote={price:q.price,changePct:q.changePct,close:q.close,netChange:q.netChange,provider:q.provider||'Upstox'};equityCache.set(x.symbol,quote);}
   }
   if(quote&&Number.isFinite(Number(quote.price))){
-    $("detailPrice").textContent=fmtPrice(quote.price);
-    $("detailChange").textContent=fmtPct(quote.changePct);
-    $("detailChange").className=Number(quote.changePct)>=0?"up":"down";
-  }else{
-    $("detailPrice").textContent="--";
-    $("detailChange").textContent="Unavailable";
-  }
+    $('detailPrice').textContent=fmtPrice(quote.price);
+    $('detailChange').textContent=fmtPct(quote.changePct);
+    $('detailChange').className='detail-change '+(Number(quote.changePct)>=0?'up':'down');
+    $('detailClose').textContent=quote.close!=null?fmtPrice(quote.close):'--';
+  }else{$('detailPrice').textContent='--';$('detailChange').textContent='Unavailable';}
   renderEquityList();
-  await loadEquityHistory(x);
 }
 
-function drawHistory(points){
-  if(!points.length){$("historyChart").innerHTML='<div class="history-loading">5-year data unavailable for this symbol.</div>';return;}
-  const w=900,h=300;
-  const vals=points.map(p=>p.v);
-  const min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
-  const path=points.map((pt,i)=>{
-    const x=i/(points.length-1||1)*w;
-    return `${i===0?"M":"L"} ${x.toFixed(1)} ${(h-((pt.v-min)/range)*(h-45)-10).toFixed(1)}`;
-  }).join(" ");
-  const first=points[0].d,last=points.at(-1).d;
-  $("historyChart").innerHTML=`<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-label="5 year price chart">
-    <path d="M0 ${h-35}H${w}" stroke="#1b3244" stroke-width="1" fill="none"/>
-    <path d="${path}" stroke="#28d5a0" stroke-width="3" fill="none"/>
-    <text x="4" y="${h-8}" fill="#71879b" font-size="11">${first}</text>
-    <text x="${w-90}" y="${h-8}" fill="#71879b" font-size="11">${last}</text>
-    <text x="4" y="14" fill="#71879b" font-size="10">5Y historical</text>
-  </svg>`;
+let detailHistoryPoints=[];
+function detailTabButtons(tab){document.querySelectorAll('#detailTabs .detail-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));}
+function setDetailTab(tab){
+  detailTabButtons(tab); const host=$('detailTabContent'); if(!host)return;
+  if(tab==='overview'){
+    host.innerHTML=`<div class="detail-stats"><div class="detail-stat"><span>Open</span><b id="detailOpen">--</b></div><div class="detail-stat"><span>High</span><b id="detailHigh">--</b></div><div class="detail-stat"><span>Low</span><b id="detailLow">--</b></div><div class="detail-stat"><span>Prev. close</span><b id="detailClose">--</b></div><div class="detail-stat"><span>Volume</span><b id="detailVolume">--</b></div><div class="detail-stat"><span>Chart</span><b id="detailPeriod">--</b></div></div>`;
+    updateDetailStats(); return;
+  }
+  if(tab==='technicals'){
+    const p=detailHistoryPoints.filter(x=>Number.isFinite(x.v));
+    if(!p.length){host.innerHTML='<div class="detail-info">Technical data will appear when historical candles are available.</div>';return;}
+    const closes=p.map(x=>x.v), sma=(a,n)=>a.length<n?null:a.slice(-n).reduce((x,y)=>x+y,0)/n;
+    const sma20=sma(closes,20),sma50=sma(closes,50),look=Math.min(14,closes.length-1); let gains=0,losses=0;
+    for(let i=closes.length-look;i<closes.length;i++){const d=closes[i]-closes[i-1];if(d>=0)gains+=d;else losses-=d;}
+    const ag=look?gains/look:0,al=look?losses/look:0,rsi=al===0?100:100-(100/(1+ag/al)),hi=Math.max(...closes),lo=Math.min(...closes),last=closes.at(-1);
+    host.innerHTML=`<div class="detail-info-grid"><div class="detail-stat"><span>SMA 20</span><b>${sma20==null?'--':fmtPrice(sma20)}</b></div><div class="detail-stat"><span>SMA 50</span><b>${sma50==null?'--':fmtPrice(sma50)}</b></div><div class="detail-stat"><span>RSI 14</span><b>${Number.isFinite(rsi)?rsi.toFixed(2):'--'}</b></div><div class="detail-stat"><span>Period high</span><b>${fmtPrice(hi)}</b></div><div class="detail-stat"><span>Period low</span><b>${fmtPrice(lo)}</b></div><div class="detail-stat"><span>Trend</span><b>${sma20==null?'Insufficient data':last>sma20?'Above SMA 20':'Below SMA 20'}</b></div></div><div class="detail-info">Technical values are calculated from the candles currently loaded in the selected chart range.</div>`; return;
+  }
+  if(tab==='news'){host.innerHTML='<div class="detail-info-card"><h4>Latest News</h4><p>Live company-news feed is not connected yet. No news is being invented or displayed as if it were live.</p></div>';return;}
+  if(tab==='events'){host.innerHTML='<div class="detail-info-card"><h4>Events</h4><p>Corporate events such as results, dividends and board announcements will appear here when an events feed is connected.</p></div>';return;}
+  host.innerHTML='<div class="detail-info-card"><h4>F&amp;O</h4><p>Futures and options data is not connected for this equity yet.</p></div>';
 }
+function updateDetailStats(){
+  const p=detailHistoryPoints;if(!p.length)return;const last=p.at(-1),highs=p.map(x=>x.high).filter(Number.isFinite),lows=p.map(x=>x.low).filter(Number.isFinite);
+  if($('detailOpen'))$('detailOpen').textContent=Number.isFinite(last.open)?fmtPrice(last.open):'--';
+  if($('detailHigh'))$('detailHigh').textContent=highs.length?fmtPrice(Math.max(...highs)):'--';
+  if($('detailLow'))$('detailLow').textContent=lows.length?fmtPrice(Math.min(...lows)):'--';
+  if($('detailVolume'))$('detailVolume').textContent=Number.isFinite(last.volume)?Number(last.volume).toLocaleString('en-IN'):'--';
+}
+
+function drawHistory(points, range, interval){
+  if(!points.length){$('historyChart').innerHTML='<div class="history-loading">Chart data unavailable for this timeframe.</div>';return;}
+  const w=900,h=300,pad={l:8,r:8,t:14,b:30};
+  const vals=points.map(p=>p.v).filter(Number.isFinite);
+  const min=Math.min(...vals),max=Math.max(...vals),span=max-min||Math.max(max*0.01,1);
+  const path=points.map((pt,i)=>{const x=pad.l+i/(points.length-1||1)*(w-pad.l-pad.r);const y=pad.t+(max-pt.v)/span*(h-pad.t-pad.b);return `${i?'L':'M'} ${x.toFixed(1)} ${y.toFixed(1)}`;}).join(' ');
+  const first=points[0].d,last=points.at(-1).d;
+  const fill=`${path} L ${w-pad.r} ${h-pad.b} L ${pad.l} ${h-pad.b} Z`;
+  $('historyChart').innerHTML=`<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-label="${chartRangeLabel(range)} price chart">
+    <defs><linearGradient id="chartFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#28d5a0" stop-opacity=".20"/><stop offset="1" stop-color="#28d5a0" stop-opacity="0"/></linearGradient></defs>
+    <path d="M0 ${h-pad.b}H${w}" stroke="#1b3244" stroke-width="1" fill="none"/>
+    <path d="${fill}" fill="url(#chartFade)"/>
+    <path d="${path}" stroke="#28d5a0" stroke-width="2.5" fill="none"/>
+    <text x="4" y="${h-8}" fill="#71879b" font-size="10">${first}</text>
+    <text x="${w-70}" y="${h-8}" fill="#71879b" font-size="10">${last}</text>
+  </svg>`;
+  $('detailPeriod').textContent=`${chartRangeLabel(range)} • ${interval==='60'?'1h':interval==='day'?'1D':interval==='1'&&range!=='1d'?'1D':interval+'m'}`;
+}
+
 async function loadEquityHistory(x){
+  const range=equityChartRange, interval=equityChartInterval;
+  $('historyChart').innerHTML='<div class="history-loading">Loading chart data...</div>';
   try{
-    const r=await apiFetch('/api/market/history-v3?symbol='+encodeURIComponent(x.symbol)+'&range=5y',{cache:'no-store'});
+    const r=await apiFetch('/api/market/history-v3?symbol='+encodeURIComponent(x.symbol)+'&range='+encodeURIComponent(range)+'&interval='+encodeURIComponent(interval),{cache:'no-store'});
     if(!r.ok)throw new Error('Historical market data unavailable');
     const d=await r.json();
     const history=Array.isArray(d?.history)?d.history:[];
-    // Keep the existing compact chart presentation by sampling roughly one
-    // observation per month from the daily backend series.
-    const monthly=new Map();
+    const points=[];
     for(const row of history){
-      const date=new Date(row.date);
-      const v=Number(row.close);
+      const date=new Date(row.date), v=Number(row.close);
       if(!Number.isFinite(v)||Number.isNaN(date.getTime()))continue;
-      const key=`${date.getUTCFullYear()}-${String(date.getUTCMonth()+1).padStart(2,'0')}`;
-      monthly.set(key,{v,d:date.toLocaleDateString('en-IN',{month:'short',year:'numeric',timeZone:'UTC'})});
+      const label=range==='1d'?date.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Kolkata'}):date.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:range==='5y'?'2-digit':undefined,timeZone:'Asia/Kolkata'});
+      points.push({v,d:label,open:Number(row.open),high:Number(row.high),low:Number(row.low),volume:Number(row.volume)});
     }
-    drawHistory([...monthly.values()]);
+    detailHistoryPoints=points;
+    drawHistory(points,range,interval);
+    if(points.length){
+      const last=points.at(-1), first=points[0];
+      $('detailOpen').textContent=Number.isFinite(last.open)?fmtPrice(last.open):'--';
+      $('detailHigh').textContent=Number.isFinite(Math.max(...points.map(p=>p.high).filter(Number.isFinite)))?fmtPrice(Math.max(...points.map(p=>p.high).filter(Number.isFinite))):'--';
+      $('detailLow').textContent=Number.isFinite(Math.min(...points.map(p=>p.low).filter(Number.isFinite)))?fmtPrice(Math.min(...points.map(p=>p.low).filter(Number.isFinite))):'--';
+      $('detailVolume').textContent=Number.isFinite(last.volume)?Number(last.volume).toLocaleString('en-IN'):'--';
+    }
   }catch(err){
     console.warn('Equity history unavailable:',err);
-    $("historyChart").innerHTML='<div class="history-loading">Unable to load historical data right now. Please try again.</div>';
+    $('historyChart').innerHTML='<div class="history-loading">Unable to load historical data right now. Please try again.</div>';
   }
 }
 /* RESTORE SAVED STATE */
@@ -1847,8 +1823,7 @@ async function restoreSession(){
 $("footerYear").textContent=new Date().getFullYear();
 greeting();
 restoreSession();
-const initialPage=location.hash.slice(1);
-showPage($(initialPage)?.classList.contains("page")?initialPage:"dashboard");
+showPage("dashboard");
 </script>
 
 
