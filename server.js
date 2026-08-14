@@ -72,9 +72,9 @@ async function initDatabase() {
         id BIGSERIAL PRIMARY KEY,
         client_id VARCHAR(30) UNIQUE NOT NULL,
         name VARCHAR(100) NOT NULL,
-        phone VARCHAR(20) UNIQUE NOT NULL,
+        phone VARCHAR(20) UNIQUE,
         email VARCHAR(255) UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
+        password_hash TEXT,
         status VARCHAR(20) NOT NULL DEFAULT 'active',
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       );
@@ -92,6 +92,9 @@ async function initDatabase() {
       ON market_snapshots(symbol, captured_at DESC);
     `);
 
+    // Allow OAuth-created accounts to complete their profile later.
+    await pool.query(`ALTER TABLE clients ALTER COLUMN phone DROP NOT NULL`);
+    await pool.query(`ALTER TABLE clients ALTER COLUMN password_hash DROP NOT NULL`);
     databaseReady = true;
     console.log('PostgreSQL database ready.');
 
@@ -743,6 +746,170 @@ function requireLogin(
 
   next();
 }
+
+
+/* =========================
+SOCIAL LOGIN — GOOGLE / FACEBOOK
+========================= */
+
+function oauthFrontendUrl(){
+  return process.env.OAUTH_FRONTEND_URL ||
+    process.env.FRONTEND_ORIGIN ||
+    'https://alphaedge-c3yf.onrender.com';
+}
+
+function oauthRedirectUri(provider){
+  const base=process.env.BACKEND_PUBLIC_URL ||
+    (process.env.RENDER_EXTERNAL_HOSTNAME
+      ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`
+      : 'https://alphaedge-backend-loxi.onrender.com');
+  const fallback=base.replace(/\/+$/,'');
+  return process.env[provider==='google'?'GOOGLE_REDIRECT_URI':'FACEBOOK_REDIRECT_URI'] ||
+    `${fallback}/api/auth/${provider}/callback`;
+}
+
+async function finishSocialLogin(req, provider, profile){
+  if(!pool || !databaseReady) throw new Error('Authentication database is unavailable');
+  const email=normalizeEmail(profile.email);
+  if(!email) throw new Error('The social account did not provide an email address.');
+
+  let result=await pool.query(
+    `SELECT id,client_id,name,phone,email,status FROM clients WHERE LOWER(email)=$1 LIMIT 1`,
+    [email]
+  );
+
+  let client=result.rows[0];
+  if(client && client.status!=='active') throw new Error('Account is not active.');
+
+  if(!client){
+    let clientId=null;
+    for(let i=0;i<20;i++){
+      const candidate=generateClientId();
+      const check=await pool.query(`SELECT 1 FROM clients WHERE client_id=$1`,[candidate]);
+      if(!check.rows.length){clientId=candidate;break;}
+    }
+    if(!clientId) throw new Error('Unable to create Client ID.');
+
+    const created=await pool.query(
+      `INSERT INTO clients(client_id,name,phone,email,password_hash,status)
+       VALUES($1,$2,NULL,$3,NULL,'active')
+       RETURNING id,client_id,name,phone,email,status`,
+      [clientId,String(profile.name||'AlphaEdge User').slice(0,100),email]
+    );
+    client=created.rows[0];
+  }
+
+  req.session.clientId=client.client_id;
+  req.session.userType='client';
+  req.session.socialProvider=provider;
+  await new Promise((resolve,reject)=>req.session.save(err=>err?reject(err):resolve()));
+  return client;
+}
+
+app.get('/api/auth/:provider', (req,res)=>{
+  const provider=String(req.params.provider||'').toLowerCase();
+  if(!['google','facebook'].includes(provider)) return res.status(404).send('Unsupported social login.');
+  const clientId=provider==='google'?process.env.GOOGLE_CLIENT_ID:process.env.FACEBOOK_APP_ID;
+  const clientSecret=provider==='google'?process.env.GOOGLE_CLIENT_SECRET:process.env.FACEBOOK_APP_SECRET;
+  if(!clientId || !clientSecret){
+    return res.status(503).send(`${provider[0].toUpperCase()+provider.slice(1)} login is not configured on the server.`);
+  }
+  const state=crypto.randomBytes(24).toString('hex');
+  req.session.oauthState=state;
+  req.session.oauthProvider=provider;
+  req.session.oauthNextSymbol=String(req.query.nextSymbol||'').trim().slice(0,80);
+  const redirectUri=oauthRedirectUri(provider);
+
+  if(provider==='google'){
+    const params=new URLSearchParams({
+      client_id:clientId,
+      redirect_uri:redirectUri,
+      response_type:'code',
+      scope:'openid email profile',
+      state,
+      access_type:'online',
+      prompt:'select_account'
+    });
+    return res.redirect('https://accounts.google.com/o/oauth2/v2/auth?'+params.toString());
+  }
+
+  const version=process.env.FACEBOOK_GRAPH_VERSION||'v24.0';
+  const params=new URLSearchParams({
+    client_id:clientId,
+    redirect_uri:redirectUri,
+    response_type:'code',
+    scope:'email,public_profile',
+    state
+  });
+  return res.redirect(`https://www.facebook.com/${version}/dialog/oauth?`+params.toString());
+});
+
+app.get('/api/auth/:provider/callback', async (req,res)=>{
+  const provider=String(req.params.provider||'').toLowerCase();
+  const frontend=oauthFrontendUrl();
+  try{
+    if(!['google','facebook'].includes(provider)) throw new Error('Unsupported social login.');
+    if(!req.query.code || !req.query.state || req.query.state!==req.session.oauthState){
+      throw new Error('Social login verification failed. Please try again.');
+    }
+    if(provider!==req.session.oauthProvider) throw new Error('Social login provider mismatch.');
+
+    const clientId=provider==='google'?process.env.GOOGLE_CLIENT_ID:process.env.FACEBOOK_APP_ID;
+    const clientSecret=provider==='google'?process.env.GOOGLE_CLIENT_SECRET:process.env.FACEBOOK_APP_SECRET;
+    const redirectUri=oauthRedirectUri(provider);
+    let profile={};
+
+    if(provider==='google'){
+      const tokenRes=await fetch('https://oauth2.googleapis.com/token',{
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams({
+          client_id:clientId,client_secret:clientSecret,code:String(req.query.code),
+          redirect_uri:redirectUri,grant_type:'authorization_code'
+        })
+      });
+      const token=await tokenRes.json();
+      if(!tokenRes.ok || !token.access_token) throw new Error('Google authorization failed.');
+      const userRes=await fetch('https://openidconnect.googleapis.com/v1/userinfo',{
+        headers:{Authorization:`Bearer ${token.access_token}`}
+      });
+      const user=await userRes.json();
+      if(!userRes.ok) throw new Error('Unable to read Google account.');
+      profile={email:user.email,name:user.name};
+    }else{
+      const version=process.env.FACEBOOK_GRAPH_VERSION||'v24.0';
+      const tokenUrl=`https://graph.facebook.com/${version}/oauth/access_token?`+
+        new URLSearchParams({
+          client_id:clientId,client_secret:clientSecret,code:String(req.query.code),redirect_uri:redirectUri
+        }).toString();
+      const tokenRes=await fetch(tokenUrl);
+      const token=await tokenRes.json();
+      if(!tokenRes.ok || !token.access_token) throw new Error('Facebook authorization failed.');
+      const userUrl=`https://graph.facebook.com/${version}/me?fields=id,name,email&access_token=${encodeURIComponent(token.access_token)}`;
+      const userRes=await fetch(userUrl);
+      const user=await userRes.json();
+      if(!userRes.ok) throw new Error('Unable to read Facebook account.');
+      profile={email:user.email,name:user.name};
+    }
+
+    const client=await finishSocialLogin(req,provider,profile);
+    const nextSymbol=String(req.session.oauthNextSymbol||'').trim();
+    delete req.session.oauthState;
+    delete req.session.oauthProvider;
+    delete req.session.oauthNextSymbol;
+    const target=new URL(frontend);
+    target.searchParams.set('social','success');
+    target.searchParams.set('clientId',client.client_id);
+    if(nextSymbol) target.searchParams.set('nextSymbol',nextSymbol);
+    return res.redirect(target.toString());
+  }catch(err){
+    console.error(`${provider} OAuth error:`,err.message);
+    const target=new URL(frontend);
+    target.searchParams.set('social','error');
+    target.searchParams.set('message',err.message||'Social login failed');
+    return res.redirect(target.toString());
+  }
+});
 
 /* =========================
 CLIENT REGISTRATION

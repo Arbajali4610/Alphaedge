@@ -87,7 +87,15 @@ button{cursor:pointer}
 .legal-overlay,.login-overlay,.utility-overlay{position:fixed;inset:0;background:#06101a;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.legal-overlay{z-index:1000}.utility-overlay{z-index:900}
 .legal-overlay.show,.login-overlay.show,.utility-overlay.show{display:flex}
 .legal-box,.login,.utility-box{width:min(650px,100%);max-height:90vh;overflow:auto;background:#0b1926;border:1px solid #1d3548;border-radius:16px;padding:24px} .privacy-box{width:min(700px,100%);max-height:92vh;padding:28px} .privacy-box .modal-actions{position:sticky;bottom:0;background:#0b1926;padding-top:16px;margin-top:22px} .privacy-box h3{margin:24px 0 9px;font-size:18px} .privacy-box p{font-size:14px;line-height:1.8}
-.login{width:min(430px,100%)}
+.login{width:min(430px,100%)}.social-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:#71879b;font-size:10px}
+.social-divider::before,.social-divider::after{content:"";height:1px;background:#1d3548;flex:1}
+.social-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.social-btn{border:1px solid #29455a;border-radius:10px;padding:10px 8px;background:#102132;color:#dce8f2;font-weight:700;font-size:11px;cursor:pointer}
+.social-btn:hover{border-color:#55dcb8}
+.social-btn.google{background:#fff;color:#202124;border-color:#ddd}
+.social-btn.facebook{background:#1877f2;color:#fff;border-color:#1877f2}.social-btn.whatsapp{background:#25d366;color:#fff;border-color:#25d366}.social-btn.truecaller{background:#fff;color:#111;border-color:#d9d9d9}
+@media(max-width:520px){.social-row{grid-template-columns:1fr}.social-btn{width:100%}}
+
 .utility-box{width:min(430px,100%)}
 .legal-box p,.legal-box li{color:#9dafc0;font-size:12px;line-height:1.7}
 .legal-close{float:right;background:#102132;border:1px solid #274054;color:#fff;border-radius:7px;padding:7px 11px}
@@ -239,6 +247,33 @@ button{cursor:pointer}
 }
 
 </style>
+
+<style id="alphaedge-light-theme">
+html,body{background:#f5f7fa!important;color:#17212b!important}
+body{color-scheme:light!important}
+.side{background:#ffffff!important;border-right:1px solid #dfe5eb!important;box-shadow:2px 0 10px rgba(20,35,50,.04)}
+.nav button{color:#64748b!important}.nav button:hover,.nav button.active{background:#e8f7f2!important;color:#087a61!important}
+.main{background:#f5f7fa!important}.top{background:#fff!important;border-bottom:1px solid #e1e7ec!important}.content{background:#f5f7fa!important}
+.card,.panel,.education-item,.research-item,.equity-item{background:#fff!important;border-color:#dfe5eb!important;box-shadow:0 2px 8px rgba(30,50,70,.04)}
+.table th{color:#64748b!important}.table th,.table td,.watch{border-color:#e5e9ee!important}
+.label,.sub,.contact-note,.greeting-sub,.education-meta,.research-category,.equity-count,.research-count,.education-id{color:#64748b!important}
+.value,.title,.greeting,.panel h3,.education-title,.research-title{color:#17212b!important}
+.action,.social-btn,.research-tab,.eq-tab,.research-open,.photo-btn,.legal-close{background:#fff!important;border-color:#cfd8e1!important;color:#263746!important}
+.action:hover,.research-item:hover{background:#f1f5f8!important}
+.primary{background:#18b98d!important;color:#fff!important}
+.form input,.form textarea,.research-search,.equity-search{background:#fff!important;border-color:#cfd8e1!important;color:#17212b!important}
+.equity-search input{color:#17212b!important}.pill{background:#e2f8f1!important;color:#078060!important}
+.legal-overlay,.login-overlay,.utility-overlay{background:rgba(245,247,250,.94)!important}
+.legal-box,.login,.utility-box,.privacy-box{background:#fff!important;border-color:#d9e1e8!important;box-shadow:0 12px 40px rgba(20,35,50,.14)!important}
+.legal-box p,.legal-box li{color:#526273!important}.privacy-box .modal-actions{background:#fff!important}
+.social-btn.google{background:#fff!important;color:#202124!important}.social-btn.facebook{background:#1877f2!important;color:#fff!important}.social-btn.whatsapp{background:#25d366!important;color:#fff!important}.social-btn.truecaller{background:#fff!important;color:#111!important}
+.loading{background:rgba(245,247,250,.78)!important}.loading-box{background:#fff!important;color:#17212b!important;box-shadow:0 10px 30px rgba(20,35,50,.12)}
+.spinner{border-color:#cbd5df!important;border-top-color:#18b98d!important}
+.password-toggle{background:#f3f6f8!important;color:#087a61!important;border-color:#cfd8e1!important}
+.research-tab.active,.eq-tab.active{background:#18b98d!important;color:#fff!important;border-color:#18b98d!important}
+.brand-mark{color:#fff!important}
+.avatar,.big-avatar{background:#dff6ef!important;color:#087a61!important}
+</style>
 </head>
 <body>
 
@@ -374,7 +409,7 @@ button{cursor:pointer}
 </div>
 
 <!-- LOGIN / REGISTER -->
-<div class="login-overlay show" id="loginScreen">
+<div class="login-overlay" id="loginScreen">
   <div class="login">
     <div class="brand-logo" aria-label="AlphaEdge">
       <div class="brand-mark">AE</div>
@@ -409,6 +444,13 @@ button{cursor:pointer}
         </label>
         <div class="error" id="loginError"></div>
         <button class="primary" style="width:100%" type="submit">Login</button>
+        <div class="social-divider"><span>OR</span></div>
+        <div class="social-row">
+          <button class="social-btn google" type="button" onclick="startSocialLogin('google')">Continue with Google</button>
+          <button class="social-btn facebook" type="button" onclick="startSocialLogin('facebook')">Continue with Facebook</button>
+          <button class="social-btn whatsapp" type="button" onclick="startSocialLogin('whatsapp')">Continue with WhatsApp</button>
+          <button class="social-btn truecaller" type="button" onclick="startSocialLogin('truecaller')">Continue with Truecaller</button>
+        </div>
       </form>
       <p style="text-align:center;font-size:11px;color:#8296a9">
         New to AlphaEdge?
@@ -433,6 +475,13 @@ button{cursor:pointer}
         <div class="error" id="registerError"></div>
         <div class="success" id="registerSuccess"></div>
         <button class="primary" style="width:100%" type="submit">Create Account</button>
+        <div class="social-divider"><span>OR</span></div>
+        <div class="social-row">
+          <button class="social-btn google" type="button" onclick="startSocialLogin('google')">Continue with Google</button>
+          <button class="social-btn facebook" type="button" onclick="startSocialLogin('facebook')">Continue with Facebook</button>
+          <button class="social-btn whatsapp" type="button" onclick="startSocialLogin('whatsapp')">Continue with WhatsApp</button>
+          <button class="social-btn truecaller" type="button" onclick="startSocialLogin('truecaller')">Continue with Truecaller</button>
+        </div>
       </form>
       <p style="text-align:center;font-size:11px">
         <a href="#" onclick="switchAuth('login');return false" style="color:#55dcb8">Login here</a>
@@ -1146,6 +1195,9 @@ $("loginForm").onsubmit=async e=>{
 
     greeting();
     $("loginScreen").classList.remove("show");
+    const nextSymbol=pendingEquitySymbol;
+    pendingEquitySymbol=null;
+    if(nextSymbol) setTimeout(()=>openEquity(nextSymbol),0);
   }catch(e){
     $("loginError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Check the backend service/CORS and try again.":e.message;
     $("loginError").style.display="block";
@@ -1639,7 +1691,40 @@ function setChartRange(range){
 }
 function setChartInterval(v){equityChartInterval=v;const sym=$('equityDetailContent')?.dataset?.symbol;if(sym)loadEquityHistory({symbol:sym});}
 
+let pendingEquitySymbol=null;
+function startSocialLogin(provider){
+  if(!['google','facebook','whatsapp','truecaller'].includes(provider)) return;
+  const next=pendingEquitySymbol ? "?nextSymbol="+encodeURIComponent(pendingEquitySymbol) : "";
+  if(provider==='whatsapp'){
+    const phone=prompt('Enter your WhatsApp mobile number with country code (e.g. +919876543210):');
+    if(!phone) return;
+    fetch(API_BASE+'/api/auth/whatsapp/request',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({phone,nextSymbol:pendingEquitySymbol||''})})
+      .then(async r=>{const j=await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.message||'WhatsApp OTP could not be sent.'); return j;})
+      .then(()=>{
+        const otp=prompt('Enter the WhatsApp OTP sent to '+phone);
+        if(!otp) return;
+        return fetch(API_BASE+'/api/auth/whatsapp/verify',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({phone,otp})});
+      })
+      .then(async r=>{if(!r) return; const j=await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.message||'WhatsApp verification failed.'); localStorage.setItem('alphaedge_logged_in','1'); if(j.clientId)localStorage.setItem('alphaedge_client_id',j.clientId); const n=pendingEquitySymbol||''; if(n) openEquity(n); else location.reload();})
+      .catch(e=>alert(e.message));
+    return;
+  }
+  window.location.href=API_BASE+"/api/auth/"+provider+next;
+}
+function openAuthForEquity(symbol){
+  pendingEquitySymbol=symbol;
+  $("loginScreen").classList.add("show");
+  switchAuth("register");
+  $("registerSuccess").style.display="none";
+  $("registerError").style.display="none";
+  const heading=document.querySelector("#registerPanel h2");
+  if(heading) heading.textContent="Register to view this stock";
+}
 async function openEquity(symbol){
+  if(localStorage.getItem("alphaedge_logged_in")!=="1"){
+    openAuthForEquity(symbol);
+    return;
+  }
   const x=equityAll().find(v=>v.symbol===symbol);
   if(!x)return;
   equityChartRange='1d'; equityChartInterval='1';
@@ -1760,8 +1845,11 @@ async function loadEquityHistory(x){
 }
 /* RESTORE SAVED STATE */
 const cid=localStorage.getItem("alphaedge_client_id");
+const socialParams=new URLSearchParams(window.location.search);
+if(socialParams.get("nextSymbol")) pendingEquitySymbol=socialParams.get("nextSymbol");
 async function restoreSession(){
-  if(localStorage.getItem("alphaedge_logged_in")!=="1" || !cid) return;
+  const socialSuccess=socialParams.get("social")==="success";
+  if(!socialSuccess && (localStorage.getItem("alphaedge_logged_in")!=="1" || !cid)) return;
   try{
     const r=await apiFetch("/api/auth/me",{method:"GET"});
     if(!r.ok){
@@ -1778,7 +1866,14 @@ async function restoreSession(){
     localStorage.setItem("alphaedge_name",u.name||"");
     localStorage.setItem("alphaedge_mobile",u.phone||"");
     localStorage.setItem("alphaedge_email",u.email||"");
+    localStorage.setItem("alphaedge_logged_in","1");
     $("loginScreen").classList.remove("show");
+    if(socialSuccess){
+      window.history.replaceState({},document.title,window.location.pathname);
+      const socialNext=pendingEquitySymbol;
+      pendingEquitySymbol=null;
+      if(socialNext) setTimeout(()=>openEquity(socialNext),0);
+    }
     greeting();
     loadProfile();
   }catch(_){
