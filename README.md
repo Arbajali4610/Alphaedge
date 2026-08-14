@@ -51,3 +51,6 @@ Callback URLs for the current backend:
 - Truecaller: `https://alphaedge-backend-loxi.onrender.com/api/auth/truecaller/callback`
 
 WhatsApp does not use an OAuth callback; it sends a one-time password through the configured WhatsApp template.
+
+## Social login session handoff
+The frontend stores the short-lived signed social `authToken` returned after Google/Facebook/Truecaller authentication and sends it to the backend as a Bearer token. This avoids relying solely on cross-site cookies between the separate Render frontend and backend services.

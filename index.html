@@ -690,6 +690,8 @@ async function apiFetch(path, options={}){
     o.body=JSON.stringify(o.body);
   }
 
+  const authToken=localStorage.getItem("alphaedge_auth_token");
+  if(authToken) o.headers["Authorization"]="Bearer "+authToken;
   const response=await fetch(API_BASE+path,{...o,credentials:"include"});
   const contentType=(response.headers.get("content-type")||"").toLowerCase();
   const raw=await response.text();
@@ -1281,6 +1283,7 @@ $("logout").onclick=async()=>{
     localStorage.removeItem("alphaedge_name");
     localStorage.removeItem("alphaedge_mobile");
     localStorage.removeItem("alphaedge_email");
+    localStorage.removeItem("alphaedge_auth_token");
     $("loginPassword").value="";
     legalAcceptedTerms=false;
     legalAcceptedPrivacy=false;
@@ -1844,12 +1847,16 @@ async function loadEquityHistory(x){
   }
 }
 /* RESTORE SAVED STATE */
-const cid=localStorage.getItem("alphaedge_client_id");
+let cid=localStorage.getItem("alphaedge_client_id");
 const socialParams=new URLSearchParams(window.location.search);
+const socialAuthToken=socialParams.get("authToken");
+if(socialAuthToken) localStorage.setItem("alphaedge_auth_token",socialAuthToken);
 if(socialParams.get("nextSymbol")) pendingEquitySymbol=socialParams.get("nextSymbol");
 async function restoreSession(){
   const socialSuccess=socialParams.get("social")==="success";
-  if(!socialSuccess && (localStorage.getItem("alphaedge_logged_in")!=="1" || !cid)) return;
+  const hasToken=!!localStorage.getItem("alphaedge_auth_token");
+  cid=localStorage.getItem("alphaedge_client_id");
+  if(!socialSuccess && (localStorage.getItem("alphaedge_logged_in")!=="1" || (!cid && !hasToken))) return;
   try{
     const r=await apiFetch("/api/auth/me",{method:"GET"});
     if(!r.ok){
@@ -1858,6 +1865,7 @@ async function restoreSession(){
       localStorage.removeItem("alphaedge_name");
       localStorage.removeItem("alphaedge_mobile");
       localStorage.removeItem("alphaedge_email");
+      localStorage.removeItem("alphaedge_auth_token");
       return;
     }
     const d=await r.json();
