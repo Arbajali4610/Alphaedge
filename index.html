@@ -92,8 +92,7 @@ button{cursor:pointer}
 .social-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .social-btn{border:1px solid #29455a;border-radius:10px;padding:10px 8px;background:#102132;color:#dce8f2;font-weight:700;font-size:11px;cursor:pointer}
 .social-btn:hover{border-color:#55dcb8}
-.social-btn.google{background:#fff;color:#202124;border-color:#ddd}
-.social-btn.facebook{background:#1877f2;color:#fff;border-color:#1877f2}.social-btn.whatsapp{background:#25d366;color:#fff;border-color:#25d366}.social-btn.truecaller{background:#fff;color:#111;border-color:#d9d9d9}
+.social-btn.truecaller{background:#fff;color:#111;border-color:#d9d9d9}
 @media(max-width:520px){.social-row{grid-template-columns:1fr}.social-btn{width:100%}}
 
 .utility-box{width:min(430px,100%)}
@@ -266,7 +265,7 @@ body{color-scheme:light!important}
 .legal-overlay,.login-overlay,.utility-overlay{background:rgba(245,247,250,.94)!important}
 .legal-box,.login,.utility-box,.privacy-box{background:#fff!important;border-color:#d9e1e8!important;box-shadow:0 12px 40px rgba(20,35,50,.14)!important}
 .legal-box p,.legal-box li{color:#526273!important}.privacy-box .modal-actions{background:#fff!important}
-.social-btn.google{background:#fff!important;color:#202124!important}.social-btn.facebook{background:#1877f2!important;color:#fff!important}.social-btn.whatsapp{background:#25d366!important;color:#fff!important}.social-btn.truecaller{background:#fff!important;color:#111!important}
+.social-btn.truecaller{background:#fff!important;color:#111!important}
 .loading{background:rgba(245,247,250,.78)!important}.loading-box{background:#fff!important;color:#17212b!important;box-shadow:0 10px 30px rgba(20,35,50,.12)}
 .spinner{border-color:#cbd5df!important;border-top-color:#18b98d!important}
 .password-toggle{background:#f3f6f8!important;color:#087a61!important;border-color:#cfd8e1!important}
@@ -446,9 +445,6 @@ body{color-scheme:light!important}
         <button class="primary" style="width:100%" type="submit">Login</button>
         <div class="social-divider"><span>OR</span></div>
         <div class="social-row">
-          <button class="social-btn google" type="button" onclick="startSocialLogin('google')">Continue with Google</button>
-          <button class="social-btn facebook" type="button" onclick="startSocialLogin('facebook')">Continue with Facebook</button>
-          <button class="social-btn whatsapp" type="button" onclick="startSocialLogin('whatsapp')">Continue with WhatsApp</button>
           <button class="social-btn truecaller" type="button" onclick="startSocialLogin('truecaller')">Continue with Truecaller</button>
         </div>
       </form>
@@ -477,9 +473,6 @@ body{color-scheme:light!important}
         <button class="primary" style="width:100%" type="submit">Create Account</button>
         <div class="social-divider"><span>OR</span></div>
         <div class="social-row">
-          <button class="social-btn google" type="button" onclick="startSocialLogin('google')">Continue with Google</button>
-          <button class="social-btn facebook" type="button" onclick="startSocialLogin('facebook')">Continue with Facebook</button>
-          <button class="social-btn whatsapp" type="button" onclick="startSocialLogin('whatsapp')">Continue with WhatsApp</button>
           <button class="social-btn truecaller" type="button" onclick="startSocialLogin('truecaller')">Continue with Truecaller</button>
         </div>
       </form>
