@@ -983,22 +983,16 @@ app.post(
           req.body.email
         );
 
-      const password =
-        String(
-          req.body.password || ''
-        );
-
       if (
         !name ||
         !phone ||
-        !email ||
-        !password
+        !email
       ) {
 
         return res.status(400).json({
           success: false,
           message:
-            'Name, phone, email and password are required'
+            'Name, phone and email are required'
         });
       }
 
@@ -1007,15 +1001,6 @@ app.post(
         return res.status(400).json({
           success: false,
           message: 'Name is too long'
-        });
-      }
-
-      if (password.length < 8) {
-
-        return res.status(400).json({
-          success: false,
-          message:
-            'Password must contain at least 8 characters'
         });
       }
 
@@ -1091,29 +1076,21 @@ app.post(
         });
       }
 
-      const passwordHash =
-        await bcrypt.hash(
-          password,
-          12
-        );
-
       await pool.query(
         `INSERT INTO clients
          (
            client_id,
            name,
            phone,
-           email,
-           password_hash
+           email
          )
          VALUES
-         ($1, $2, $3, $4, $5)`,
+         ($1, $2, $3, $4)`,
         [
           clientId,
           name,
           phone,
-          email,
-          passwordHash
+          email
         ]
       );
 
