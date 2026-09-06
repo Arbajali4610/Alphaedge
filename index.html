@@ -456,9 +456,8 @@ body{color-scheme:light!important}
 
     <div id="registerPanel" style="display:none">
       <h2>Create your account</h2>
-      <p class="contact-note">Register using your mobile number and email ID.</p>
+      <p class="contact-note">Register with your mobile number and email ID.</p>
       <form class="form" id="registerForm">
-        <label>Full Name *<input id="regName" type="text" maxlength="100" required autocomplete="name"></label>
         <label>Mobile Number *<input id="regMobile" type="tel" inputmode="numeric" maxlength="10" required autocomplete="tel"></label>
         <label>Email ID *<input id="regEmail" type="email" required autocomplete="email"></label>
         <label class="terms">
@@ -1049,7 +1048,7 @@ function setupPasswordToggles(){
 syncLegalCheckboxes();
 bindLegalCheckboxes();
 setupPasswordToggles();
-switchAuth("login");
+switchAuth("register");
 loadRememberedLogin();
 
 /* LEGAL MODALS */
@@ -1099,15 +1098,8 @@ $("registerForm").onsubmit=async e=>{
   $("registerError").style.display="none";
   $("registerSuccess").style.display="none";
 
-  const name=$("regName").value.trim();
   const mobile=$("regMobile").value.replace(/\D/g,"");
   const email=$("regEmail").value.trim().toLowerCase();
-
-  if(!name){
-    $("registerError").textContent="Enter your full name.";
-    $("registerError").style.display="block";
-    return;
-  }
 
   if(!/^\d{10}$/.test(mobile)){
     $("registerError").textContent="Enter a valid 10-digit mobile number.";
@@ -1125,23 +1117,21 @@ $("registerForm").onsubmit=async e=>{
     return;
   }
 
-  $("loading").classList.add("show");
   try{
-    const r=await apiFetch("/api/auth/register",{method:"POST",body:{name,mobile,email}});
+    const r=await apiFetch("/api/auth/register",{method:"POST",body:{mobile,email}});
     const d=await r.json();
     if(!r.ok)throw new Error(d.message||"Registration failed.");
     const u=d.client||{};
-    const id=d.clientId||u.client_id||u.clientId;
+    const id=u.client_id||u.clientId||d.clientId;
+    if(id) localStorage.setItem("alphaedge_client_id",id);
     localStorage.setItem("alphaedge_logged_in","1");
-    localStorage.setItem("alphaedge_client_id",id||"");
     localStorage.setItem("alphaedge_name",u.name||"");
     localStorage.setItem("alphaedge_mobile",u.phone||u.mobile||mobile);
     localStorage.setItem("alphaedge_email",u.email||email);
-    if(id){
-      $("registerSuccess").innerHTML="Account created successfully. Your Client ID is <b>"+id+"</b>.";
-    }else{
-      $("registerSuccess").textContent="Account created successfully.";
-    }
+    localStorage.setItem("alphaedge_auth_token",d.authToken||"");
+    $("registerSuccess").innerHTML=id
+      ? "Account created successfully. Your Client ID is <b>"+id+"</b>."
+      : "Account created successfully.";
     $("registerSuccess").style.display="block";
     setTimeout(()=>{
       $("loginScreen").classList.remove("show");
@@ -1151,8 +1141,6 @@ $("registerForm").onsubmit=async e=>{
   }catch(e){
     $("registerError").textContent=e.message==="Failed to fetch"?"Backend unavailable. Check the backend service/CORS and try again.":e.message;
     $("registerError").style.display="block";
-  }finally{
-    $("loading").classList.remove("show");
   }
 };
 
@@ -1896,7 +1884,11 @@ async function restoreSession(){
   const socialSuccess=socialParams.get("social")==="success";
   const hasToken=!!localStorage.getItem("alphaedge_auth_token");
   cid=localStorage.getItem("alphaedge_client_id");
-  if(!socialSuccess && (localStorage.getItem("alphaedge_logged_in")!=="1" || (!cid && !hasToken))) return;
+  if(!socialSuccess && (localStorage.getItem("alphaedge_logged_in")!=="1" || (!cid && !hasToken))){
+    $("loginScreen").classList.add("show");
+    switchAuth("register");
+    return;
+  }
   try{
     const r=await apiFetch("/api/auth/me",{method:"GET"});
     if(!r.ok){
@@ -1906,6 +1898,8 @@ async function restoreSession(){
       localStorage.removeItem("alphaedge_mobile");
       localStorage.removeItem("alphaedge_email");
       localStorage.removeItem("alphaedge_auth_token");
+      $("loginScreen").classList.add("show");
+      switchAuth("register");
       return;
     }
     const d=await r.json();
@@ -1925,13 +1919,13 @@ async function restoreSession(){
     greeting();
     loadProfile();
   }catch(_){
-    $("loginScreen").classList.remove("show");
+    $("loginScreen").classList.add("show");
+    switchAuth("register");
     greeting();
   }
 }
 $("footerYear").textContent=new Date().getFullYear();
 greeting();
-switchAuth("register");
 restoreSession();
 showPage("dashboard");
 </script>
