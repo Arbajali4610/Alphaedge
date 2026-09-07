@@ -1,12 +1,14 @@
 services:
-  - type: web
-    name: alphaedge-live
-    runtime: node
-    plan: free
-    buildCommand: npm install
-    startCommand: npm start
-    envVars:
-      - key: UPSTOX_ACCESS_TOKEN
-        sync: false
-      - key: SESSION_SECRET
-        generateValue: true
+- type: web
+  name: alphaedge-live
+  runtime: node
+  plan: free
+  buildCommand: npm install
+  startCommand: npm start
+  envVars:
+  - key: UPSTOX_ACCESS_TOKEN
+    sync: false
+  - key: SESSION_SECRET
+    generateValue: true
+  - key: NODE_VERSION
+    value: 20.19.0
