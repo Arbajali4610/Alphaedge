@@ -8,7 +8,5 @@ services:
     envVars:
       - key: UPSTOX_ACCESS_TOKEN
         sync: false
-      - key: DATABASE_URL
-        sync: false
       - key: SESSION_SECRET
         generateValue: true

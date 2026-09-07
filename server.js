@@ -4,8 +4,7 @@ const protobuf = require('protobufjs');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
-const pgSession = require('connect-pg-simple')(session);
-const { Pool } = require('pg');
+const Database = require('better-sqlite3');
 
 const app = express();
 
@@ -41,69 +40,85 @@ app.use((req, res, next) => {
 DATABASE
 ========================= */
 
-let pool = null;
 let databaseReady = false;
+const path = require('path');
+const fs = require('fs');
+const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'data');
+fs.mkdirSync(DATA_DIR, { recursive: true });
+const sqlite = new Database(path.join(DATA_DIR, 'alphaedge.db'));
+sqlite.pragma('journal_mode = WAL');
+sqlite.pragma('foreign_keys = ON');
 
-if (DATABASE_URL) {
-  pool = new Pool({
-    connectionString: DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
-    },
-    max: 10,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000
-  });
+// PostgreSQL-compatible query wrapper used by the existing API routes.
+// Storage is SQLite, so no DATABASE_URL/PostgreSQL service is required.
+const pool = {
+  async query(text, params = []) {
+    let sql = String(text);
+    sql = sql.replace(/NOW\(\)\s*\+\s*INTERVAL\s*'5 minutes'/gi, "datetime('now','+5 minutes')");
+    sql = sql.replace(/NOW\(\)/gi, "datetime('now')");
+    sql = sql.replace(/CURRENT_SCHEMA\(\)/gi, "'main'");
+    sql = sql.replace(/BTRIM\(/gi, 'trim(');
+    sql = sql.replace(/TIMESTAMPTZ/gi, 'TEXT');
+    sql = sql.replace(/BIGSERIAL/gi, 'INTEGER');
+    sql = sql.replace(/VARCHAR\(\d+\)/gi, 'TEXT');
+    sql = sql.replace(/NUMERIC\(\d+,\d+\)/gi, 'REAL');
+    sql = sql.replace(/ALTER TABLE clients ALTER COLUMN [^;]+;?/gi, '');
+    sql = sql.replace(/\$(\d+)/g, '?');
 
-  pool.on('error', (err) => {
-    console.error('PostgreSQL pool error:', err.message);
-  });
-}
+    if (/information_schema\.columns/i.test(sql)) {
+      const rows = sqlite.prepare('PRAGMA table_info(clients)').all().map(r => ({ column_name: r.name }));
+      return { rows, rowCount: rows.length };
+    }
+
+    const stmt = sqlite.prepare(sql);
+    if (/^\s*(SELECT|PRAGMA|WITH)\b/i.test(sql) || /\bRETURNING\b/i.test(sql)) {
+      const rows = stmt.all(...params);
+      return { rows, rowCount: rows.length };
+    }
+    const result = stmt.run(...params);
+    return { rows: [], rowCount: result.changes, lastInsertId: result.lastInsertRowid };
+  }
+};
 
 async function initDatabase() {
-  if (!pool) {
-    console.warn('DATABASE_URL is not configured. Authentication is disabled.');
-    return;
-  }
-
   try {
-    await pool.query(`
+    sqlite.exec(`
       CREATE TABLE IF NOT EXISTS clients (
-        id BIGSERIAL PRIMARY KEY,
-        client_id VARCHAR(30) UNIQUE NOT NULL,
-        name VARCHAR(100) NOT NULL,
-        phone VARCHAR(20) UNIQUE,
-        email VARCHAR(255) UNIQUE NOT NULL,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        client_id TEXT UNIQUE NOT NULL,
+        name TEXT NOT NULL,
+        phone TEXT UNIQUE,
+        email TEXT UNIQUE NOT NULL,
         password_hash TEXT,
-        status VARCHAR(20) NOT NULL DEFAULT 'active',
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        status TEXT NOT NULL DEFAULT 'active',
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
-
       CREATE TABLE IF NOT EXISTS market_snapshots (
-        id BIGSERIAL PRIMARY KEY,
-        symbol VARCHAR(30) NOT NULL,
-        ltp NUMERIC(14,4) NOT NULL,
-        close NUMERIC(14,4),
-        change_pct NUMERIC(10,4),
-        captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        symbol TEXT NOT NULL,
+        ltp REAL NOT NULL,
+        close REAL,
+        change_pct REAL,
+        captured_at TEXT NOT NULL DEFAULT (datetime('now'))
       );
-
       CREATE INDEX IF NOT EXISTS market_snapshots_symbol_time_idx
-      ON market_snapshots(symbol, captured_at DESC);
+        ON market_snapshots(symbol, captured_at DESC);
     `);
 
-    // Allow OAuth-created accounts to complete their profile later.
-    await pool.query(`ALTER TABLE clients ALTER COLUMN phone DROP NOT NULL`);
-    await pool.query(`ALTER TABLE clients ALTER COLUMN password_hash DROP NOT NULL`);
-    databaseReady = true;
-    console.log('PostgreSQL database ready.');
+    const cols = new Set(sqlite.prepare('PRAGMA table_info(clients)').all().map(r => r.name));
+    if (!cols.has('phone')) sqlite.exec('ALTER TABLE clients ADD COLUMN phone TEXT');
+    if (!cols.has('mobile')) sqlite.exec('ALTER TABLE clients ADD COLUMN mobile TEXT');
+    if (!cols.has('password_hash')) sqlite.exec('ALTER TABLE clients ADD COLUMN password_hash TEXT');
+    if (!cols.has('status')) sqlite.exec("ALTER TABLE clients ADD COLUMN status TEXT DEFAULT 'active'");
+    if (!cols.has('created_at')) sqlite.exec("ALTER TABLE clients ADD COLUMN created_at TEXT DEFAULT (datetime('now'))");
+    if (!cols.has('updated_at')) sqlite.exec("ALTER TABLE clients ADD COLUMN updated_at TEXT DEFAULT (datetime('now'))");
 
+    databaseReady = true;
+    console.log(`SQLite database ready: ${path.join(DATA_DIR, 'alphaedge.db')}`);
   } catch (err) {
     databaseReady = false;
-    console.error(
-      'PostgreSQL initialization failed:',
-      err.message
-    );
+    console.error('SQLite initialization failed:', err.message);
   }
 }
 
@@ -111,42 +126,17 @@ async function initDatabase() {
 SESSION
 ========================= */
 
-if (pool) {
-  app.use(
-    session({
-      store: new pgSession({
-        pool,
-        tableName: 'user_sessions',
-        createTableIfMissing: true
-      }),
-
-      secret:
-        process.env.SESSION_SECRET ||
-        'CHANGE_THIS_SESSION_SECRET',
-
-      resave: false,
-      saveUninitialized: false,
-
-      cookie: {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        maxAge: null
-      }
-    })
-  );
-} else {
-  app.use(
-    session({
-      secret:
-        process.env.SESSION_SECRET ||
-        'CHANGE_THIS_SESSION_SECRET',
-
-      resave: false,
-      saveUninitialized: false
-    })
-  );
-}
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'CHANGE_THIS_SESSION_SECRET',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: null
+  }
+}));
 
 /* =========================
 MARKET DATA
@@ -995,6 +985,7 @@ app.post(
          FROM clients
          WHERE email = $1
          OR phone = $2
+         OR mobile = $2
          LIMIT 1`,
         [email, phone]
       );
@@ -1032,8 +1023,8 @@ app.post(
 
       await pool.query(
         `INSERT INTO clients
-         (client_id, name, phone, email, password_hash)
-         VALUES ($1, $2, $3, $4, NULL)`,
+         (client_id, name, phone, mobile, email, password_hash, created_at, updated_at)
+         VALUES ($1, $2, $3, $3, $4, NULL, datetime('now'), datetime('now'))`,
         [clientId, name, phone, email]
       );
 
