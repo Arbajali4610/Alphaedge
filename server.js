@@ -63,7 +63,13 @@ const pool = {
     sql = sql.replace(/VARCHAR\(\d+\)/gi, 'TEXT');
     sql = sql.replace(/NUMERIC\(\d+,\d+\)/gi, 'REAL');
     sql = sql.replace(/ALTER TABLE clients ALTER COLUMN [^;]+;?/gi, '');
-    sql = sql.replace(/\$(\d+)/g, '?');
+    // Expand PostgreSQL-style placeholders in occurrence order.
+    // This preserves repeated placeholders such as $2 appearing twice.
+    const boundParams = [];
+    sql = sql.replace(/\$(\d+)/g, (_, n) => {
+      boundParams.push(params[Number(n) - 1]);
+      return '?';
+    });
 
     if (/information_schema\.columns/i.test(sql)) {
       const rows = sqlite.prepare('PRAGMA table_info(clients)').all().map(r => ({ column_name: r.name }));
@@ -72,10 +78,10 @@ const pool = {
 
     const stmt = sqlite.prepare(sql);
     if (/^\s*(SELECT|PRAGMA|WITH)\b/i.test(sql) || /\bRETURNING\b/i.test(sql)) {
-      const rows = stmt.all(...params);
+      const rows = stmt.all(...boundParams);
       return { rows, rowCount: rows.length };
     }
-    const result = stmt.run(...params);
+    const result = stmt.run(...boundParams);
     return { rows: [], rowCount: result.changes, lastInsertId: result.lastInsertRowid };
   }
 };
