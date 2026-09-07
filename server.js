@@ -959,170 +959,96 @@ app.post(
   async (req, res) => {
 
     if (!pool || !databaseReady) {
-
       return res.status(503).json({
         success: false,
-        message:
-          'Authentication database is unavailable'
+        message: 'Authentication database is unavailable'
       });
     }
 
     try {
+      const phone = normalizePhone(req.body.phone || req.body.mobile);
+      const email = normalizeEmail(req.body.email);
 
-      const name =
-        String(req.body.name || '')
-          .trim();
-
-      const phone =
-        normalizePhone(
-          req.body.phone || req.body.mobile
-        );
-
-      const email =
-        normalizeEmail(
-          req.body.email
-        );
-
-      const password =
-        String(
-          req.body.password || ''
-        );
-
-      if (
-        !name ||
-        !phone ||
-        !email ||
-        !password
-      ) {
-
+      if (!phone || !email) {
         return res.status(400).json({
           success: false,
-          message:
-            'Name, phone, email and password are required'
+          message: 'Mobile number and email are required'
         });
       }
 
-      if (name.length > 100) {
-
+      if (!/^\d{10}$/.test(phone)) {
         return res.status(400).json({
           success: false,
-          message: 'Name is too long'
+          message: 'Enter a valid 10-digit mobile number'
         });
       }
 
-      if (password.length < 8) {
-
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return res.status(400).json({
           success: false,
-          message:
-            'Password must contain at least 8 characters'
+          message: 'Invalid email address'
         });
       }
 
-      if (
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
-          .test(email)
-      ) {
+      const existing = await pool.query(
+        `SELECT client_id
+         FROM clients
+         WHERE email = $1
+         OR phone = $2
+         LIMIT 1`,
+        [email, phone]
+      );
 
-        return res.status(400).json({
-          success: false,
-          message:
-            'Invalid email address'
-        });
-      }
-
-      const existing =
-        await pool.query(
-          `SELECT client_id
-           FROM clients
-           WHERE email = $1
-           OR phone = $2
-           LIMIT 1`,
-          [email, phone]
-        );
-
-      if (
-        existing.rows.length > 0
-      ) {
-
+      if (existing.rows.length > 0) {
         return res.status(409).json({
           success: false,
-          message:
-            'Email or phone number is already registered'
+          message: 'Email or phone number is already registered'
         });
       }
 
       let clientId;
-
-      for (
-        let i = 0;
-        i < 10;
-        i++
-      ) {
-
-        const candidate =
-          generateClientId();
-
-        const check =
-          await pool.query(
-            `SELECT id
-             FROM clients
-             WHERE client_id = $1`,
-            [candidate]
-          );
-
-        if (
-          check.rows.length === 0
-        ) {
-
-          clientId =
-            candidate;
-
+      for (let i = 0; i < 10; i++) {
+        const candidate = generateClientId();
+        const check = await pool.query(
+          `SELECT id FROM clients WHERE client_id = $1`,
+          [candidate]
+        );
+        if (check.rows.length === 0) {
+          clientId = candidate;
           break;
         }
       }
 
       if (!clientId) {
-
         return res.status(500).json({
           success: false,
-          message:
-            'Unable to create Client ID'
+          message: 'Unable to create Client ID'
         });
       }
 
-      const passwordHash =
-        await bcrypt.hash(
-          password,
-          12
-        );
+      // Passwordless registration: the frontend collects only mobile + email.
+      // Keep password_hash NULL and use the email prefix as the initial display name.
+      const name = email.split('@')[0].slice(0, 100) || 'AlphaEdge User';
 
       await pool.query(
         `INSERT INTO clients
-         (
-           client_id,
-           name,
-           phone,
-           email,
-           password_hash
-         )
-         VALUES
-         ($1, $2, $3, $4, $5)`,
-        [
-          clientId,
-          name,
-          phone,
-          email,
-          passwordHash
-        ]
+         (client_id, name, phone, email, password_hash)
+         VALUES ($1, $2, $3, $4, NULL)`,
+        [clientId, name, phone, email]
       );
+
+      req.session.clientId = clientId;
+      req.session.userType = 'client';
+      await new Promise((resolve, reject) => {
+        req.session.save(err => err ? reject(err) : resolve());
+      });
 
       return res.status(201).json({
         success: true,
-        message:
-          'Registration successful',
+        message: 'Registration successful',
         clientId,
         client: {
+          clientId,
           client_id: clientId,
           name,
           phone,
@@ -1131,20 +1057,15 @@ app.post(
       });
 
     } catch (err) {
-
-      console.error(
-        'Registration error:',
-        err.message
-      );
-
+      console.error('Registration error:', err.message);
       return res.status(500).json({
         success: false,
-        message:
-          'Registration failed'
+        message: 'Registration failed'
       });
     }
   }
 );
+
 
 /* =========================
 CLIENT LOGIN
