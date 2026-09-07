@@ -197,6 +197,8 @@ async function saveMarketSnapshot(name, value) {
 
 const clients = new Set();
 
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+
 app.use(express.static(__dirname));
 
 app.get('/api/market', (req, res) => {
