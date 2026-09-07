@@ -1170,20 +1170,11 @@ app.post(
           req.body.clientId || ''
         ).trim();
 
-      const password =
-        String(
-          req.body.password || ''
-        );
-
-      if (
-        !clientId ||
-        !password
-      ) {
-
+      if (!clientId) {
         return res.status(400).json({
           success: false,
           message:
-            'Client ID and password are required'
+            'Client ID is required'
         });
       }
 
@@ -1225,21 +1216,6 @@ app.post(
           success: false,
           message:
             'Account is not active'
-        });
-      }
-
-      const passwordCorrect =
-        await bcrypt.compare(
-          password,
-          client.password_hash
-        );
-
-      if (!passwordCorrect) {
-
-        return res.status(401).json({
-          success: false,
-          message:
-            'Invalid Client ID or password'
         });
       }
 
